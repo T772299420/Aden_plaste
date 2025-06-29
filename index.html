@@ -9,13 +9,13 @@
   <style>
     body {
       font-family: Arial, sans-serif;
-      padding-top: 70px;
+      padding-top: 60px; /* لإفساح مكان للشريط الثابت */
       background: #FFFFF0; /* خلفية الصفحة */
       margin: 0;
       color: #E41B17; /* لون النص */
     }
     #toolbar {
-      position: sticky;
+      position: fixed; /* ثابت أعلى الصفحة */
       top: 0;
       left: 0;
       right: 0;
@@ -51,7 +51,7 @@
     #toolbar img {
       width: 24px;
       height: 24px;
-      filter: brightness(100%) invert(100%); /* يجعل الأيقونات بيضاء على الخلفية الحمراء */
+      filter: brightness(100%) invert(100%);
     }
     #imageSizeRange {
       width: 150px;
@@ -77,11 +77,11 @@
       border-radius: 10px;
       box-shadow: 0 0 5px #ccc;
       display: flex;
-      border: 2px solid #E41B17; /* لون إطار الأصناف */
+      border: 2px solid #E41B17;
       align-items: center;
       gap: 15px;
       max-width: 900px;
-      color: #000; /* نص الأصناف أسود */
+      color: #000;
     }
     .item img {
       width: 120px;
