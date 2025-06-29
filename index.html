@@ -194,8 +194,9 @@
     }
 
     function checkAdminPassword() {
-      const pass = document.getElementById('adminPassword').value;
-      if (pass === '٢٠١٠٢٠') {
+      let pass = document.getElementById('adminPassword').value.trim();
+      pass = pass.replace(/[٠-٩]/g, d => '٠١٢٣٤٥٦٧٨٩'.indexOf(d));
+      if (pass === '201020') {
         document.getElementById('adminLogin').style.display = 'none';
         document.getElementById('adminPanel').style.display = 'block';
         loadAdminData();
@@ -255,4 +256,4 @@
       alert("تم حفظ البيانات بنجاح!");
     }
   </script></body>
-  </html>
+                 </html>
