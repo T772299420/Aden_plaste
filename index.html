@@ -8,32 +8,29 @@
   <style>
     body {
       font-family: Arial, sans-serif;
-      padding-top: 70px; /* مساحة لشريط التحكم */
-      background: #f5f5f5;
+      padding-top: 70px;
+      background: #FDEEF4; /* خلفية الصفحة */
       margin: 0;
     }
 
-    /* شريط التحكم الثابت */
     #toolbar {
       position: fixed;
       top: 0;
       left: 0;
       right: 0;
       height: 60px;
-      background: #C69C6D; /* بني فاتح */
+      background: #C11B17; /* شريط التحكم */
       color: white;
       display: flex;
       align-items: center;
       justify-content: flex-start;
+      gap: 15px;
       padding: 0 20px;
       box-shadow: 0 2px 5px rgba(0,0,0,0.3);
       z-index: 9999;
-      border-bottom: 2px solid #8B7D5A;
-      user-select: none;
     }
 
     #toolbar label {
-      margin-right: 15px;
       font-weight: bold;
       font-size: 16px;
     }
@@ -43,7 +40,7 @@
       cursor: pointer;
       height: 25px;
       border-radius: 8px;
-      background: #f1e6d0;
+      background: #fff;
       -webkit-appearance: none;
     }
 
@@ -52,23 +49,25 @@
       appearance: none;
       width: 24px;
       height: 24px;
-      background: #8B7D5A;
+      background: #8B0000;
       cursor: pointer;
       border-radius: 50%;
       border: 1px solid #666;
-      margin-top: -9px;
-      transition: background 0.3s ease;
     }
-    #imageSizeRange::-webkit-slider-thumb:hover {
-      background: #5a4e32;
-    }
-    #imageSizeRange:focus {
-      outline: none;
-      box-shadow: 0 0 5px #8B7D5A;
+
+    #sendWhatsappBtn {
+      background-color: #25D366;
+      border: none;
+      color: white;
+      padding: 10px 18px;
+      font-size: 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      white-space: nowrap;
     }
 
     img.logo {
-      width: 200px;
+      width: 100px; /* شعار الشركة نصف الحجم */
       height: auto;
       margin: 20px auto;
       animation: move-logo 5s alternate infinite;
@@ -95,22 +94,17 @@
       display: flex;
       align-items: center;
       gap: 15px;
+      border: 2px solid #C11B17; /* إطار الصنف */
     }
 
     .item img {
       width: 120px;
       height: 120px;
-      object-fit: cover;
-      border-radius: 0;
-      box-shadow: -5px 5px 15px rgba(0, 0, 0, 0.2);
-      border: 2px solid #ddd;
-      transition: transform 0.3s ease, box-shadow 0.3s ease, border 0.3s ease, width 0.3s ease, height 0.3s ease;
+      object-fit: contain;
+      border-radius: 6px;
+      border: 3px solid #C11B17; /* حافة الصورة */
+      box-shadow: -5px 5px 10px rgba(0, 0, 0, 0.2);
       flex-shrink: 0;
-    }
-
-    .item img:hover {
-      transform: scale(1.1) rotate(-3deg);
-      box-shadow: -8px 8px 20px rgba(0, 0, 0, 0.3);
     }
 
     .item img.highlight {
@@ -120,17 +114,13 @@
 
     .item-details {
       flex-grow: 1;
+      text-align: right;
     }
 
     .item-name {
       font-size: 18px;
       font-weight: bold;
       margin-bottom: 6px;
-      text-align: right;
-    }
-
-    .item-qty {
-      text-align: right;
     }
 
     .item-qty label {
@@ -143,31 +133,19 @@
       width: 70px;
       padding: 5px;
     }
-
-    button {
-      display: block;
-      margin: 30px auto 20px auto;
-      padding: 10px 20px;
-      font-size: 16px;
-      border-radius: 8px;
-      border: none;
-      background: #25D366;
-      color: white;
-      cursor: pointer;
-    }
   </style>
 </head>
 <body>
   <div id="toolbar">
     <label for="imageSizeRange">حجم الصورة:</label>
     <input type="range" id="imageSizeRange" min="60" max="300" value="120" />
+    <button id="sendWhatsappBtn" onclick="sendToWhatsApp()">إرسال الطلب عبر واتساب</button>
   </div>
 
   <img src="001.jpg" class="logo" alt="Aden Plastic logo" />
   <h2 style="text-align:center;">شركة عدن الوطنية للصناعات المنزلية</h2>
 
   <div id="items"></div>
-  <button onclick="sendToWhatsApp()">إرسال الطلب عبر واتساب</button>
 
   <script>
     const imageSizeRange = document.getElementById('imageSizeRange');
@@ -247,4 +225,4 @@
     }
   </script>
 </body>
-  </html>
+</html>
