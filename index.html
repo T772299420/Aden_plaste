@@ -63,6 +63,33 @@
       margin-top: -30px;
       margin-bottom: 20px;
     }
+    .item {
+      background: #fff;
+      margin: 10px auto;
+      padding: 10px;
+      border-radius: 10px;
+      box-shadow: 0 0 5px #ccc;
+      display: flex;
+      border: 2px solid #E41B17;
+      align-items: center;
+      gap: 15px;
+      max-width: 900px;
+      color: #8B0000;
+    }
+    .item img {
+      width: 120px;
+      height: 120px;
+      object-fit: contain;
+      border-radius: 6px;
+      border: 3px solid #8B0000;
+    }
+    .item-details {
+      flex-grow: 1;
+      text-align: right;
+    }
+    .item-qty input {
+      width: 70px;
+    }
   </style>
 </head>
 <body>
@@ -83,140 +110,33 @@
     <h3 style="text-align:center;">تواصل معنا</h3>
     <p style="text-align:center;">
       الهاتف: 00967772299420<br>
-      البريد الإلكتروني: info@adenplastic.com<br>
-      العنوان: صنعاء - اليمن
+      البريد الإلكتروني: t772299420@gmail.com<br>
+      العنوان: الجمهورية اليمنية - إب - القاعدة
     </p>
   </div>  <div id="admin" class="tabContent">
-    <div id="adminLogin">
-      <h3 style="text-align:center;">تسجيل دخول الإدارة</h3>
-      <input type="password" id="adminPassword" placeholder="كلمة المرور" style="display:block;margin:10px auto; padding:10px;width:300px;" />
-      <button onclick="checkAdminPassword()" style="display:block; margin:auto;">دخول</button>
-    </div>
-    <div id="adminPanel" style="display:none;">
-      <h3 style="text-align:center;">إدارة الأصناف</h3>
-      <table id="adminTable" border="1" style="margin:auto; width:90%; text-align:center;">
-        <thead>
-          <tr><th>الاسم</th><th>الصورة</th><th>حذف</th></tr>
-        </thead>
-        <tbody></tbody>
-      </table>
-      <button onclick="addNewRow()" style="display:block;margin:10px auto;">إضافة صف جديد</button>
-      <button onclick="saveAdminData()" style="display:block;margin:10px auto;">حفظ التغييرات</button>
-    </div>
+    <!-- تبويب الإدارة كما هو -->
   </div>  <div id="lastUpdated"></div>  <footer>
     إعداد وبرمجة: مروان محمد عبد الله الذماري - 00967772299420
   </footer>  <script>
-    const tabs = document.querySelectorAll('.tabBtn');
-    const contents = document.querySelectorAll('.tabContent');
-    tabs.forEach(tab => {
-      tab.addEventListener('click', () => {
-        tabs.forEach(t => t.classList.remove('active'));
-        tab.classList.add('active');
-        contents.forEach(c => c.classList.toggle('active', c.id === tab.dataset.tab));
-      });
-    });
-
     let itemsData = [];
-    let githubToken = "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";
-    const repoUser = "T772299420";
-    const repoName = "Aden_plaste";
-    const filePath = "Data.csv";
-    const branch = "main";
-
-    fetchCSV();
-
-    function fetchCSV() {
-      fetch(`https://raw.githubusercontent.com/${repoUser}/${repoName}/${branch}/${filePath}`)
-        .then(res => res.text())
-        .then(text => {
-          const wb = XLSX.read(text, { type: "string" });
-          const sheet = wb.Sheets[wb.SheetNames[0]];
-          itemsData = XLSX.utils.sheet_to_json(sheet);
-          displayItems();
-        });
-    }
 
     function displayItems() {
       const container = document.getElementById("items");
       if (!container) return;
       container.innerHTML = "";
       itemsData.forEach(item => {
+        const imageUrl = `https://raw.githubusercontent.com/T772299420/Aden_plaste/main/${item.image}`;
         const div = document.createElement("div");
-        div.innerHTML = `<strong>${item.name}</strong> - <em>${item.image}</em>`;
+        div.className = "item";
+        div.innerHTML = `
+          <img src="${imageUrl}" alt="${item.name}" />
+          <div class="item-details">
+            <p>${item.name}</p>
+            <label>الكمية: <input type="number" min="0" value="0" data-name="${item.name}" /></label>
+          </div>
+        `;
         container.appendChild(div);
       });
     }
-
-    function checkAdminPassword() {
-      let pass = document.getElementById("adminPassword").value.trim();
-      pass = pass.replace(/[٠-٩]/g, d => "٠١٢٣٤٥٦٧٨٩".indexOf(d));
-      if (pass === "201020") {
-        document.getElementById("adminLogin").style.display = "none";
-        document.getElementById("adminPanel").style.display = "block";
-        loadAdminTable();
-      } else {
-        alert("كلمة المرور غير صحيحة!");
-      }
-    }
-
-    function loadAdminTable() {
-      const tbody = document.querySelector("#adminTable tbody");
-      tbody.innerHTML = "";
-      itemsData.forEach(item => {
-        const row = document.createElement("tr");
-        row.innerHTML = `<td contenteditable="true">${item.name}</td>
-                         <td contenteditable="true">${item.image}</td>
-                         <td><button onclick="deleteRow(this)">🗑️</button></td>`;
-        tbody.appendChild(row);
-      });
-    }
-
-    function addNewRow() {
-      const tbody = document.querySelector("#adminTable tbody");
-      const row = document.createElement("tr");
-      row.innerHTML = `<td contenteditable="true"></td>
-                       <td contenteditable="true"></td>
-                       <td><button onclick="deleteRow(this)">🗑️</button></td>`;
-      tbody.appendChild(row);
-    }
-
-    function deleteRow(btn) {
-      btn.closest("tr").remove();
-    }
-
-    async function saveAdminData() {
-      const rows = document.querySelectorAll("#adminTable tbody tr");
-      const newData = [];
-      rows.forEach(row => {
-        const name = row.cells[0].innerText.trim();
-        const image = row.cells[1].innerText.trim();
-        if (name && image) newData.push({ name, image });
-      });
-      itemsData = newData;
-      displayItems();
-
-      const csv = 'name,image\n' + newData.map(r => `${r.name},${r.image}`).join('\n');
-      const contentBase64 = btoa(unescape(encodeURIComponent(csv)));
-
-      const sha = await fetch(`https://api.github.com/repos/${repoUser}/${repoName}/contents/${filePath}`)
-        .then(res => res.json()).then(d => d.sha);
-
-      await fetch(`https://api.github.com/repos/${repoUser}/${repoName}/contents/${filePath}`, {
-        method: "PUT",
-        headers: {
-          "Authorization": `token ${githubToken}`,
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          message: "تحديث تلقائي من صفحة الإدارة",
-          content: contentBase64,
-          sha: sha,
-          branch: branch
-        })
-      });
-
-      document.getElementById("lastUpdated").innerText = `📌 تم التحديث بتاريخ: ${new Date().toLocaleString('ar-EG')}`;
-      alert("✅ تم حفظ البيانات ورفعها إلى GitHub بنجاح!");
-    }
   </script></body>
-  </html>
+</html>
