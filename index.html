@@ -116,9 +116,9 @@
   <div id="toolbar">
     <label for="imageSizeRange">حجم الصورة:</label>
     <input type="range" id="imageSizeRange" min="60" max="300" value="120" />
-    <button id="editInfoBtn" onclick="showForm()"><img src="up.png" alt="تعديل" /></button>
-    <button id="sendWhatsappBtn" onclick="sendToWhatsApp()" disabled><img src="Wt.png" alt="واتساب" /></button>
-    <button id="printPdfBtn" onclick="printPDF()" disabled><img src="pd.png" alt="PDF" /></button>
+    <button id="editInfoBtn" onclick="showForm()"><img src="https://raw.githubusercontent.com/T772299420/Aden_plaste/main/Up.png" alt="تعديل" /></button>
+    <button id="sendWhatsappBtn" onclick="sendToWhatsApp()" disabled><img src="https://raw.githubusercontent.com/T772299420/Aden_plaste/main/Wt.png" alt="واتساب" /></button>
+    <button id="printPdfBtn" onclick="printPDF()" disabled><img src="https://raw.githubusercontent.com/T772299420/Aden_plaste/main/Pd.png" alt="PDF" /></button>
   </div>  <img src="001.jpg" class="logo" alt="Aden Plastic logo" />
   <h2 style="text-align:center; font-weight:bold; color:#C11B17;">شركة عدن الوطنية للصناعات المنزلية</h2>  <div id="items"></div>  <div id="overlay" style="display:none">
     <div id="formModal">
@@ -242,7 +242,7 @@
     async function printPDF() {
       const info = JSON.parse(localStorage.getItem('customerInfo'));
       const now = new Date().toLocaleDateString();
-      const {{ jsPDF }} = window.jspdf;
+      const { jsPDF } = window.jspdf;
       const doc = new jsPDF();
 
       doc.text("الأخوة مبيعات - شركة عدن الوطنية للصناعات المنزلية المحترمون", 10, 20);
