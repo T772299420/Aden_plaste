@@ -10,8 +10,9 @@
     body {
       font-family: Arial, sans-serif;
       padding-top: 70px;
-      background: #FDEEF4;
+      background: #FFFFF0; /* خلفية الصفحة */
       margin: 0;
+      color: #E41B17; /* لون النص */
     }
     #toolbar {
       position: sticky;
@@ -19,7 +20,7 @@
       left: 0;
       right: 0;
       height: 60px;
-      background: #FDEEF4;
+      background: #E41B17; /* لون شريط الأدوات */
       display: flex;
       align-items: center;
       justify-content: flex-start;
@@ -28,10 +29,14 @@
       z-index: 9999;
       transition: top 0.4s ease-in-out;
     }
+    #toolbar label {
+      color: #FFFFF0; /* لون نص تسمية التحكم بحجم الصورة */
+      font-weight: bold;
+    }
     #toolbar button {
       height: 40px;
       width: 40px;
-      background-color: #C11B17;
+      background-color: #E41B17; /* نفس لون الشريط */
       border: none;
       border-radius: 6px;
       display: flex;
@@ -46,6 +51,7 @@
     #toolbar img {
       width: 24px;
       height: 24px;
+      filter: brightness(100%) invert(100%); /* يجعل الأيقونات بيضاء على الخلفية الحمراء */
     }
     #imageSizeRange {
       width: 150px;
@@ -71,10 +77,11 @@
       border-radius: 10px;
       box-shadow: 0 0 5px #ccc;
       display: flex;
-      border: 2px solid #C11B17;
+      border: 2px solid #E41B17; /* لون إطار الأصناف */
       align-items: center;
       gap: 15px;
       max-width: 900px;
+      color: #000; /* نص الأصناف أسود */
     }
     .item img {
       width: 120px;
@@ -108,6 +115,7 @@
       border-radius: 10px;
       max-width: 400px;
       text-align: center;
+      color: #000;
     }
     #formModal input {
       width: 90%;
@@ -115,22 +123,24 @@
       padding: 10px;
       border-radius: 6px;
       border: 1px solid #ccc;
+      color: #000;
     }
     #formModal button {
       margin-top: 10px;
       padding: 10px 20px;
-      background: #C11B17;
+      background: #E41B17;
       color: white;
       border: none;
       border-radius: 6px;
+      cursor: pointer;
     }
     footer {
       text-align: center;
       margin-top: 40px;
       padding: 20px;
       font-size: 14px;
-      color: #333;
-      border-top: 2px solid #C11B17;
+      color: #E41B17;
+      border-top: 2px solid #E41B17;
     }
   </style>
 </head>
@@ -144,7 +154,7 @@
   </div>
 
   <img src="001.jpg" class="logo" alt="Aden Plastic logo" />
-  <h2 style="text-align:center; font-weight:bold; color:#C11B17;">شركة عدن الوطنية للصناعات المنزلية</h2>
+  <h2 style="text-align:center; font-weight:bold; color:#E41B17;">شركة عدن الوطنية للصناعات المنزلية</h2>
 
   <div id="items"></div>
 
@@ -228,7 +238,7 @@
       if (val > 0) {
         input.parentElement.parentElement.querySelector('img').style.borderColor = '#8B0000';
       } else {
-        input.parentElement.parentElement.querySelector('img').style.borderColor = '#C11B17';
+        input.parentElement.parentElement.querySelector('img').style.borderColor = '#E41B17';
       }
     }
 
@@ -357,4 +367,4 @@
     }
   </script>
 </body>
-    </html>
+  </html>
