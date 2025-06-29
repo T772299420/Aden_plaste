@@ -1,5 +1,4 @@
-<!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<!DOCTYPE html><html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -9,52 +8,23 @@
     body {
       font-family: Arial, sans-serif;
       padding-top: 70px;
-      background: #FDEEF4; /* خلفية الصفحة */
+      background: #FDEEF4;
       margin: 0;
     }
-
     #toolbar {
       position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
+      top: 0; left: 0; right: 0;
       height: 60px;
-      background: #C11B17; /* شريط التحكم */
+      background: #C11B17;
       color: white;
       display: flex;
       align-items: center;
       justify-content: flex-start;
       gap: 15px;
       padding: 0 20px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.3);
       z-index: 9999;
     }
-
-    #toolbar label {
-      font-weight: bold;
-      font-size: 16px;
-    }
-
-    #imageSizeRange {
-      width: 180px;
-      cursor: pointer;
-      height: 25px;
-      border-radius: 8px;
-      background: #fff;
-      -webkit-appearance: none;
-    }
-
-    #imageSizeRange::-webkit-slider-thumb {
-      -webkit-appearance: none;
-      appearance: none;
-      width: 24px;
-      height: 24px;
-      background: #8B0000;
-      cursor: pointer;
-      border-radius: 50%;
-      border: 1px solid #666;
-    }
-
+    #imageSizeRange { width: 180px; }
     #sendWhatsappBtn {
       background-color: #25D366;
       border: none;
@@ -63,28 +33,17 @@
       font-size: 16px;
       border-radius: 8px;
       cursor: pointer;
-      white-space: nowrap;
     }
-
     img.logo {
-      width: 100px; /* شعار الشركة نصف الحجم */
-      height: auto;
+      width: 100px;
       margin: 20px auto;
-      animation: move-logo 5s alternate infinite;
       display: block;
+      animation: move-logo 5s alternate infinite;
     }
-
     @keyframes move-logo {
       0% { transform: translateX(100px); }
       100% { transform: translateX(-100px); }
     }
-
-    #items {
-      max-width: 900px;
-      margin: 0 auto;
-      text-align: left;
-    }
-
     .item {
       background: #fff;
       margin: 10px auto;
@@ -92,46 +51,55 @@
       border-radius: 10px;
       box-shadow: 0 0 5px #ccc;
       display: flex;
+      border: 2px solid #C11B17;
       align-items: center;
       gap: 15px;
-      border: 2px solid #C11B17; /* إطار الصنف */
+      max-width: 900px;
     }
-
     .item img {
-      width: 120px;
-      height: 120px;
+      width: 120px; height: 120px;
       object-fit: contain;
       border-radius: 6px;
-      border: 3px solid #C11B17; /* حافة الصورة */
-      box-shadow: -5px 5px 10px rgba(0, 0, 0, 0.2);
-      flex-shrink: 0;
+      border: 3px solid #C11B17;
     }
-
     .item img.highlight {
       border: 3px solid #25D366;
-      box-shadow: 0 0 20px rgba(37, 211, 102, 0.5);
     }
-
     .item-details {
       flex-grow: 1;
       text-align: right;
     }
-
-    .item-name {
-      font-size: 18px;
-      font-weight: bold;
-      margin-bottom: 6px;
+    .item-qty input { width: 70px; }
+    #overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 10000;
     }
-
-    .item-qty label {
-      font-weight: bold;
-      display: block;
-      margin-bottom: 4px;
+    #formModal {
+      background: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      max-width: 400px;
+      text-align: center;
     }
-
-    .item-qty input[type="number"] {
-      width: 70px;
-      padding: 5px;
+    #formModal input {
+      width: 90%;
+      margin: 5px 0;
+      padding: 10px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+    #formModal button {
+      margin-top: 10px;
+      padding: 10px 20px;
+      background: #C11B17;
+      color: white;
+      border: none;
+      border-radius: 6px;
     }
   </style>
 </head>
@@ -140,20 +108,40 @@
     <label for="imageSizeRange">حجم الصورة:</label>
     <input type="range" id="imageSizeRange" min="60" max="300" value="120" />
     <button id="sendWhatsappBtn" onclick="sendToWhatsApp()">إرسال الطلب عبر واتساب</button>
-  </div>
-
-  <img src="001.jpg" class="logo" alt="Aden Plastic logo" />
-  <h2 style="text-align:center;">شركة عدن الوطنية للصناعات المنزلية</h2>
-
-  <div id="items"></div>
-
-  <script>
+  </div>  <img src="001.jpg" class="logo" alt="Aden Plastic logo" />
+  <h2 style="text-align:center;">شركة عدن الوطنية للصناعات المنزلية</h2>  <div id="items"></div>  <div id="overlay" style="display:none">
+    <div id="formModal">
+      <h3>تسجيل معلومات العميل</h3>
+      <input type="text" id="fullName" placeholder="الاسم الرباعي" required />
+      <input type="text" id="businessName" placeholder="الاسم التجاري" required />
+      <input type="text" id="address" placeholder="عنوان المحل" required />
+      <input type="tel" id="phone" placeholder="رقم الهاتف" required />
+      <button onclick="saveCustomerInfo()">حفظ</button>
+    </div>
+  </div>  <script>
     const imageSizeRange = document.getElementById('imageSizeRange');
 
     document.addEventListener('DOMContentLoaded', () => {
+      const info = localStorage.getItem('customerInfo');
+      if (!info) document.getElementById('overlay').style.display = 'flex';
       fetchCSVFromGitHub();
       imageSizeRange.addEventListener('input', updateImageSizes);
     });
+
+    function saveCustomerInfo() {
+      const data = {
+        name: document.getElementById('fullName').value.trim(),
+        business: document.getElementById('businessName').value.trim(),
+        address: document.getElementById('address').value.trim(),
+        phone: document.getElementById('phone').value.trim(),
+      };
+      if (data.name && data.business && data.address && data.phone) {
+        localStorage.setItem('customerInfo', JSON.stringify(data));
+        document.getElementById('overlay').style.display = 'none';
+      } else {
+        alert('يرجى تعبئة جميع الحقول');
+      }
+    }
 
     function fetchCSVFromGitHub() {
       fetch('https://raw.githubusercontent.com/T772299420/Aden_plaste/main/Data.csv')
@@ -167,8 +155,7 @@
           updateImageSizes();
         })
         .catch(err => {
-          console.error('خطأ تحميل CSV:', err);
-          alert('تعذر تحميل بيانات الأصناف من GitHub.');
+          alert('تعذر تحميل بيانات الأصناف');
         });
     }
 
@@ -176,21 +163,18 @@
       const div = document.getElementById('items');
       div.innerHTML = '';
       items.forEach(it => {
-        const imageName = it.image?.trim() || '';
-        const imageUrl = `https://raw.githubusercontent.com/T772299420/Aden_plaste/main/${imageName}`;
-        const itemDiv = document.createElement('div');
-        itemDiv.className = 'item';
-        itemDiv.innerHTML = `
-          <img src="${imageUrl}" alt="${it.name}" onerror="this.src='notfound.jpg';" />
-          <div class="item-details">
-            <div class="item-name">${it.name}</div>
-            <div class="item-qty">
-              <label>الكمية:</label>
-              <input type="number" min="0" data-name="${it.name}" />
+        const imgUrl = `https://raw.githubusercontent.com/T772299420/Aden_plaste/main/${it.image?.trim()}`;
+        div.innerHTML += `
+          <div class="item">
+            <img src="${imgUrl}" alt="${it.name}" onerror="this.src='notfound.jpg'" />
+            <div class="item-details">
+              <div class="item-name">${it.name}</div>
+              <div class="item-qty">
+                <label>الكمية:</label>
+                <input type="number" min="0" data-name="${it.name}" />
+              </div>
             </div>
-          </div>
-        `;
-        div.appendChild(itemDiv);
+          </div>`;
       });
     }
 
@@ -206,23 +190,21 @@
       document.querySelectorAll('.item input[type="number"]').forEach(input => {
         input.addEventListener('input', () => {
           const img = input.closest('.item').querySelector('img');
-          if (parseInt(input.value) > 0) {
-            img.classList.add('highlight');
-          } else {
-            img.classList.remove('highlight');
-          }
+          img.classList.toggle('highlight', parseInt(input.value) > 0);
         });
       });
     }
 
     function sendToWhatsApp() {
-      let msg = 'طلبية من شركة عدن:\n';
-      document.querySelectorAll('input[type=number]').forEach(inp => {
-        const q = parseInt(inp.value);
-        if (q > 0) msg += `- ${inp.dataset.name}: ${q}\n`;
+      const info = JSON.parse(localStorage.getItem('customerInfo'));
+      const now = new Date().toLocaleDateString();
+      let msg = `الأخوة مبيعات شركة عدن الوطنية للصناعات المنزلية المحدودة المحترمون\n\n`;
+      msg += `${info.name} - ${info.business} - ${info.address} - ${now}\n\n`;
+      document.querySelectorAll('input[type="number"]').forEach(inp => {
+        const qty = parseInt(inp.value);
+        if (qty > 0) msg += `- ${inp.dataset.name}: ${qty}\n`;
       });
       window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank');
     }
-  </script>
-</body>
-</html>
+  </script></body>
+  </html>
