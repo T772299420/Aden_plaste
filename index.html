@@ -12,7 +12,7 @@
       background: #FFFFF0;
       margin: 0;
       color: #8B0000;
-      padding-top: 110px; /* مساحة لشريط التبويبات وشريط الأدوات */
+      padding-top: 100px; /* مكان لشريط التبويبات */
     }
     /* شريط التبويبات */
     #tabBar {
@@ -41,30 +41,36 @@
     #tabBar button.active {
       border-bottom-color: #8B0000;
     }
-    /* شريط الأدوات تحت التبويبات */
+    /* محتوى التبويبات */
+    .tabContent {
+      display: none;
+      max-width: 1000px;
+      margin: auto;
+      padding: 20px;
+    }
+    .tabContent.active {
+      display: block;
+    }
+    /* نفس تنسيق عناصر الصفحة من الكود السابق */
     #toolbar {
-      position: fixed;
+      position: sticky;
       top: 60px;
       left: 0;
       right: 0;
-      height: 50px;
+      height: 60px;
       background: #E41B17;
       display: flex;
       align-items: center;
       justify-content: flex-start;
-      gap: 12px;
-      padding: 0 15px;
+      gap: 15px;
+      padding: 0 20px;
       z-index: 9999;
+      transition: top 0.4s ease-in-out;
       color: #FFFFF0;
     }
     #toolbar label {
       color: #FFFFF0;
       font-weight: bold;
-      user-select: none;
-    }
-    #toolbar input[type=range] {
-      width: 140px;
-      cursor: pointer;
     }
     #toolbar button {
       height: 40px;
@@ -76,7 +82,6 @@
       align-items: center;
       justify-content: center;
       cursor: pointer;
-      padding: 0;
     }
     #toolbar button:disabled {
       opacity: 0.5;
@@ -86,21 +91,10 @@
       width: 24px;
       height: 24px;
       filter: brightness(100%) invert(100%);
-      pointer-events: none;
-      user-select: none;
     }
-    /* محتوى التبويبات */
-    .tabContent {
-      display: none;
-      max-width: 1000px;
-      margin: auto;
-      padding: 20px;
-      text-align: right;
+    #imageSizeRange {
+      width: 150px;
     }
-    .tabContent.active {
-      display: block;
-    }
-    /* شعار متحرك */
     img.logo {
       width: 100px;
       margin: 20px auto;
@@ -111,7 +105,6 @@
       0% { transform: translateX(100px); }
       100% { transform: translateX(-100px); }
     }
-    /* الأصناف */
     .item {
       background: #fff;
       margin: 10px auto;
@@ -138,10 +131,7 @@
     }
     .item-qty input {
       width: 70px;
-      font-size: 16px;
-      padding: 3px 6px;
     }
-    /* مودال التسجيل */
     #overlay {
       position: fixed;
       top: 0; left: 0; right: 0; bottom: 0;
@@ -149,38 +139,33 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      z-index: 11000;
+      z-index: 10000;
     }
     #formModal {
       background: #fff;
-      padding: 20px 25px;
+      padding: 20px;
       border-radius: 10px;
       max-width: 400px;
       text-align: center;
       color: #000;
-      box-shadow: 0 0 15px rgba(0,0,0,0.3);
     }
     #formModal input {
       width: 90%;
-      margin: 8px 0;
+      margin: 5px 0;
       padding: 10px;
       border-radius: 6px;
       border: 1px solid #ccc;
       color: #000;
-      font-size: 16px;
     }
     #formModal button {
-      margin-top: 12px;
+      margin-top: 10px;
       padding: 10px 20px;
       background: #E41B17;
       color: white;
       border: none;
       border-radius: 6px;
-      font-size: 18px;
       cursor: pointer;
-      font-weight: bold;
     }
-    /* التذييل */
     footer {
       text-align: center;
       margin-top: 40px;
@@ -188,23 +173,6 @@
       font-size: 14px;
       color: #8B0000;
       border-top: 2px solid #E41B17;
-      user-select: none;
-    }
-    /* تبويب الرئيسية - النص في المنتصف */
-    #home .content-center {
-      max-width: 900px;
-      margin: 20px auto;
-      text-align: center;
-      line-height: 1.6;
-      font-size: 16px;
-    }
-    #home h2 {
-      font-weight: bold;
-      color: #8B0000;
-      margin-bottom: 15px;
-    }
-    #home h3 {
-      margin-bottom: 10px;
     }
   </style>
 </head>
@@ -218,38 +186,21 @@
     <button class="tabBtn" data-tab="contact">راسلنا</button>
   </div>
 
-  <!-- شريط الأدوات (تحت شريط التبويبات) -->
-  <div id="toolbar">
-    <label for="imageSizeRange">حجم الصورة:</label>
-    <input type="range" id="imageSizeRange" min="60" max="300" value="120" />
-    <button id="editInfoBtn" title="تعديل بيانات العميل" onclick="showForm()">
-      <img src="https://raw.githubusercontent.com/T772299420/Aden_plaste/main/Up.png" alt="تعديل" />
-    </button>
-    <button id="sendWhatsappBtn" title="إرسال عبر واتساب" onclick="sendToWhatsApp()" disabled>
-      <img src="https://raw.githubusercontent.com/T772299420/Aden_plaste/main/Wt.png" alt="واتساب" />
-    </button>
-    <button id="printPdfBtn" title="طباعة الطلب PDF" onclick="printPDF()" disabled>
-      <img src="https://raw.githubusercontent.com/T772299420/Aden_plaste/main/Pd.png" alt="PDF" />
-    </button>
-  </div>
-
-  <!-- محتوى التبويبات -->
+  <!-- المحتوى -->
   <div id="home" class="tabContent active">
     <img src="001.jpg" class="logo" alt="Aden Plastic logo" />
-    <h2>شركة عدن الوطنية للصناعات المنزلية</h2>
-    <div class="content-center">
-      <h3>عن عدن للبلاستيك</h3>
-      <p>
-        تعد شركة عدن الوطنية للصناعات المنزلية المحدودة - المعروفة اختصاراً بـ " عدن بلاستيك" - واحدة من الشركات الصناعية الرائدة في مجال إنتاج الأدوات المنزلية وأدوات التعبئة والتغليف بالإضافة لمستلزمات الأثاث المنزلي. 
-        منذ بدايتها الأولى عمدت شركة عدن إلى التميز من خلال التركيز على جودة منتجاتها وإرضاء عملائها، ولتحقيق ذلك عملت الشركة على تشجيع التجديد والابتكار في المنتجات وترسيخ ثقافة الاهتمام بالعميل، وبذلك وضعت شركة عدن نفسها كواحدة من الشركات الرائدة في هذا المجال بفضل اتباع سياستي الاهتمام بالمنتج والعميل. 
-        تعتز شركة عدن أن منتجاتها تصنع من مواد خام أولية عالية الجودة تجلب من كبريات الشركات في هذا المجال، وتسويق منتجاتها في كل أرجاء اليمن من خلال شبكة واسعة من الموزعين ونقاط البيع، كما تستهدف الشركة الأسواق المجاورة في منطقة الخليج والقرن الأفريقي. 
-        وتشمل منتجاتها على سبيل المثال لا الحصر البراميل، البوالد، السلات، حافظات الأطعمة، الصناديق، رفوف المطبخ، الكراسي والطاولات وغيرها. 
-        تضع شركة عدن الوطنية موضوع الاستدامة في مقدمة أولوياتها، حيث تعمل جاهدة للحفاظ على البيئة والارتقاء بالجانب التصنيعي من خلال تقليل استنزاف الموارد واستخدام التكنولوجيا الحديثة بالإضافة إلى التحول إلى خيارات الطاقة البديلة.
-      </p>
-    </div>
+    <h2 style="text-align:center; font-weight:bold; color:#8B0000;">شركة عدن الوطنية للصناعات المنزلية</h2>
   </div>
 
   <div id="sales" class="tabContent">
+    <div id="toolbar">
+      <label for="imageSizeRange">حجم الصورة:</label>
+      <input type="range" id="imageSizeRange" min="60" max="300" value="120" />
+      <button id="editInfoBtn" onclick="showForm()"><img src="https://raw.githubusercontent.com/T772299420/Aden_plaste/main/Up.png" alt="تعديل" /></button>
+      <button id="sendWhatsappBtn" onclick="sendToWhatsApp()" disabled><img src="https://raw.githubusercontent.com/T772299420/Aden_plaste/main/Wt.png" alt="واتساب" /></button>
+      <button id="printPdfBtn" onclick="printPDF()" disabled><img src="https://raw.githubusercontent.com/T772299420/Aden_plaste/main/Pd.png" alt="PDF" /></button>
+    </div>
+
     <div id="items"></div>
   </div>
 
@@ -270,8 +221,7 @@
     </p>
   </div>
 
-  <!-- مودال تسجيل بيانات العميل -->
-  <div id="overlay" style="display:none;">
+  <div id="overlay" style="display:none">
     <div id="formModal">
       <h3>تسجيل معلومات العميل</h3>
       <input type="text" id="fullName" placeholder="الاسم الرباعي" required />
@@ -282,7 +232,6 @@
     </div>
   </div>
 
-  <!-- التذييل -->
   <footer>
     إعداد وبرمجة<br/>
     المميز سوفت للأنظمة المحاسبية المتكاملة<br/>
@@ -291,7 +240,7 @@
   </footer>
 
 <script>
-  // التبويبات
+  // تبويبات الصفحة
   const tabs = document.querySelectorAll('.tabBtn');
   const contents = document.querySelectorAll('.tabContent');
 
@@ -299,8 +248,11 @@
     tab.addEventListener('click', () => {
       tabs.forEach(t => t.classList.remove('active'));
       tab.classList.add('active');
+
       const target = tab.dataset.tab;
-      contents.forEach(c => c.classList.toggle('active', c.id === target));
+      contents.forEach(c => {
+        c.classList.toggle('active', c.id === target);
+      });
     });
   });
 
@@ -313,7 +265,6 @@
     setupImageSizeControl();
   });
 
-  // جلب بيانات CSV من GitHub
   function fetchCSV() {
     fetch('https://raw.githubusercontent.com/T772299420/Aden_plaste/main/Data.csv')
       .then(res => res.text())
@@ -329,7 +280,6 @@
       });
   }
 
-  // عرض الأصناف
   function displayItems(items) {
     const div = document.getElementById('items');
     div.innerHTML = '';
@@ -353,7 +303,6 @@
     attachQtyListeners();
   }
 
-  // استماع لتغير الكمية لتفعيل/تعطيل الأزرار وتحديد الصورة
   function attachQtyListeners() {
     document.querySelectorAll('#items input[type=number]').forEach(input => {
       input.addEventListener('input', () => {
@@ -363,7 +312,6 @@
     });
   }
 
-  // تمييز الصورة عند إدخال كمية أكبر من صفر
   function highlightSelected(input) {
     const val = parseInt(input.value);
     if (val > 0) {
@@ -373,7 +321,6 @@
     }
   }
 
-  // تفعيل وتعطيل أزرار الإرسال والطباعة
   function updateButtonsState() {
     const hasQty = Array.from(document.querySelectorAll('#items input[type=number]'))
       .some(input => parseInt(input.value) > 0);
@@ -382,7 +329,6 @@
     document.getElementById('printPdfBtn').disabled = !hasQty;
   }
 
-  // التحكم بحجم الصور
   function setupImageSizeControl() {
     const range = document.getElementById('imageSizeRange');
     range.addEventListener('input', () => {
@@ -394,7 +340,6 @@
     });
   }
 
-  // تحميل بيانات العميل من localStorage
   function loadCustomerInfo() {
     const saved = localStorage.getItem('customerInfo');
     if (saved) {
@@ -404,7 +349,6 @@
     }
   }
 
-  // عرض نافذة تسجيل بيانات العميل
   function showForm() {
     document.getElementById('overlay').style.display = 'flex';
     if (customer) {
@@ -415,7 +359,6 @@
     }
   }
 
-  // حفظ بيانات العميل
   function saveCustomerInfo() {
     const fullName = document.getElementById('fullName').value.trim();
     const businessName = document.getElementById('businessName').value.trim();
@@ -432,7 +375,6 @@
     document.getElementById('overlay').style.display = 'none';
   }
 
-  // إرسال الطلب عبر واتساب مع بيانات العميل
   function sendToWhatsApp() {
     if (!customer) {
       alert('يرجى تسجيل بيانات العميل أولاً.');
@@ -440,12 +382,68 @@
       return;
     }
 
+    let msg = `الأخوه مبيعات\n*شركه عدن الوطنيه للصناعات المنزلية*  المحترمون\n\n`;
+    msg += `نحنو / ${customer.businessName}  | عنهم الاخ / ${customer.fullName}  | العنوان / ${customer.address}\n\n`;
+    msg += `نتقدم بطلب الاصناف التاليه:\n`;
+
+    let hasItems = false;
+    document.querySelectorAll('#items input[type=number]').forEach(input => {
+      const qty = parseInt(input.value);
+      const name = input.getAttribute('data-name');
+      if (qty > 0) {
+        hasItems = true;
+        msg += `- ${name}: ${qty}\n`;
+      }
+    });
+
+    if (!hasItems) {
+      alert('يرجى اختيار كمية واحدة على الأقل.');
+      return;
+    }
+
     const now = new Date();
     const dateStr = now.toLocaleDateString('ar-EG');
 
-    let msg = `الأخوه مبيعات\n*شركه عدن الوطنيه للصناعات المنزلية*  المحترمون\n\n`;
-    msg += `نحن / ${customer.businessName} ❚ عنهم الأخ / ${customer.fullName} ❚ العنوان / ${customer.address}\n\n`;
-    msg += `نتقدم بطلب الأصناف التالية:\n`;
+    msg += `\nتاريخ الطلب: ${dateStr}`;
 
+    const whatsappUrl = `https://wa.me/967771334747?text=${encodeURIComponent(msg)}`;
+    window.open(whatsappUrl, '_blank');
+  }
+
+  function printPDF() {
+    if (!customer) {
+      alert('يرجى تسجيل بيانات العميل أولاً.');
+      showForm();
+      return;
+    }
+
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+
+    doc.setFontSize(16);
+    doc.text("الأخوه مبيعات", 105, 10, null, null, "center");
+    doc.setFontSize(14);
+    doc.text("شركه عدن الوطنيه للصناعات المنزلية  المحترمون", 105, 20, null, null, "center");
+    doc.setFontSize(12);
+    doc.text(`نحنو / ${customer.businessName}  | عنهم الاخ / ${customer.fullName}  | العنوان / ${customer.address}`, 105, 30, null, null, "center");
+    doc.text("نتقدم بطلب الاصناف التاليه:", 10, 45);
+
+    let y = 55;
     document.querySelectorAll('#items input[type=number]').forEach(input => {
       const qty = parseInt(input.value);
+      const name = input.getAttribute('data-name');
+      if (qty > 0) {
+        doc.text(`- ${name}: ${qty}`, 10, y);
+        y += 10;
+      }
+    });
+
+    const now = new Date();
+    const dateStr = now.toLocaleDateString('ar-EG');
+    doc.text(`تاريخ الطلب: ${dateStr}`, 10, y + 10);
+
+    doc.save("طلب_شركة_عدن.pdf");
+  }
+</script>
+</body>
+  </html>
