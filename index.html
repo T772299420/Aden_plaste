@@ -72,10 +72,7 @@
       width: 120px; height: 120px;
       object-fit: contain;
       border-radius: 6px;
-      border: 3px solid #C11B17;
-    }
-    .item img.highlight {
-      border: 3px solid #25D366;
+      border: 3px solid #8B0000;
     }
     .item-details {
       flex-grow: 1;
@@ -119,9 +116,9 @@
   <div id="toolbar">
     <label for="imageSizeRange">حجم الصورة:</label>
     <input type="range" id="imageSizeRange" min="60" max="300" value="120" />
-    <button id="editInfoBtn" onclick="showForm()"><img src="edit.png" alt="تعديل" /></button>
-    <button id="sendWhatsappBtn" onclick="sendToWhatsApp()" disabled><img src="whatsapp.png" alt="واتساب" /></button>
-    <button id="printPdfBtn" onclick="printPDF()" disabled><img src="pdf.png" alt="PDF" /></button>
+    <button id="editInfoBtn" onclick="showForm()"><img src="up.png" alt="تعديل" /></button>
+    <button id="sendWhatsappBtn" onclick="sendToWhatsApp()" disabled><img src="Wt.png" alt="واتساب" /></button>
+    <button id="printPdfBtn" onclick="printPDF()" disabled><img src="pd.png" alt="PDF" /></button>
   </div>  <img src="001.jpg" class="logo" alt="Aden Plastic logo" />
   <h2 style="text-align:center; font-weight:bold; color:#C11B17;">شركة عدن الوطنية للصناعات المنزلية</h2>  <div id="items"></div>  <div id="overlay" style="display:none">
     <div id="formModal">
@@ -248,7 +245,6 @@
       const {{ jsPDF }} = window.jspdf;
       const doc = new jsPDF();
 
-      doc.setFont("arabic");
       doc.text("الأخوة مبيعات - شركة عدن الوطنية للصناعات المنزلية المحترمون", 10, 20);
       doc.text(`نحن / ${info.business} - عنهم الأخ / ${info.name} - العنوان / ${info.address}`, 10, 30);
       doc.text("نتقدم بطلب الأصناف التالية:", 10, 40);
@@ -263,7 +259,8 @@
       });
 
       doc.text(`تاريخ الطلب / ${now}`, 10, y + 10);
-      doc.save("طلب_عدن.pdf");
+      const fileName = `طلب_${info.name.replace(/\s+/g, '_')}_${now.replaceAll('/', '-')}.pdf`;
+      doc.save(fileName);
     }
   </script></body>
   </html>
