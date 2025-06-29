@@ -13,8 +13,10 @@
       margin: 0;
     }
     #toolbar {
-      position: fixed;
-      top: 0; left: 0; right: 0;
+      position: sticky;
+      top: 0;
+      left: 0;
+      right: 0;
       height: 60px;
       background: #C11B17;
       color: white;
@@ -24,7 +26,10 @@
       gap: 15px;
       padding: 0 20px;
       z-index: 9999;
-      transition: top 0.3s;
+      transition: top 0.4s ease-in-out;
+    }
+    #toolbar.hidden {
+      top: -70px;
     }
     #toolbar button {
       height: 40px;
@@ -130,137 +135,16 @@
       <button onclick="saveCustomerInfo()">حفظ</button>
     </div>
   </div>  <script>
-    const imageSizeRange = document.getElementById('imageSizeRange');
-    const sendBtn = document.getElementById('sendWhatsappBtn');
-    const printBtn = document.getElementById('printPdfBtn');
     let lastScrollTop = 0;
     const toolbar = document.getElementById('toolbar');
-
     window.addEventListener('scroll', () => {
       const current = window.pageYOffset || document.documentElement.scrollTop;
-      toolbar.style.top = current > lastScrollTop ? '-70px' : '0';
+      if (current > lastScrollTop) {
+        toolbar.classList.add('hidden');
+      } else {
+        toolbar.classList.remove('hidden');
+      }
       lastScrollTop = current <= 0 ? 0 : current;
     });
-
-    document.addEventListener('DOMContentLoaded', () => {
-      const info = localStorage.getItem('customerInfo');
-      if (!info) showForm();
-      fetchCSVFromGitHub();
-      imageSizeRange.addEventListener('input', updateImageSizes);
-    });
-
-    function showForm() {
-      const info = JSON.parse(localStorage.getItem('customerInfo') || '{}');
-      document.getElementById('fullName').value = info.name || '';
-      document.getElementById('businessName').value = info.business || '';
-      document.getElementById('address').value = info.address || '';
-      document.getElementById('phone').value = info.phone || '';
-      document.getElementById('overlay').style.display = 'flex';
-    }
-
-    function saveCustomerInfo() {
-      const data = {
-        name: document.getElementById('fullName').value.trim(),
-        business: document.getElementById('businessName').value.trim(),
-        address: document.getElementById('address').value.trim(),
-        phone: document.getElementById('phone').value.trim(),
-      };
-      if (data.name && data.business && data.address && data.phone) {
-        localStorage.setItem('customerInfo', JSON.stringify(data));
-        document.getElementById('overlay').style.display = 'none';
-      } else {
-        alert('يرجى تعبئة جميع الحقول');
-      }
-    }
-
-    function fetchCSVFromGitHub() {
-      fetch('https://raw.githubusercontent.com/T772299420/Aden_plaste/main/Data.csv')
-        .then(res => res.text())
-        .then(csvText => {
-          const wb = XLSX.read(csvText, { type: 'string' });
-          const sheet = wb.Sheets[wb.SheetNames[0]];
-          const data = XLSX.utils.sheet_to_json(sheet);
-          displayItems(data);
-          addInputListeners();
-          updateImageSizes();
-        })
-        .catch(err => {
-          alert('تعذر تحميل بيانات الأصناف');
-        });
-    }
-
-    function displayItems(items) {
-      const div = document.getElementById('items');
-      div.innerHTML = '';
-      items.forEach(it => {
-        const imgUrl = `https://raw.githubusercontent.com/T772299420/Aden_plaste/main/${it.image?.trim()}`;
-        div.innerHTML += `
-          <div class="item">
-            <img src="${imgUrl}" alt="${it.name}" onerror="this.src='notfound.jpg'" />
-            <div class="item-details">
-              <div class="item-name">${it.name}</div>
-              <div class="item-qty">
-                <label>الكمية:</label>
-                <input type="number" min="0" data-name="${it.name}" />
-              </div>
-            </div>
-          </div>`;
-      });
-    }
-
-    function updateImageSizes() {
-      const size = imageSizeRange.value;
-      document.querySelectorAll('.item img').forEach(img => {
-        img.style.width = size + 'px';
-        img.style.height = size + 'px';
-      });
-    }
-
-    function addInputListeners() {
-      document.querySelectorAll('.item input[type="number"]').forEach(input => {
-        input.addEventListener('input', () => {
-          const hasValues = [...document.querySelectorAll('input[type="number"]')].some(inp => parseInt(inp.value) > 0);
-          sendBtn.disabled = !hasValues;
-          printBtn.disabled = !hasValues;
-        });
-      });
-    }
-
-    function sendToWhatsApp() {
-      const info = JSON.parse(localStorage.getItem('customerInfo'));
-      const now = new Date().toLocaleDateString();
-      let msg = `الأخوة مبيعات\n*شركة عدن الوطنية للصناعات المنزلية* المحترمون\n\n`;
-      msg += `نحن / ${info.business} - عنهم الأخ / ${info.name} - العنوان / ${info.address}\n\nنتقدم بطلب الأصناف التالية:\n\n`;
-      document.querySelectorAll('input[type="number"]').forEach(inp => {
-        const qty = parseInt(inp.value);
-        if (qty > 0) msg += `- ${inp.dataset.name}: ${qty}\n`;
-      });
-      msg += `\nتاريخ الطلب / ${now}`;
-      window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank');
-    }
-
-    async function printPDF() {
-      const info = JSON.parse(localStorage.getItem('customerInfo'));
-      const now = new Date().toLocaleDateString();
-      const { jsPDF } = window.jspdf;
-      const doc = new jsPDF();
-
-      doc.text("الأخوة مبيعات - شركة عدن الوطنية للصناعات المنزلية المحترمون", 10, 20);
-      doc.text(`نحن / ${info.business} - عنهم الأخ / ${info.name} - العنوان / ${info.address}`, 10, 30);
-      doc.text("نتقدم بطلب الأصناف التالية:", 10, 40);
-
-      let y = 50;
-      document.querySelectorAll('input[type="number"]').forEach(inp => {
-        const qty = parseInt(inp.value);
-        if (qty > 0) {
-          doc.text(`- ${inp.dataset.name}: ${qty}`, 10, y);
-          y += 10;
-        }
-      });
-
-      doc.text(`تاريخ الطلب / ${now}`, 10, y + 10);
-      const fileName = `طلب_${info.name.replace(/\s+/g, '_')}_${now.replaceAll('/', '-')}.pdf`;
-      doc.save(fileName);
-    }
   </script></body>
-  </html>
+</html>
