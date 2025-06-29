@@ -1,142 +1,430 @@
-<!DOCTYPE html><html lang="ar" dir="rtl">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>شركة عدن الوطنية للصناعات المنزلية</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #FFFFF0;
-      margin: 0;
-      color: #8B0000;
-      padding-top: 100px;
-    }
-    #tabBar {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 60px;
-      background: #E41B17;
-      display: flex;
-      justify-content: space-around;
-      align-items: center;
-      z-index: 10000;
-    }
-    #tabBar button {
-      background: none;
-      border: none;
-      color: #FFFFF0;
-      font-weight: bold;
-      font-size: 18px;
-      cursor: pointer;
-      padding: 10px 15px;
-      border-bottom: 3px solid transparent;
-      transition: border-bottom-color 0.3s ease;
-    }
-    #tabBar button.active {
-      border-bottom-color: #8B0000;
-    }
-    .tabContent {
-      display: none;
-      max-width: 1000px;
-      margin: auto;
-      padding: 20px;
-    }
-    .tabContent.active {
-      display: block;
-    }
-    footer {
-      text-align: center;
-      margin-top: 40px;
-      padding: 20px;
-      font-size: 14px;
-      color: #8B0000;
-      border-top: 2px solid #E41B17;
-    }
-    #lastUpdated {
-      text-align: center;
-      font-size: 13px;
-      color: #555;
-      margin-top: -30px;
-      margin-bottom: 20px;
-    }
-    .item {
-      background: #fff;
-      margin: 10px auto;
-      padding: 10px;
-      border-radius: 10px;
-      box-shadow: 0 0 5px #ccc;
-      display: flex;
-      border: 2px solid #E41B17;
-      align-items: center;
-      gap: 15px;
-      max-width: 900px;
-      color: #8B0000;
-    }
-    .item img {
-      width: 120px;
-      height: 120px;
-      object-fit: contain;
-      border-radius: 6px;
-      border: 3px solid #8B0000;
-    }
-    .item-details {
-      flex-grow: 1;
-      text-align: right;
-    }
-    .item-qty input {
-      width: 70px;
-    }
-  </style>
-</head>
-<body>
-  <div id="tabBar">
-    <button class="tabBtn active" data-tab="home">الرئيسية</button>
-    <button class="tabBtn" data-tab="sales">مبيعات</button>
-    <button class="tabBtn" data-tab="returns">مرتجعات</button>
-    <button class="tabBtn" data-tab="contact">راسلنا</button>
-    <button class="tabBtn" data-tab="admin">الإدارة</button>
-  </div>  <div id="home" class="tabContent active">
-    <h2 style="text-align:center;">شركة عدن الوطنية للصناعات المنزلية</h2>
-  </div>  <div id="sales" class="tabContent">
-    <div id="items"></div>
-  </div>  <div id="returns" class="tabContent">
-    <h3 style="text-align:center;">قسم المرتجعات</h3>
-    <p style="text-align:center;">هذه الخاصية تحت التطوير.</p>
-  </div>  <div id="contact" class="tabContent">
-    <h3 style="text-align:center;">تواصل معنا</h3>
-    <p style="text-align:center;">
-      الهاتف: 00967772299420<br>
-      البريد الإلكتروني: t772299420@gmail.com<br>
-      العنوان: الجمهورية اليمنية - إب - القاعدة
-    </p>
-  </div>  <div id="admin" class="tabContent">
-    <!-- تبويب الإدارة كما هو -->
-  </div>  <div id="lastUpdated"></div>  <footer>
-    إعداد وبرمجة: مروان محمد عبد الله الذماري - 00967772299420
-  </footer>  <script>
-    let itemsData = [];
+<!DOCTYPE html>  <html lang="ar" dir="rtl">  
+<head>  
+  <meta charset="UTF-8" />  
+  <meta name="viewport" content="width=device-width, initial-scale=1" />  
+  <title>شركة عدن الوطنية للصناعات المنزلية</title>  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>  
+  <style>  
+    body {  
+      font-family: Arial, sans-serif;  
+      background: #FFFFF0;  
+      margin: 0;  
+      color: #8B0000;  
+      padding-top: 100px; /* مكان لشريط التبويبات */  
+    }  
+    /* شريط التبويبات */  
+    #tabBar {  
+      position: fixed;  
+      top: 0;  
+      left: 0;  
+      right: 0;  
+      height: 60px;  
+      background: #E41B17;  
+      display: flex;  
+      justify-content: space-around;  
+      align-items: center;  
+      z-index: 10000;  
+    }  
+    #tabBar button {  
+      background: none;  
+      border: none;  
+      color: #FFFFF0;  
+      font-weight: bold;  
+      font-size: 18px;  
+      cursor: pointer;  
+      padding: 10px 15px;  
+      border-bottom: 3px solid transparent;  
+      transition: border-bottom-color 0.3s ease;  
+    }  
+    #tabBar button.active {  
+      border-bottom-color: #8B0000;  
+    }  
+    /* محتوى التبويبات */  
+    .tabContent {  
+      display: none;  
+      max-width: 1000px;  
+      margin: auto;  
+      padding: 20px;  
+    }  
+    .tabContent.active {  
+      display: block;  
+    }  
+    /* نفس تنسيق عناصر الصفحة من الكود السابق */  
+    #toolbar {  
+      position: sticky;  
+      top: 60px;  
+      left: 0;  
+      right: 0;  
+      height: 60px;  
+      background: #E41B17;  
+      display: flex;  
+      align-items: center;  
+      justify-content: flex-start;  
+      gap: 15px;  
+      padding: 0 20px;  
+      z-index: 9999;  
+      transition: top 0.4s ease-in-out;  
+      color: #FFFFF0;  
+    }  
+    #toolbar label {  
+      color: #FFFFF0;  
+      font-weight: bold;  
+    }  
+    #toolbar button {  
+      height: 40px;  
+      width: 40px;  
+      background-color: #E41B17;  
+      border: none;  
+      border-radius: 6px;  
+      display: flex;  
+      align-items: center;  
+      justify-content: center;  
+      cursor: pointer;  
+    }  
+    #toolbar button:disabled {  
+      opacity: 0.5;  
+      cursor: not-allowed;  
+    }  
+    #toolbar img {  
+      width: 24px;  
+      height: 24px;  
+      filter: brightness(100%) invert(100%);  
+    }  
+    #imageSizeRange {  
+      width: 150px;  
+    }  
+    img.logo {  
+      width: 100px;  
+      margin: 20px auto;  
+      display: block;  
+      animation: move-logo 5s alternate infinite;  
+    }  
+    @keyframes move-logo {  
+      0% { transform: translateX(100px); }  
+      100% { transform: translateX(-100px); }  
+    }  
+    .item {  
+      background: #fff;  
+      margin: 10px auto;  
+      padding: 10px;  
+      border-radius: 10px;  
+      box-shadow: 0 0 5px #ccc;  
+      display: flex;  
+      border: 2px solid #E41B17;  
+      align-items: center;  
+      gap: 15px;  
+      max-width: 900px;  
+      color: #8B0000;  
+    }  
+    .item img {  
+      width: 120px;  
+      height: 120px;  
+      object-fit: contain;  
+      border-radius: 6px;  
+      border: 3px solid #8B0000;  
+    }  
+    .item-details {  
+      flex-grow: 1;  
+      text-align: right;  
+    }  
+    .item-qty input {  
+      width: 70px;  
+    }  
+    #overlay {  
+      position: fixed;  
+      top: 0; left: 0; right: 0; bottom: 0;  
+      background: rgba(0,0,0,0.6);  
+      display: flex;  
+      align-items: center;  
+      justify-content: center;  
+      z-index: 10000;  
+    }  
+    #formModal {  
+      background: #fff;  
+      padding: 20px;  
+      border-radius: 10px;  
+      max-width: 400px;  
+      text-align: center;  
+      color: #000;  
+    }  
+    #formModal input {  
+      width: 90%;  
+      margin: 5px 0;  
+      padding: 10px;  
+      border-radius: 6px;  
+      border: 1px solid #ccc;  
+      color: #000;  
+    }  
+    #formModal button {  
+      margin-top: 10px;  
+      padding: 10px 20px;  
+      background: #E41B17;  
+      color: white;  
+      border: none;  
+      border-radius: 6px;  
+      cursor: pointer;  
+    }  
+    footer {  
+      text-align: center;  
+      margin-top: 40px;  
+      padding: 20px;  
+      font-size: 14px;  
+      color: #8B0000;  
+      border-top: 2px solid #E41B17;  
+    }  
+  </style>  
+</head>  
+<body>    <!-- شريط التبويبات -->    <div id="tabBar">  
+    <button class="tabBtn active" data-tab="home">الرئيسية</button>  
+    <button class="tabBtn" data-tab="sales">مبيعات</button>  
+    <button class="tabBtn" data-tab="returns">مرتجعات</button>  
+    <button class="tabBtn" data-tab="contact">راسلنا</button>  
+  </div>    <!-- المحتوى -->    <div id="home" class="tabContent active">  
+    <img src="001.jpg" class="logo" alt="Aden Plastic logo" />  
+    <h2 style="text-align:center; font-weight:bold; color:#8B0000;">شركة عدن الوطنية للصناعات المنزلية</h2>  
+  </div>    <div id="sales" class="tabContent">  
+    <div id="toolbar">  
+      <label for="imageSizeRange">حجم الصورة:</label>  
+      <input type="range" id="imageSizeRange" min="60" max="300" value="120" />  
+      <button id="editInfoBtn" onclick="showForm()"><img src="https://raw.githubusercontent.com/T772299420/Aden_plaste/main/Up.png" alt="تعديل" /></button>  
+      <button id="sendWhatsappBtn" onclick="sendToWhatsApp()" disabled><img src="https://raw.githubusercontent.com/T772299420/Aden_plaste/main/Wt.png" alt="واتساب" /></button>  
+      <button id="printPdfBtn" onclick="printPDF()" disabled><img src="https://raw.githubusercontent.com/T772299420/Aden_plaste/main/Pd.png" alt="PDF" /></button>  
+    </div>  <div id="items"></div>
 
-    function displayItems() {
-      const container = document.getElementById("items");
-      if (!container) return;
-      container.innerHTML = "";
-      itemsData.forEach(item => {
-        const imageUrl = `https://raw.githubusercontent.com/T772299420/Aden_plaste/main/${item.image}`;
-        const div = document.createElement("div");
-        div.className = "item";
-        div.innerHTML = `
-          <img src="${imageUrl}" alt="${item.name}" />
-          <div class="item-details">
-            <p>${item.name}</p>
-            <label>الكمية: <input type="number" min="0" value="0" data-name="${item.name}" /></label>
-          </div>
-        `;
-        container.appendChild(div);
-      });
-    }
-  </script></body>
-</html>
+  </div>    <div id="returns" class="tabContent">  
+    <h3 style="text-align:center;">قسم المرتجعات</h3>  
+    <p style="max-width:800px; margin:auto; text-align:right;">  
+      هنا يمكنك إدارة المرتجعات الخاصة بالأصناف. هذه الخاصية تحت التطوير حالياً.  
+    </p>  
+  </div>    <div id="contact" class="tabContent">  
+    <h3 style="text-align:center;">تواصل معنا</h3>  
+    <p style="max-width:800px; margin:auto; text-align:center;">  
+      لأي استفسار أو دعم، تواصل معنا عبر:<br/>  
+      الهاتف: 00967772299420<br/>  
+      البريد الإلكتروني: info@adenplastic.com<br/>  
+      العنوان: صنعاء - اليمن  
+    </p>  
+  </div>    <div id="overlay" style="display:none">  
+    <div id="formModal">  
+      <h3>تسجيل معلومات العميل</h3>  
+      <input type="text" id="fullName" placeholder="الاسم الرباعي" required />  
+      <input type="text" id="businessName" placeholder="الاسم التجاري" required />  
+      <input type="text" id="address" placeholder="عنوان المحل" required />  
+      <input type="tel" id="phone" placeholder="رقم الهاتف" required />  
+      <button onclick="saveCustomerInfo()">حفظ</button>  
+    </div>  
+  </div>    <footer>  
+    إعداد وبرمجة<br/>  
+    المميز سوفت للأنظمة المحاسبية المتكاملة<br/>  
+    م / مروان محمد عبد الله الذماري<br/>  
+    00967772299420  
+  </footer>  <script>  
+  // تبويبات الصفحة  
+  const tabs = document.querySelectorAll('.tabBtn');  
+  const contents = document.querySelectorAll('.tabContent');  
+  
+  tabs.forEach(tab => {  
+    tab.addEventListener('click', () => {  
+      tabs.forEach(t => t.classList.remove('active'));  
+      tab.classList.add('active');  
+  
+      const target = tab.dataset.tab;  
+      contents.forEach(c => {  
+        c.classList.toggle('active', c.id === target);  
+      });  
+    });  
+  });  
+  
+  let customer = null;  
+  let itemsData = [];  
+  
+  document.addEventListener('DOMContentLoaded', () => {  
+    loadCustomerInfo();  
+    fetchCSV();  
+    setupImageSizeControl();  
+  });  
+  
+  function fetchCSV() {  
+    fetch('https://raw.githubusercontent.com/T772299420/Aden_plaste/main/Data.csv')  
+      .then(res => res.text())  
+      .then(csvText => {  
+        const wb = XLSX.read(csvText, { type: 'string' });  
+        const sheet = wb.Sheets[wb.SheetNames[0]];  
+        itemsData = XLSX.utils.sheet_to_json(sheet);  
+        displayItems(itemsData);  
+      })  
+      .catch(err => {  
+        console.error('خطأ تحميل CSV:', err);  
+        alert('تعذر تحميل بيانات الأصناف من GitHub.');  
+      });  
+  }  
+  
+  function displayItems(items) {  
+    const div = document.getElementById('items');  
+    div.innerHTML = '';  
+    items.forEach(it => {  
+      const imageName = it.image?.trim() || '';  
+      const imageUrl = `https://raw.githubusercontent.com/T772299420/Aden_plaste/main/${imageName}`;  
+      const itemDiv = document.createElement('div');  
+      itemDiv.className = 'item';  
+  
+      itemDiv.innerHTML = `  
+        <img src="${imageUrl}" alt="${it.name}" />  
+        <div class="item-details">  
+          <p>${it.name}</p>  
+          <label>الكمية: <input type="number" min="0" value="0" data-name="${it.name}" /></label>  
+        </div>  
+      `;  
+      div.appendChild(itemDiv);  
+    });  
+  
+    updateButtonsState();  
+    attachQtyListeners();  
+  }  
+  
+  function attachQtyListeners() {  
+    document.querySelectorAll('#items input[type=number]').forEach(input => {  
+      input.addEventListener('input', () => {  
+        updateButtonsState();  
+        highlightSelected(input);  
+      });  
+    });  
+  }  
+  
+  function highlightSelected(input) {  
+    const val = parseInt(input.value);  
+    if (val > 0) {  
+      input.parentElement.parentElement.querySelector('img').style.borderColor = '#8B0000';  
+    } else {  
+      input.parentElement.parentElement.querySelector('img').style.borderColor = '#E41B17';  
+    }  
+  }  
+  
+  function updateButtonsState() {  
+    const hasQty = Array.from(document.querySelectorAll('#items input[type=number]'))  
+      .some(input => parseInt(input.value) > 0);  
+  
+    document.getElementById('sendWhatsappBtn').disabled = !hasQty;  
+    document.getElementById('printPdfBtn').disabled = !hasQty;  
+  }  
+  
+  function setupImageSizeControl() {  
+    const range = document.getElementById('imageSizeRange');  
+    range.addEventListener('input', () => {  
+      const size = range.value;  
+      document.querySelectorAll('.item img').forEach(img => {  
+        img.style.width = size + 'px';  
+        img.style.height = size + 'px';  
+      });  
+    });  
+  }  
+  
+  function loadCustomerInfo() {  
+    const saved = localStorage.getItem('customerInfo');  
+    if (saved) {  
+      customer = JSON.parse(saved);  
+    } else {  
+      showForm();  
+    }  
+  }  
+  
+  function showForm() {  
+    document.getElementById('overlay').style.display = 'flex';  
+    if (customer) {  
+      document.getElementById('fullName').value = customer.fullName;  
+      document.getElementById('businessName').value = customer.businessName;  
+      document.getElementById('address').value = customer.address;  
+      document.getElementById('phone').value = customer.phone;  
+    }  
+  }  
+  
+  function saveCustomerInfo() {  
+    const fullName = document.getElementById('fullName').value.trim();  
+    const businessName = document.getElementById('businessName').value.trim();  
+    const address = document.getElementById('address').value.trim();  
+    const phone = document.getElementById('phone').value.trim();  
+  
+    if (!fullName || !businessName || !address || !phone) {  
+      alert('يرجى تعبئة جميع الحقول.');  
+      return;  
+    }  
+  
+    customer = { fullName, businessName, address, phone };  
+    localStorage.setItem('customerInfo', JSON.stringify(customer));  
+    document.getElementById('overlay').style.display = 'none';  
+  }  
+  
+  function sendToWhatsApp() {  
+    if (!customer) {  
+      alert('يرجى تسجيل بيانات العميل أولاً.');  
+      showForm();  
+      return;  
+    }  
+  
+    let msg = `الأخوه مبيعات\n*شركه عدن الوطنيه للصناعات المنزلية*  المحترمون\n\n`;  
+    msg += `نحنو / ${customer.businessName}  | عنهم الاخ / ${customer.fullName}  | العنوان / ${customer.address}\n\n`;  
+    msg += `نتقدم بطلب الاصناف التاليه:\n`;  
+  
+    let hasItems = false;  
+    document.querySelectorAll('#items input[type=number]').forEach(input => {  
+      const qty = parseInt(input.value);  
+      const name = input.getAttribute('data-name');  
+      if (qty > 0) {  
+        hasItems = true;  
+        msg += `- ${name}: ${qty}\n`;  
+      }  
+    });  
+  
+    if (!hasItems) {  
+      alert('يرجى اختيار كمية واحدة على الأقل.');  
+      return;  
+    }  
+  
+    const now = new Date();  
+    const dateStr = now.toLocaleDateString('ar-EG');  
+  
+    msg += `\nتاريخ الطلب: ${dateStr}`;  
+  
+    const whatsappUrl = `https://wa.me/967771334747?text=${encodeURIComponent(msg)}`;  
+    window.open(whatsappUrl, '_blank');  
+  }  
+  
+  function printPDF() {  
+    if (!customer) {  
+      alert('يرجى تسجيل بيانات العميل أولاً.');  
+      showForm();  
+      return;  
+    }  
+  
+    const { jsPDF } = window.jspdf;  
+    const doc = new jsPDF();  
+  
+    doc.setFontSize(16);  
+    doc.text("الأخوه مبيعات", 105, 10, null, null, "center");  
+    doc.setFontSize(14);  
+    doc.text("شركه عدن الوطنيه للصناعات المنزلية  المحترمون", 105, 20, null, null, "center");  
+    doc.setFontSize(12);  
+    doc.text(`نحنو / ${customer.businessName}  | عنهم الاخ / ${customer.fullName}  | العنوان / ${customer.address}`, 105, 30, null, null, "center");  
+    doc.text("نتقدم بطلب الاصناف التاليه:", 10, 45);  
+  
+    let y = 55;  
+    document.querySelectorAll('#items input[type=number]').forEach(input => {  
+      const qty = parseInt(input.value);  
+      const name = input.getAttribute('data-name');  
+      if (qty > 0) {  
+        doc.text(`- ${name}: ${qty}`, 10, y);  
+        y += 10;  
+      }  
+    });  
+  
+    const now = new Date();  
+    const dateStr = now.toLocaleDateString('ar-EG');  
+    doc.text(`تاريخ الطلب: ${dateStr}`, 10, y + 10);  
+  
+    doc.save("طلب_شركة_عدن.pdf");  
+  }  
+</script>  </body>  
+  </html>  
+ارغب باضافه تبويب الاداره وحيث عند الدخول له يقوم بطلب كلمه مرور يقوم المدير بادخال كلمه السر ٢٠١٠٢٠ في حال ا د خالها بشكل صحيح ٢٠١٠٢٠ يفتح شاشه تعرض اسماء الاصناف واسم الصوره الموجودات في ملف data.csv  
+ومن خلال هذه الشاشه يمكن تعديل اسماء الاصناف او اسماء الصور او يمكنه الاضافه او الحذف وعند الحفض يتم تثبيت البيانات الى ملف data.csv
