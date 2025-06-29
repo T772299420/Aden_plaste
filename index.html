@@ -2,13 +2,13 @@
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>شركة عدن الوطنية للصناعات المنزلية</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
   <style>
     body {
       font-family: Arial, sans-serif;
-      padding-top: 60px; /* مساحة لشريط التحكم */
+      padding-top: 70px; /* مساحة لشريط التحكم */
       background: #f5f5f5;
       margin: 0;
     }
@@ -19,35 +19,60 @@
       top: 0;
       left: 0;
       right: 0;
-      height: 50px;
-      background: #C69C6D; /* لون بني فاتح */
+      height: 60px;
+      background: #C69C6D; /* بني فاتح */
       color: white;
       display: flex;
       align-items: center;
-      padding: 0 15px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-      z-index: 1000;
-    }
-
-    #toolbar label {
-      margin-right: 10px;
-      font-weight: bold;
+      justify-content: flex-start;
+      padding: 0 20px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+      z-index: 9999;
+      border-bottom: 2px solid #8B7D5A;
       user-select: none;
     }
 
+    #toolbar label {
+      margin-right: 15px;
+      font-weight: bold;
+      font-size: 16px;
+    }
+
     #imageSizeRange {
-      width: 150px;
+      width: 180px;
       cursor: pointer;
+      height: 25px;
+      border-radius: 8px;
+      background: #f1e6d0;
+      -webkit-appearance: none;
+    }
+
+    #imageSizeRange::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 24px;
+      height: 24px;
+      background: #8B7D5A;
+      cursor: pointer;
+      border-radius: 50%;
+      border: 1px solid #666;
+      margin-top: -9px;
+      transition: background 0.3s ease;
+    }
+    #imageSizeRange::-webkit-slider-thumb:hover {
+      background: #5a4e32;
+    }
+    #imageSizeRange:focus {
+      outline: none;
+      box-shadow: 0 0 5px #8B7D5A;
     }
 
     img.logo {
       width: 200px;
       height: auto;
-      margin: 20px 0;
+      margin: 20px auto;
       animation: move-logo 5s alternate infinite;
       display: block;
-      margin-left: auto;
-      margin-right: auto;
     }
 
     @keyframes move-logo {
@@ -58,7 +83,7 @@
     #items {
       max-width: 900px;
       margin: 0 auto;
-      text-align: left; /* لمحاذاة النصوص لليسار داخل العناصر */
+      text-align: left;
     }
 
     .item {
@@ -73,10 +98,10 @@
     }
 
     .item img {
-      width: 120px; /* الحجم الافتراضي، سيتغير */
+      width: 120px;
       height: 120px;
       object-fit: cover;
-      border-radius: 0; /* بدون حواف دائرية */
+      border-radius: 0;
       box-shadow: -5px 5px 15px rgba(0, 0, 0, 0.2);
       border: 2px solid #ddd;
       transition: transform 0.3s ease, box-shadow 0.3s ease, border 0.3s ease, width 0.3s ease, height 0.3s ease;
@@ -222,4 +247,4 @@
     }
   </script>
 </body>
-</html>
+  </html>
