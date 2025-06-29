@@ -7,7 +7,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
   <style>
     body {
-      font-family: Arial;
+      font-family: Arial, sans-serif;
       padding: 10px;
       background: #f5f5f5;
       text-align: center;
@@ -39,7 +39,7 @@
       width: 120px;
       height: 120px;
       object-fit: cover;
-      border-radius: 50%;
+      border-radius: 12px; /* حواف دائرية صغيرة */
       box-shadow: -5px 5px 15px rgba(0, 0, 0, 0.2);
       border: 2px solid #ddd;
       transition: transform 0.3s ease, box-shadow 0.3s ease, border 0.3s ease;
@@ -91,7 +91,7 @@
   </style>
 </head>
 <body>
-  <img src="001.jpg" class="logo" alt="Aden Plastic Logo" />
+  <img src="001.jpg" class="logo" alt="Aden Plastic logo" />
   <h2>شركة عدن الوطنية للصناعات المنزلية</h2>
   <div id="items"></div>
   <button onclick="sendToWhatsApp()">إرسال الطلب عبر واتساب</button>
