@@ -4,6 +4,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>شركة عدن الوطنية للصناعات المنزلية</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -25,16 +26,26 @@
       z-index: 9999;
       transition: top 0.3s;
     }
-    #imageSizeRange { width: 180px; }
-    #sendWhatsappBtn, #editInfoBtn {
+    #toolbar button {
+      height: 40px;
+      width: 40px;
       background-color: #C11B17;
       border: none;
-      color: white;
-      padding: 10px 18px;
-      font-size: 16px;
-      border-radius: 8px;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       cursor: pointer;
     }
+    #toolbar button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    #toolbar img {
+      width: 24px;
+      height: 24px;
+    }
+    #imageSizeRange { width: 150px; }
     img.logo {
       width: 100px;
       margin: 20px auto;
@@ -108,8 +119,9 @@
   <div id="toolbar">
     <label for="imageSizeRange">حجم الصورة:</label>
     <input type="range" id="imageSizeRange" min="60" max="300" value="120" />
-    <button id="sendWhatsappBtn" onclick="sendToWhatsApp()">إرسال الطلب عبر واتساب</button>
-    <button id="editInfoBtn" onclick="showForm()">تعديل البيانات</button>
+    <button id="editInfoBtn" onclick="showForm()"><img src="edit.png" alt="تعديل" /></button>
+    <button id="sendWhatsappBtn" onclick="sendToWhatsApp()" disabled><img src="whatsapp.png" alt="واتساب" /></button>
+    <button id="printPdfBtn" onclick="printPDF()" disabled><img src="pdf.png" alt="PDF" /></button>
   </div>  <img src="001.jpg" class="logo" alt="Aden Plastic logo" />
   <h2 style="text-align:center; font-weight:bold; color:#C11B17;">شركة عدن الوطنية للصناعات المنزلية</h2>  <div id="items"></div>  <div id="overlay" style="display:none">
     <div id="formModal">
@@ -122,6 +134,8 @@
     </div>
   </div>  <script>
     const imageSizeRange = document.getElementById('imageSizeRange');
+    const sendBtn = document.getElementById('sendWhatsappBtn');
+    const printBtn = document.getElementById('printPdfBtn');
     let lastScrollTop = 0;
     const toolbar = document.getElementById('toolbar');
 
@@ -208,8 +222,9 @@
     function addInputListeners() {
       document.querySelectorAll('.item input[type="number"]').forEach(input => {
         input.addEventListener('input', () => {
-          const img = input.closest('.item').querySelector('img');
-          img.classList.toggle('highlight', parseInt(input.value) > 0);
+          const hasValues = [...document.querySelectorAll('input[type="number"]')].some(inp => parseInt(inp.value) > 0);
+          sendBtn.disabled = !hasValues;
+          printBtn.disabled = !hasValues;
         });
       });
     }
@@ -217,13 +232,38 @@
     function sendToWhatsApp() {
       const info = JSON.parse(localStorage.getItem('customerInfo'));
       const now = new Date().toLocaleDateString();
-      let msg = `الأخوة مبيعات شركة عدن الوطنية للصناعات المنزلية المحدودة المحترمون\n\n`;
-      msg += `${info.name} - ${info.business} - ${info.address} - ${now}\n\n`;
+      let msg = `الأخوة مبيعات\n*شركة عدن الوطنية للصناعات المنزلية* المحترمون\n\n`;
+      msg += `نحن / ${info.business} - عنهم الأخ / ${info.name} - العنوان / ${info.address}\n\nنتقدم بطلب الأصناف التالية:\n\n`;
       document.querySelectorAll('input[type="number"]').forEach(inp => {
         const qty = parseInt(inp.value);
         if (qty > 0) msg += `- ${inp.dataset.name}: ${qty}\n`;
       });
+      msg += `\nتاريخ الطلب / ${now}`;
       window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank');
+    }
+
+    async function printPDF() {
+      const info = JSON.parse(localStorage.getItem('customerInfo'));
+      const now = new Date().toLocaleDateString();
+      const {{ jsPDF }} = window.jspdf;
+      const doc = new jsPDF();
+
+      doc.setFont("arabic");
+      doc.text("الأخوة مبيعات - شركة عدن الوطنية للصناعات المنزلية المحترمون", 10, 20);
+      doc.text(`نحن / ${info.business} - عنهم الأخ / ${info.name} - العنوان / ${info.address}`, 10, 30);
+      doc.text("نتقدم بطلب الأصناف التالية:", 10, 40);
+
+      let y = 50;
+      document.querySelectorAll('input[type="number"]').forEach(inp => {
+        const qty = parseInt(inp.value);
+        if (qty > 0) {
+          doc.text(`- ${inp.dataset.name}: ${qty}`, 10, y);
+          y += 10;
+        }
+      });
+
+      doc.text(`تاريخ الطلب / ${now}`, 10, y + 10);
+      doc.save("طلب_عدن.pdf");
     }
   </script></body>
   </html>
