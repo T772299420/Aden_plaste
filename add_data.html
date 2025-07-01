@@ -1,115 +1,94 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="UTF-8" />
-<title>إدارة بيانات Aden_plaste</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-<style>
-  body { font-family: Arial; background: #f5f5f5; padding: 20px; direction: rtl; }
-  table { width:100%;border-collapse:collapse;margin-top:20px; }
-  th,td { border:1px solid #ccc;padding:8px;text-align:center; background:#fff; }
-  button { padding:5px 10px; margin:2px; }
-</style>
+  <meta charset="UTF-8">
+  <title>إدارة الأصناف</title>
+  <style>
+    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; padding: 20px; background: #f9f9f9; }
+    table { width: 100%; border-collapse: collapse; margin-top: 20px; background: white; }
+    th, td { border: 1px solid #ccc; padding: 8px; text-align: right; }
+    th { background-color: #f44336; color: white; }
+    input[type="text"], input[type="number"] { width: 100%; padding: 6px; box-sizing: border-box; }
+    button { padding: 6px 12px; margin: 4px; cursor: pointer; border: none; background-color: #4CAF50; color: white; border-radius: 4px; }
+    .delete-btn { background-color: #f44336; }
+    .action-bar { margin-top: 20px; }
+  </style>
 </head>
 <body>
 
-<h2 style="text-align:center;">إدارة الأصناف - Aden Plastic</h2>
-<div id="tools" style="text-align:center;">
-  <button onclick="addRow()">➕ إضافة</button>
-  <button onclick="saveData()">💾 حفظ التعديلات</button>
-</div>
-<table id="tbl">
-  <thead>
-    <tr><th>الاسم</th><th>الصورة</th><th>حذف</th></tr>
-  </thead>
-  <tbody></tbody>
-</table>
+  <h2>إدارة الأصناف</h2>
 
-<script>
-const repo = 'T772299420/Aden_plaste';
-const path = 'Data.csv';
-const branch = 'main';
-const token = 'ghp_YOUR_TOKEN_HERE'; // ✳️ استبدل هذا بالتوكن الخاص بك
-let currentSHA = '';
-let data = [];
+  <div class="action-bar">
+    <button onclick="addRow()">➕ إضافة صنف</button>
+    <button onclick="saveData()">💾 حفظ البيانات</button>
+  </div>
 
-window.onload = () => {
-  loadData();
-};
+  <table id="itemsTable">
+    <thead>
+      <tr>
+        <th>اسم الصنف</th>
+        <th>صورة</th>
+        <th>السعر</th>
+        <th>إجراء</th>
+      </tr>
+    </thead>
+    <tbody id="tableBody">
+      <!-- صفوف البيانات ستُضاف هنا -->
+    </tbody>
+  </table>
 
-async function loadData(){
-  const res = await fetch(`https://api.github.com/repos/${repo}/contents/${path}?ref=${branch}`);
-  const js = await res.json();
-  currentSHA = js.sha;
-  const txt = atob(js.content.trim());
-  const wb = XLSX.read(txt, { type: 'string' });
-  data = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]);
-  showTable();
-}
+  <script>
+    const csvUrl = 'https://raw.githubusercontent.com/T772299420/Aden_plaste/main/Data.csv';
 
-function showTable(){
-  const tbl = document.getElementById('tbl');
-  const bb = tbl.querySelector('tbody');
-  bb.innerHTML = '';
-  data.forEach((row, i) => {
-    const tr = bb.insertRow();
-    const tdName = tr.insertCell();
-    tdName.contentEditable = true;
-    tdName.innerText = row.name || '';
+    // تحميل البيانات من CSV
+    async function loadData() {
+      const response = await fetch(csvUrl);
+      const text = await response.text();
+      const rows = text.trim().split('\n').slice(1); // تخطي العنوان
+      rows.forEach(row => {
+        const [name, image, price] = row.split(',');
+        addRowToTable(name.trim(), image.trim(), price.trim());
+      });
+    }
 
-    const tdImg = tr.insertCell();
-    tdImg.contentEditable = true;
-    tdImg.innerText = row.image || '';
+    // إضافة صف للجدول
+    function addRowToTable(name = '', image = '', price = '') {
+      const tbody = document.getElementById('tableBody');
+      const row = document.createElement('tr');
 
-    const tdDel = tr.insertCell();
-    const btn = document.createElement('button');
-    btn.innerText = '🗑️';
-    btn.onclick = () => { data.splice(i, 1); showTable(); };
-    tdDel.appendChild(btn);
-  });
-}
+      row.innerHTML = `
+        <td><input type="text" value="${name}"></td>
+        <td><input type="text" value="${image}"></td>
+        <td><input type="number" value="${price}"></td>
+        <td><button class="delete-btn" onclick="this.closest('tr').remove()">🗑 حذف</button></td>
+      `;
+      tbody.appendChild(row);
+    }
 
-function addRow(){
-  data.push({name:'', image:''});
-  showTable();
-}
+    function addRow() {
+      addRowToTable();
+    }
 
-async function saveData(){
-  const rows = [];
-  document.querySelectorAll('#tbl tbody tr').forEach(tr => {
-    const name = tr.cells[0].innerText.trim();
-    const image = tr.cells[1].innerText.trim();
-    if (name) rows.push({name, image});
-  });
+    // حفظ البيانات كملف CSV
+    function saveData() {
+      const rows = [['name', 'image', 'price']];
+      const tbody = document.querySelectorAll('#tableBody tr');
 
-  const ws = XLSX.utils.json_to_sheet(rows);
-  const wb = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
-  const out = XLSX.write(wb, { bookType: 'csv', type: 'array' });
-  const b64 = btoa(new Uint8Array(out).reduce((s, c) => s + String.fromCharCode(c), ''));
+      tbody.forEach(tr => {
+        const inputs = tr.querySelectorAll('input');
+        const row = Array.from(inputs).map(input => input.value.trim());
+        rows.push(row);
+      });
 
-  const res = await fetch(`https://api.github.com/repos/${repo}/contents/${path}`, {
-    method: 'PUT',
-    headers: {
-      Authorization: `token ${token}`,
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({
-      message: 'تحديث الملف من واجهة HTML',
-      content: b64,
-      sha: currentSHA,
-      branch
-    })
-  });
+      const csvContent = rows.map(e => e.join(',')).join('\n');
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = 'data.csv';
+      link.click();
+    }
 
-  const js = await res.json();
-  if (res.ok) {
-    alert('✅ تم الحفظ بنجاح');
-    currentSHA = js.content.sha;
-  } else {
-    alert('❌ فشل الحفظ: ' + js.message);
-  }
-}
-</script>
+    loadData();
+  </script>
 </body>
 </html>
