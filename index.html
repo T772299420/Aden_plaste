@@ -1,15 +1,29 @@
-<!DOCTYPE html><html lang="ar" dir="rtl">
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>شركة عدن الوطنية للصناعات المنزلية</title>
   <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #FFFFF0;
+      margin: 0;
+      padding-top: 60px; /* مكان لشريط التبويبات */
+      color: #8B0000;
+    }
+    /* شريط التبويبات */
     #tabBar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 60px;
       background: #E41B17;
       display: flex;
       justify-content: space-around;
       align-items: center;
-      padding: 10px;
+      z-index: 10000;
     }
     #tabBar button {
       background: none;
@@ -25,51 +39,97 @@
     #tabBar button.active {
       border-bottom-color: #8B0000;
     }
+    /* محتوى التبويبات */
     .tabContent {
       display: none;
+      max-width: 900px;
+      margin: 30px auto;
       padding: 20px;
-      text-align: center;
+      background: #fff;
+      border: 2px solid #8B0000;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      color: black;
+      font-family: 'Times New Roman', Times, serif;
+      line-height: 1.8;
+      text-align: justify;
+      animation: fadeInUp 1.2s ease-out;
     }
     .tabContent.active {
       display: block;
     }
+    /* صورة الشعار */
+    .about-box img {
+      display: block;
+      margin: 0 auto 20px;
+      max-width: 120px;
+      border-radius: 8px;
+      border: 2px solid #8B0000;
+      padding: 5px;
+      background-color: #fff;
+    }
+    @keyframes fadeInUp {
+      0% {
+        opacity: 0;
+        transform: translateY(40px);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
   </style>
 </head>
 <body>
+
   <!-- شريط التبويبات -->
   <div id="tabBar">
     <button class="tabBtn active" data-tab="home">الرئيسية</button>
     <button class="tabBtn" data-tab="sales">مبيعات</button>
     <button class="tabBtn" data-tab="returns">مرتجعات</button>
     <button class="tabBtn" data-tab="contact">راسلنا</button>
-    <button onclick="window.open('dataa.html', '_blank')">قاعدة البيانات</button>
-  </div>  <!-- المحتوى -->  <div id="home" class="tabContent active">
-    <h2>شركة عدن الوطنية للصناعات المنزلية</h2>
   </div>
+
+  <!-- محتوى التبويبات -->
+  <div id="home" class="tabContent active about-box">
+    <img src="aden-port.jpg" alt="شعار عدن بلاست" />
+    تعد شركة عدن الوطنية للصناعات المنزلية المحدودة - المعروفة اختصاراً بـ "عدن بلاستيك" - واحدة من الشركات الصناعية الرائدة في مجال إنتاج الأدوات المنزلية وأدوات التعبية والتغليف بالإضافة لمستلزمات الأثاث المنزلي. 
+    منذ بدايتها الأولى عمدت شركة عدن إلى التميز من خلال التركيز على جودة منتجاتها وإرضاء عملائها، ولتحقيق ذلك عملت الشركة على تشجيع التجديد والابتكار في المنتجات وترسيخ ثقافة الاهتمام بالعميل، وبذلك وضعت شركة عدن نفسها كواحدة من الشركات الرائدة في هذا المجال بفضل اتباع سياستي الاهتمام بالمنتج والعميل. 
+    تعتز شركة عدن أن منتجاتها تصنع من مواد خام أولية عالية الجودة تجلب من كبريات الشركات في هذه المجال، وتسويق منتجاتها في كل أرجاء اليمن من خلال شبكة واسعة من الموزعين ونقاط البيع، كما تستهدف الشركة الأسواق المجاورة في منطقة الخليج والقرن الأفريقي، وتشمل منتجاتها على سبيل المثال لا الحصر البراميل، البوالد، السلات، حافظات الأطعمة، الصناديق، رفوف المطبخ، الكراسي والطاولات وغيرها. 
+    تضع شركة عدن الوطنية موضوع الاستدامة في مقدمة أولوياتها، حيث تعمل جاهدة للحفاظ على البيئة والارتقاء بالجانب التصنيعي من خلال تقليل استنزاف الموارد واستخدام التكنولوجيا الحديثة بالإضافة إلى التحول إلى خيارات الطاقة البديلة.
+  </div>
+
   <div id="sales" class="tabContent">
-    <p>محتوى المبيعات</p>
+    <h2 style="text-align:center;">مبيعات</h2>
+    <p>محتوى المبيعات هنا</p>
   </div>
+
   <div id="returns" class="tabContent">
-    <p>محتوى المرتجعات</p>
+    <h2 style="text-align:center;">مرتجعات</h2>
+    <p>محتوى المرتجعات هنا</p>
   </div>
+
   <div id="contact" class="tabContent">
-    <p>محتوى التواصل</p>
-  </div>  <script>
-    const tabs = document.querySelectorAll('.tabBtn');
-    const contents = document.querySelectorAll('.tabContent');
+    <h2 style="text-align:center;">راسلنا</h2>
+    <p>محتوى التواصل هنا</p>
+  </div>
 
-    tabs.forEach(tab => {
-      tab.addEventListener('click', () => {
-        // تفعيل التبويب
-        tabs.forEach(t => t.classList.remove('active'));
-        tab.classList.add('active');
+<script>
+  const tabs = document.querySelectorAll('.tabBtn');
+  const contents = document.querySelectorAll('.tabContent');
 
-        // عرض المحتوى المرتبط فقط
-        const target = tab.dataset.tab;
-        contents.forEach(c => {
-          c.classList.toggle('active', c.id === target);
-        });
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      tabs.forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+
+      const target = tab.dataset.tab;
+      contents.forEach(c => {
+        c.classList.toggle('active', c.id === target);
       });
     });
-  </script></body>
-</html>
+  });
+</script>
+
+</body>
+      </html>
