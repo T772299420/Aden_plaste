@@ -4,6 +4,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>شركة عدن الوطنية للصناعات المنزلية</title>
   <style>
+    #tabBar {
+      background: #E41B17;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      padding: 10px;
+    }
     #tabBar button {
       background: none;
       border: none;
@@ -18,6 +25,14 @@
     #tabBar button.active {
       border-bottom-color: #8B0000;
     }
+    .tabContent {
+      display: none;
+      padding: 20px;
+      text-align: center;
+    }
+    .tabContent.active {
+      display: block;
+    }
   </style>
 </head>
 <body>
@@ -28,9 +43,7 @@
     <button class="tabBtn" data-tab="returns">مرتجعات</button>
     <button class="tabBtn" data-tab="contact">راسلنا</button>
     <button onclick="window.open('dataa.html', '_blank')">قاعدة البيانات</button>
-  </div>
-  <!-- المحتوى -->
-  <div id="home" class="tabContent active">
+  </div>  <!-- المحتوى -->  <div id="home" class="tabContent active">
     <h2>شركة عدن الوطنية للصناعات المنزلية</h2>
   </div>
   <div id="sales" class="tabContent">
@@ -41,21 +54,22 @@
   </div>
   <div id="contact" class="tabContent">
     <p>محتوى التواصل</p>
-  </div>
-  <script>
+  </div>  <script>
     const tabs = document.querySelectorAll('.tabBtn');
-    const contents = document.querySelectorAll('.tabContent');tabs.forEach(tab => {
-  tab.addEventListener('click', () => {
-    tabs.forEach(t => t.classList.remove('active'));
-    tab.classList.add('active');
+    const contents = document.querySelectorAll('.tabContent');
 
-    const target = tab.dataset.tab;
-    contents.forEach(c => {
-      c.classList.toggle('active', c.id === target);
+    tabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        // تفعيل التبويب
+        tabs.forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+
+        // عرض المحتوى المرتبط فقط
+        const target = tab.dataset.tab;
+        contents.forEach(c => {
+          c.classList.toggle('active', c.id === target);
+        });
+      });
     });
-  });
-});
-
-  </script>
-</body>
+  </script></body>
 </html>
