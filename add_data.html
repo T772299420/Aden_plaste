@@ -1,5 +1,4 @@
-<!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<!DOCTYPE html><html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -91,21 +90,13 @@
     }
   </style>
 </head>
-<body>
-
-  <h2>جدول بيانات الأصناف</h2>
-
-  <input type="text" id="searchInput" placeholder="ابحث باسم الصنف..." />
-
-  <button class="add" onclick="toggleAddForm()">إضافة صنف جديد +</button>
+<body>  <h2>جدول بيانات الأصناف</h2>  <input type="text" id="searchInput" placeholder="ابحث باسم الصنف..." /><button class="add" onclick="toggleAddForm()">إضافة صنف جديد +</button>
 
   <div id="addForm">
     <input type="text" id="newName" placeholder="اسم الصنف" />
     <input type="text" id="newImage" placeholder="رابط صورة الصنف (URL)" />
     <button onclick="addItem()">حفظ الصنف</button>
-  </div>
-
-  <table id="itemsTable">
+  </div>  <table id="itemsTable">
     <thead>
       <tr>
         <th>الصورة</th>
@@ -117,70 +108,52 @@
     <tbody id="itemsBody">
       <!-- البيانات تظهر هنا -->
     </tbody>
-  </table>
-
-  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
-  <script>
+  </table>  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>  <script>
     const repoOwner = 'T772299420';
     const repoName = 'Aden_plaste';
     const branch = 'main';
     const filePath = 'Data.csv';
+    const token = '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';
 
     let items = [];
 
-    // جلب ملف CSV من GitHub Raw
     async function fetchCSV() {
       const url = `https://raw.githubusercontent.com/${repoOwner}/${repoName}/${branch}/${filePath}`;
       const res = await fetch(url);
-      if (!res.ok) {
-        alert('فشل في تحميل ملف البيانات من GitHub');
-        throw new Error('فشل جلب الملف');
-      }
+      if (!res.ok) throw new Error('فشل جلب البيانات');
       return await res.text();
     }
 
-    // تحميل البيانات عند فتح الصفحة
     async function loadData() {
       try {
         const csvText = await fetchCSV();
         const parsed = Papa.parse(csvText, { header: true, skipEmptyLines: true });
         items = parsed.data;
-        loadLocalStorage(); // تحميل التعديلات المحفوظة محليًا
         renderTable(items);
       } catch (e) {
         console.error(e);
       }
     }
 
-    // عرض البيانات في الجدول
     function renderTable(data) {
       const tbody = document.getElementById('itemsBody');
       tbody.innerHTML = '';
-
       data.forEach((item, idx) => {
         const tr = document.createElement('tr');
 
-        // صورة الصنف (إذا الرابط غير موجود نعرض نص)
         const imgCell = document.createElement('td');
-        if(item.image && item.image.trim() !== '') {
+        if(item.image) {
           const img = document.createElement('img');
-          img.src = item.image.trim();
-          img.alt = item.name || 'صورة الصنف';
-          img.title = 'انقر للتكبير';
-          img.style.maxWidth = '80px';
-          img.style.maxHeight = '80px';
-          img.style.cursor = 'pointer';
-          img.onclick = () => window.open(item.image.trim(), '_blank');
+          img.src = item.image;
+          img.onclick = () => window.open(item.image, '_blank');
           imgCell.appendChild(img);
         } else {
           imgCell.textContent = 'لا توجد صورة';
         }
 
-        // اسم الصنف
         const nameCell = document.createElement('td');
-        nameCell.textContent = item.name || '';
+        nameCell.textContent = item.name;
 
-        // زر تعديل
         const editCell = document.createElement('td');
         const editBtn = document.createElement('button');
         editBtn.textContent = 'تعديل';
@@ -188,7 +161,6 @@
         editBtn.onclick = () => editItem(idx);
         editCell.appendChild(editBtn);
 
-        // زر حذف
         const delCell = document.createElement('td');
         const delBtn = document.createElement('button');
         delBtn.textContent = 'حذف';
@@ -200,92 +172,69 @@
         tr.appendChild(nameCell);
         tr.appendChild(editCell);
         tr.appendChild(delCell);
-
         tbody.appendChild(tr);
       });
     }
 
-    // بحث مع فلترة
     document.getElementById('searchInput').addEventListener('input', e => {
       const val = e.target.value.trim().toLowerCase();
       const filtered = items.filter(i => (i.name || '').toLowerCase().includes(val));
       renderTable(filtered);
     });
 
-    // إظهار أو إخفاء نموذج الإضافة
     function toggleAddForm() {
       const form = document.getElementById('addForm');
-      if(form.style.display === 'block') {
-        form.style.display = 'none';
-      } else {
-        form.style.display = 'block';
-        document.getElementById('newName').value = '';
-        document.getElementById('newImage').value = '';
-      }
+      form.style.display = form.style.display === 'block' ? 'none' : 'block';
+      document.getElementById('newName').value = '';
+      document.getElementById('newImage').value = '';
     }
 
-    // إضافة صنف جديد
     function addItem() {
       const newName = document.getElementById('newName').value.trim();
       const newImage = document.getElementById('newImage').value.trim();
-
-      if (!newName) {
-        alert('يرجى إدخال اسم الصنف');
-        return;
-      }
-      // يمكن إضافة تحقق على رابط الصورة إذا أردت
-
+      if (!newName) return alert('يرجى إدخال اسم الصنف');
       items.push({ name: newName, image: newImage });
-      saveLocalStorage();
-      renderTable(items);
-      toggleAddForm();
+      saveToGitHub();
     }
 
-    // تعديل صنف
     function editItem(idx) {
-      const newName = prompt('عدل اسم الصنف:', items[idx].name);
-      if (newName === null) return; // إلغاء
-
-      const newImage = prompt('عدل رابط صورة الصنف:', items[idx].image);
-      if (newImage === null) return;
-
-      items[idx].name = newName.trim();
-      items[idx].image = newImage.trim();
-      saveLocalStorage();
-      renderTable(items);
+      const newName = prompt('عدل الاسم:', items[idx].name);
+      const newImage = prompt('عدل الصورة:', items[idx].image);
+      if (newName !== null) items[idx].name = newName.trim();
+      if (newImage !== null) items[idx].image = newImage.trim();
+      saveToGitHub();
     }
 
-    // حذف صنف
     function deleteItem(idx) {
-      if (!confirm('هل أنت متأكد من حذف هذا الصنف؟')) return;
-      items.splice(idx, 1);
-      saveLocalStorage();
-      renderTable(items);
-    }
-
-    // حفظ البيانات في LocalStorage مؤقتًا (لأن حفظ على GitHub API يحتاج كود أكثر تعقيداً)
-    function saveLocalStorage() {
-      localStorage.setItem('itemsData', JSON.stringify(items));
-    }
-
-    // تحميل البيانات من LocalStorage إذا كانت موجودة
-    function loadLocalStorage() {
-      const saved = localStorage.getItem('itemsData');
-      if (saved) {
-        try {
-          const data = JSON.parse(saved);
-          if (Array.isArray(data) && data.length > 0) {
-            items = data;
-          }
-        } catch (e) {
-          console.error('خطأ في تحميل البيانات من التخزين المحلي', e);
-        }
+      if (confirm('هل تريد الحذف؟')) {
+        items.splice(idx, 1);
+        saveToGitHub();
       }
     }
 
-    // بدء التحميل
-    loadData();
-  </script>
+    async function saveToGitHub() {
+      const csv = Papa.unparse(items);
+      const content = btoa(unescape(encodeURIComponent(csv)));
+      const getUrl = `https://api.github.com/repos/${repoOwner}/${repoName}/contents/${filePath}`;
+      const getRes = await fetch(getUrl, {
+        headers: { Authorization: `token ${token}` }
+      });
+      const { sha } = await getRes.json();
+      await fetch(getUrl, {
+        method: 'PUT',
+        headers: {
+          Authorization: `token ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          message: 'تحديث بيانات الأصناف',
+          content,
+          sha
+        })
+      });
+      loadData();
+    }
 
-</body>
+    loadData();
+  </script></body>
   </html>
