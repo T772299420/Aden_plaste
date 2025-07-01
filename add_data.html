@@ -1,94 +1,286 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8">
-  <title>إدارة الأصناف</title>
-  <style>
-    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; padding: 20px; background: #f9f9f9; }
-    table { width: 100%; border-collapse: collapse; margin-top: 20px; background: white; }
-    th, td { border: 1px solid #ccc; padding: 8px; text-align: right; }
-    th { background-color: #f44336; color: white; }
-    input[type="text"], input[type="number"] { width: 100%; padding: 6px; box-sizing: border-box; }
-    button { padding: 6px 12px; margin: 4px; cursor: pointer; border: none; background-color: #4CAF50; color: white; border-radius: 4px; }
-    .delete-btn { background-color: #f44336; }
-    .action-bar { margin-top: 20px; }
-  </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>إدارة الأصناف - شركة عدن الوطنية</title>
+
+<!-- مكتبة XLSX لتحليل CSV -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<!-- مكتبة jsPDF لتصدير PDF -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+<style>
+  body {
+    font-family: 'Times New Roman', serif;
+    background: #fff;
+    color: #000;
+    margin: 20px;
+  }
+  h2 {
+    text-align: center;
+    color: #8B0000;
+  }
+  #searchInput {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    font-size: 16px;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 15px;
+  }
+  th, td {
+    border: 1px solid #8B0000;
+    padding: 8px;
+    text-align: center;
+  }
+  th {
+    background: #E41B17;
+    color: white;
+  }
+  img.item-img {
+    width: 70px;
+    height: 70px;
+    object-fit: contain;
+  }
+  button {
+    background-color: #E41B17;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    margin: 2px;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  button:hover {
+    background-color: #8B0000;
+  }
+  #addRowBtn {
+    margin-bottom: 15px;
+  }
+  input.editable {
+    width: 100%;
+    box-sizing: border-box;
+    font-size: 14px;
+    padding: 4px;
+  }
+</style>
+
 </head>
 <body>
 
-  <h2>إدارة الأصناف</h2>
+<h2>إدارة الأصناف - شركة عدن الوطنية للصناعات المنزلية</h2>
 
-  <div class="action-bar">
-    <button onclick="addRow()">➕ إضافة صنف</button>
-    <button onclick="saveData()">💾 حفظ البيانات</button>
-  </div>
+<input type="text" id="searchInput" placeholder="ابحث بالاسم..." />
 
-  <table id="itemsTable">
-    <thead>
-      <tr>
-        <th>اسم الصنف</th>
-        <th>صورة</th>
-        <th>السعر</th>
-        <th>إجراء</th>
-      </tr>
-    </thead>
-    <tbody id="tableBody">
-      <!-- صفوف البيانات ستُضاف هنا -->
-    </tbody>
-  </table>
+<button id="addRowBtn">إضافة صنف جديد</button>
+<button id="exportPdfBtn">تصدير PDF</button>
+<button id="sendWhatsappBtn">إرسال عبر واتساب</button>
 
-  <script>
-    const csvUrl = 'https://raw.githubusercontent.com/T772299420/Aden_plaste/main/Data.csv';
+<table id="itemsTable">
+  <thead>
+    <tr>
+      <th>اسم الصنف</th>
+      <th>صورة الصنف</th>
+      <th>تعديل</th>
+      <th>حذف</th>
+    </tr>
+  </thead>
+  <tbody>
+    <!-- البيانات ستُضاف هنا ديناميكيًا -->
+  </tbody>
+</table>
 
-    // تحميل البيانات من CSV
-    async function loadData() {
-      const response = await fetch(csvUrl);
-      const text = await response.text();
-      const rows = text.trim().split('\n').slice(1); // تخطي العنوان
-      rows.forEach(row => {
-        const [name, image, price] = row.split(',');
-        addRowToTable(name.trim(), image.trim(), price.trim());
-      });
-    }
+<script>
+const repoOwner = 'T772299420';
+const repoName = 'Aden_plaste';
+const filePath = 'Data.csv';
+const branch = 'main';
+const githubToken = 'YOUR_GITHUB_TOKEN'; // استبدل بالتوكن الخاص بك
 
-    // إضافة صف للجدول
-    function addRowToTable(name = '', image = '', price = '') {
-      const tbody = document.getElementById('tableBody');
-      const row = document.createElement('tr');
+let itemsData = []; // بيانات الأصناف
+let fileSha = '';   // SHA ملف CSV ضروري للحفظ عبر API
 
-      row.innerHTML = `
-        <td><input type="text" value="${name}"></td>
-        <td><input type="text" value="${image}"></td>
-        <td><input type="number" value="${price}"></td>
-        <td><button class="delete-btn" onclick="this.closest('tr').remove()">🗑 حذف</button></td>
-      `;
-      tbody.appendChild(row);
-    }
+// تحميل ملف CSV من GitHub
+async function loadCSV() {
+  const url = `https://raw.githubusercontent.com/${repoOwner}/${repoName}/${branch}/${filePath}`;
+  try {
+    const res = await fetch(url);
+    const csvText = await res.text();
+    const workbook = XLSX.read(csvText, { type: 'string' });
+    const sheet = workbook.Sheets[workbook.SheetNames[0]];
+    itemsData = XLSX.utils.sheet_to_json(sheet);
+    renderTable(itemsData);
+    await getFileSha(); // للحصول على SHA الملف من GitHub (للرفع لاحقًا)
+  } catch (err) {
+    alert('خطأ في تحميل بيانات الأصناف من GitHub.');
+    console.error(err);
+  }
+}
 
-    function addRow() {
-      addRowToTable();
-    }
+// جلب SHA الملف من GitHub (ضروري لرفع التغييرات)
+async function getFileSha() {
+  const url = `https://api.github.com/repos/${repoOwner}/${repoName}/contents/${filePath}?ref=${branch}`;
+  try {
+    const res = await fetch(url, {
+      headers: { Authorization: 'token ' + githubToken }
+    });
+    if (!res.ok) throw new Error('خطأ في جلب معلومات الملف');
+    const data = await res.json();
+    fileSha = data.sha;
+  } catch (err) {
+    alert('خطأ في جلب معلومات الملف من GitHub.');
+    console.error(err);
+  }
+}
 
-    // حفظ البيانات كملف CSV
-    function saveData() {
-      const rows = [['name', 'image', 'price']];
-      const tbody = document.querySelectorAll('#tableBody tr');
+// عرض البيانات في الجدول
+function renderTable(data) {
+  const tbody = document.querySelector('#itemsTable tbody');
+  tbody.innerHTML = '';
 
-      tbody.forEach(tr => {
-        const inputs = tr.querySelectorAll('input');
-        const row = Array.from(inputs).map(input => input.value.trim());
-        rows.push(row);
-      });
+  data.forEach((item, idx) => {
+    const tr = document.createElement('tr');
 
-      const csvContent = rows.map(e => e.join(',')).join('\n');
-      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-      const link = document.createElement('a');
-      link.href = URL.createObjectURL(blob);
-      link.download = 'data.csv';
-      link.click();
-    }
+    // اسم الصنف (قابل للتعديل)
+    const tdName = document.createElement('td');
+    const inputName = document.createElement('input');
+    inputName.value = item['اسم الصنف'] || '';
+    inputName.classList.add('editable');
+    inputName.onchange = () => {
+      itemsData[idx]['اسم الصنف'] = inputName.value.trim();
+      saveChanges();
+    };
+    tdName.appendChild(inputName);
+    tr.appendChild(tdName);
 
-    loadData();
-  </script>
+    // صورة الصنف (قابل للتعديل)
+    const tdImg = document.createElement('td');
+    const inputImg = document.createElement('input');
+    inputImg.value = item['صورة الصنف'] || '';
+    inputImg.classList.add('editable');
+    inputImg.onchange = () => {
+      itemsData[idx]['صورة الصنف'] = inputImg.value.trim();
+      saveChanges();
+      renderTable(itemsData);
+    };
+    tdImg.appendChild(inputImg);
+
+    // عرض الصورة بجانب خانة التعديل
+    const imgPreview = document.createElement('img');
+    imgPreview.src = `https://raw.githubusercontent.com/${repoOwner}/${repoName}/${branch}/${inputImg.value.trim()}`;
+    imgPreview.classList.add('item-img');
+    imgPreview.style.marginRight = '5px';
+    tdImg.prepend(imgPreview);
+
+    tr.appendChild(tdImg);
+
+    // زر حذف
+    const tdDel = document.createElement('td');
+    const delBtn = document.createElement('button');
+    delBtn.textContent = 'حذف';
+    delBtn.onclick = () => {
+      if (confirm('هل أنت متأكد من حذف هذا الصنف؟')) {
+        itemsData.splice(idx, 1);
+        saveChanges();
+        renderTable(itemsData);
+      }
+    };
+    tdDel.appendChild(delBtn);
+    tr.appendChild(tdDel);
+
+    tbody.appendChild(tr);
+  });
+}
+
+// حفظ التغييرات إلى GitHub
+async function saveChanges() {
+  // تحويل بيانات JSON إلى CSV
+  const headers = ['اسم الصنف', 'صورة الصنف'];
+  const rows = itemsData.map(item => {
+    return headers.map(h => `"${(item[h]||'').replace(/"/g, '""')}"`).join(',');
+  });
+  const csvContent = headers.join(',') + '\n' + rows.join('\n');
+
+  // تشفير المحتوى base64
+  const base64Content = btoa(unescape(encodeURIComponent(csvContent)));
+
+  const url = `https://api.github.com/repos/${repoOwner}/${repoName}/contents/${filePath}`;
+  try {
+    const res = await fetch(url, {
+      method: 'PUT',
+      headers: {
+        Authorization: 'token ' + githubToken,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        message: 'تحديث بيانات الأصناف عبر التطبيق',
+        branch,
+        content: base64Content,
+        sha: fileSha
+      })
+    });
+    if (!res.ok) throw new Error('فشل الحفظ');
+    const data = await res.json();
+    fileSha = data.content.sha;
+    alert('تم حفظ التغييرات بنجاح!');
+  } catch (err) {
+    alert('حدث خطأ أثناء حفظ التغييرات.');
+    console.error(err);
+  }
+}
+
+// زر إضافة صف جديد
+document.getElementById('addRowBtn').onclick = () => {
+  itemsData.push({'اسم الصنف':'','صورة الصنف':''});
+  renderTable(itemsData);
+  saveChanges();
+};
+
+// وظيفة البحث في الجدول
+document.getElementById('searchInput').addEventListener('input', e => {
+  const term = e.target.value.trim().toLowerCase();
+  const filtered = itemsData.filter(item => (item['اسم الصنف'] || '').toLowerCase().includes(term));
+  renderTable(filtered);
+});
+
+// تصدير PDF (جدول بيانات فقط)
+document.getElementById('exportPdfBtn').onclick = () => {
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ unit: 'pt', format: 'a4', orientation: 'portrait' });
+
+  const columns = ['اسم الصنف', 'صورة الصنف'];
+  const rows = itemsData.map(i => [i['اسم الصنف'], i['صورة الصنف']]);
+
+  doc.text('بيانات الأصناف - شركة عدن الوطنية', 40, 40);
+  doc.autoTable({
+    head: [columns],
+    body: rows,
+    startY: 60,
+    styles: { font: 'Times', fontSize: 12 }
+  });
+  doc.save('items.pdf');
+};
+
+// إرسال عبر واتساب (نص مع أسماء الأصناف والكميات — هنا الكميات غير موجودة لأن csv لا يحتوي، يمكن تعديل لاحقًا)
+document.getElementById('sendWhatsappBtn').onclick = () => {
+  let message = 'طلب الأصناف:\n';
+  itemsData.forEach(item => {
+    message += `- ${item['اسم الصنف']}\n`;
+  });
+  const encoded = encodeURIComponent(message);
+  window.open(`https://wa.me/?text=${encoded}`, '_blank');
+};
+
+// تحميل بيانات عند بدء الصفحة
+loadCSV();
+</script>
+
+<!-- مكتبة jsPDF-AutoTable -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+
 </body>
-</html>
+  </html>
