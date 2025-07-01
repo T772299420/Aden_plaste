@@ -3,6 +3,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>شركة عدن الوطنية للصناعات المنزلية</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -32,7 +33,6 @@
       cursor: pointer;
       padding: 10px 15px;
       border-bottom: 3px solid transparent;
-      transition: border-bottom-color 0.3s ease;
     }
     #tabBar button.active {
       border-bottom-color: #8B0000;
@@ -46,61 +46,53 @@
     .tabContent.active {
       display: block;
     }
-    img.logo {
-      width: 100px;
-      margin: 20px auto;
-      display: block;
-      animation: move-logo 5s alternate infinite;
+    .item {
+      background: #fff;
+      margin: 10px auto;
+      padding: 10px;
+      border-radius: 10px;
+      box-shadow: 0 0 5px #ccc;
+      display: flex;
+      border: 2px solid #E41B17;
+      align-items: center;
+      gap: 15px;
+      max-width: 900px;
+      color: #8B0000;
     }
-    @keyframes move-logo {
-      0% { transform: translateX(100px); }
-      100% { transform: translateX(-100px); }
+    .item img {
+      width: 120px;
+      height: 120px;
+      object-fit: contain;
+      border-radius: 6px;
+      border: 3px solid #8B0000;
+    }
+    .item-details {
+      flex-grow: 1;
+      text-align: right;
     }
   </style>
 </head>
 <body>
-  <!-- شريط التبويبات -->
   <div id="tabBar">
     <button class="tabBtn active" data-tab="home">الرئيسية</button>
     <button class="tabBtn" data-tab="sales">مبيعات</button>
-    <button class="tabBtn" data-tab="returns">مرتجعات</button>
-    <button class="tabBtn" data-tab="contact">راسلنا</button>
-  </div>  <!-- تبويب الرئيسية -->  <div id="home" class="tabContent active">
-    <img src="001.jpg" class="logo" alt="Aden Plastic logo" />
-    <h2 style="text-align:center; font-weight:bold; color:#8B0000;">شركة عدن الوطنية للصناعات المنزلية</h2><div style="max-width: 900px; margin: 20px auto; padding: 20px; background-color: #fff; border-radius: 10px; box-shadow: 0 0 10px #ccc; font-family: 'Times New Roman', Times, serif; color: #000; line-height: 1.8;">
-  <p style="font-weight:bold; font-size: 18px; text-align: center;">
-    الشركة الوطنية الرائدة في تصنيع منتجات البلاستيك المنزلية والمكتبية عالية الجودة
-  </p>
-  <p>
-    تعد شركة عدن الوطنية للصناعات المنزلية المحدودة - المعروفة اختصاراً بـ "عدن بلاستيك" - واحدة من الشركات الصناعية الرائدة في مجال إنتاج الأدوات المنزلية وأدوات التعبية والتغليف بالإضافة لمستلزمات الأثاث المنزلي.
-    منذ بدايتها الأولى عمدت شركة عدن إلى التميز من خلال التركيز على جودة منتجاتها وإرضاء عملائها، ولتحقيق ذلك عملت الشركة على تشجيع التجديد والابتكار في المنتجات وترسيخ ثقافة الاهتمام بالعميل،
-    وبذلك وضعت شركة عدن نفسها كواحدة من الشركات الرائدة في هذا المجال بفضل اتباع سياستي الاهتمام بالمنتج والعميل.
-  </p>
-  <p>
-    تعتز شركة عدن أن منتجاتها تصنع من مواد خام أولية عالية الجودة تجلب من كبريات الشركات في هذه المجال، وتسويق منتجاتها في كل أرجاء اليمن من خلال شبكة واسعة من الموزعين ونقاط البيع،
-    كما تستهدف الشركة الأسواق المجاورة في منطقة الخليج والقرن الأفريقي.
-  </p>
-  <p>
-    وتشمل منتجاتها على سبيل المثال لا الحصر البراميل، البوالد، السلات، حافظات الأطعمة، الصناديق، رفوف المطبخ، الكراسي والطاولات وغيرها.
-  </p>
-  <p>
-    تضع شركة عدن الوطنية موضوع الاستدامة في مقدمة أولوياتها، حيث تعمل جاهدة للحفاظ على البيئة والارتقاء بالجانب التصنيعي من خلال تقليل استنزاف الموارد واستخدام التكنولوجيا الحديثة بالإضافة إلى التحول إلى خيارات الطاقة البديلة.
-  </p>
-</div>
-
-  </div>  <!-- تبويب المبيعات -->  <div id="sales" class="tabContent">
-    <h3 style="text-align:center;">قسم المبيعات</h3>
-    <p style="text-align:center;">المحتوى تحت التطوير.</p>
-  </div>  <!-- تبويب المرتجعات -->  <div id="returns" class="tabContent">
-    <h3 style="text-align:center;">قسم المرتجعات</h3>
-    <p style="text-align:center;">هذه الخاصية تحت التطوير حالياً.</p>
-  </div>  <!-- تبويب راسلنا -->  <div id="contact" class="tabContent">
-    <h3 style="text-align:center;">تواصل معنا</h3>
-    <p style="text-align:center;">
-      الهاتف: 00967772299420<br>
-      البريد الإلكتروني: t772299420@gmail.com<br>
-      العنوان: اليمن - إب - القاعدة
-    </p>
+  </div>  <div id="home" class="tabContent active">
+    <h2 style="text-align:center; font-weight:bold; color:#8B0000;">شركة عدن الوطنية للصناعات المنزلية</h2>
+    <div style="font-family: 'Times New Roman', serif; color: black; background: #f9f9f9; padding: 20px; border-radius: 10px; border: 2px solid #E41B17; max-width: 1000px; margin: 20px auto; line-height: 1.9;">
+      <p style="text-align: justify;">
+        تعد شركة عدن الوطنية للصناعات المنزلية المحدودة - المعروفة اختصاراً بـ "عدن بلاستيك" - واحدة من الشركات الصناعية الرائدة في مجال إنتاج الأدوات المنزلية وأدوات التعبئة والتغليف بالإضافة لمستلزمات الأثاث المنزلي.
+        منذ بدايتها الأولى عمدت شركة عدن إلى التميز من خلال التركيز على جودة منتجاتها وإرضاء عملائها، ولتحقيق ذلك عملت الشركة على تشجيع التجديد والابتكار في المنتجات وترسيخ ثقافة الاهتمام بالعميل،
+        وبذلك وضعت شركة عدن نفسها كواحدة من الشركات الرائدة في هذا المجال بفضل اتباع سياستي الاهتمام بالمنتج والعميل.
+        <br><br>
+        تعتز شركة عدن أن منتجاتها تصنع من مواد خام أولية عالية الجودة تجلب من كبريات الشركات في هذا المجال، وتسوق منتجاتها في كل أرجاء اليمن من خلال شبكة واسعة من الموزعين ونقاط البيع،
+        كما تستهدف الشركة الأسواق المجاورة في منطقة الخليج والقرن الأفريقي، وتشمل منتجاتها - على سبيل المثال لا الحصر - البراميل، البوالد، السلات، حافظات الأطعمة، الصناديق، رفوف المطبخ، الكراسي والطاولات وغيرها.
+        <br><br>
+        تضع شركة عدن الوطنية موضوع الاستدامة في مقدمة أولوياتها، حيث تعمل جاهدة للحفاظ على البيئة والارتقاء بالجانب التصنيعي من خلال تقليل استنزاف الموارد واستخدام التكنولوجيا الحديثة بالإضافة إلى التحول إلى خيارات الطاقة البديلة.
+      </p>
+    </div>
+  </div>  <div id="sales" class="tabContent">
+    <h3 style="text-align:center;">الأصناف المتاحة</h3>
+    <div id="items"></div>
   </div>  <script>
     const tabs = document.querySelectorAll('.tabBtn');
     const contents = document.querySelectorAll('.tabContent');
@@ -109,12 +101,36 @@
       tab.addEventListener('click', () => {
         tabs.forEach(t => t.classList.remove('active'));
         tab.classList.add('active');
-
         const target = tab.dataset.tab;
-        contents.forEach(c => {
-          c.classList.toggle('active', c.id === target);
-        });
+        contents.forEach(c => c.classList.toggle('active', c.id === target));
       });
     });
+
+    document.addEventListener('DOMContentLoaded', () => {
+      fetch('https://raw.githubusercontent.com/T772299420/Aden_plaste/main/Data.csv')
+        .then(res => res.text())
+        .then(csvText => {
+          const wb = XLSX.read(csvText, { type: 'string' });
+          const sheet = wb.Sheets[wb.SheetNames[0]];
+          const data = XLSX.utils.sheet_to_json(sheet);
+          displayItems(data);
+        });
+    });
+
+    function displayItems(items) {
+      const container = document.getElementById('items');
+      container.innerHTML = '';
+      items.forEach(item => {
+        const imageUrl = `https://raw.githubusercontent.com/T772299420/Aden_plaste/main/${item.image}`;
+        const div = document.createElement('div');
+        div.className = 'item';
+        div.innerHTML = `
+          <img src="${imageUrl}" alt="${item.name}" />
+          <div class="item-details">
+            <h4>${item.name}</h4>
+          </div>`;
+        container.appendChild(div);
+      });
+    }
   </script></body>
 </html>
