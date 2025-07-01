@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<title>إدارة بيانات Aden_plaste</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+  body { font-family: Arial; background: #f5f5f5; padding: 20px; }
+  #modal { position:fixed;top:0;left:0;right:0;bottom:0;
+    display:flex;align-items:center;justify-content:center;
+    background:rgba(0,0,0,0.7);z-index:10; }
+  #modal input, button { font-size:18px;padding:10px; margin:5px; }
+  table { width:100%;border-collapse:collapse;margin-top:20px; }
+  th,td { border:1px solid #ccc;padding:8px;text-align:center; background:#fff; }
+  button { padding:5px 10px; margin:2px; }
+</style>
+</head>
+<body>
+
+<div id="modal">
+  <div>
+    <h2 style="color:white;text-align:center;">أدخل كلمة المرور</h2>
+    <input type="password" id="pwd" placeholder="••••••" />
+    <button onclick="checkPwd()">دخول</button>
+  </div>
+</div>
+
+<h2 style="text-align:center;">إدارة الأصناف</h2>
+<div id="tools" style="display:none; text-align:center;">
+  <button onclick="addRow()">إضافة</button>
+  <button onclick="saveData()">حفظ على GitHub</button>
+</div>
+<table id="tbl" style="display:none;">
+  <thead>
+    <tr><th>الاسم</th><th>الصورة</th><th>حذف</th></tr>
+  </thead>
+  <tbody></tbody>
+</table>
+
+<script>
+const repo = 'T772299420/Aden_plaste';
+const path = 'Data.csv';
+const branch = 'main';
+const token = 'ghp_YOURTOKENHERE'; // ضع هنا GitHub Token الخاص بك
+let currentSHA = '';
+let data = [];
+
+async function checkPwd(){
+  const v = document.getElementById('pwd').value;
+  if (v==='٢٠١٠٢٠' || v==='201020') {
+    document.getElementById('modal').style.display='none';
+    await loadData();
+  } else alert('كلمة مرور خاطئة');
+}
+
+async function loadData(){
+  const res = await fetch(`https://api.github.com/repos/${repo}/contents/${path}?ref=${branch}`);
+  const js = await res.json();
+  currentSHA = js.sha;
+  const txt = atob(js.content.trim());
+  const wb = XLSX.read(txt, { type: 'string' });
+  data = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]);
+  showTable();
+}
+
+function showTable(){
+  const tbl=document.getElementById('tbl'), bb=tbl.querySelector('tbody');
+  bb.innerHTML=''; data.forEach((row,i)=>{
+    const tr=bb.insertRow();
+    tr.insertCell().contentEditable=row.name;
+    tr.cells[0].innerText = row.name || '';
+    tr.insertCell().contentEditable = row.image;
+    tr.cells[1].innerText = row.image || '';
+    const btn = document.createElement('button');
+    btn.innerText='🗑️';
+    btn.onclick=() => { data.splice(i,1); showTable(); };
+    tr.insertCell().appendChild(btn);
+  });
+  document.getElementById('tbl').style.display='';
+  document.getElementById('tools').style.display='';
+}
+
+function addRow(){
+  data.push({name:'',image:''});
+  showTable();
+}
+
+async function saveData(){
+  const rows=[];
+  document.querySelectorAll('#tbl tbody tr').forEach(tr=>{
+    const n=tr.cells[0].innerText.trim(), img=tr.cells[1].innerText.trim();
+    if(n) rows.push({name:n, image:img});
+  });
+  const ws = XLSX.utils.json_to_sheet(rows);
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
+  const out = XLSX.write(wb, { bookType:'csv', type:'array' });
+  const b64 = btoa(new Uint8Array(out).reduce((s,c)=>s+String.fromCharCode(c), ''));
+
+  const res = await fetch(`https://api.github.com/repos/${repo}/contents/${path}`, {
+    method:'PUT',
+    headers:{
+      Authorization:`token ${token}`,
+      'Content-Type':'application/json'
+    },
+    body: JSON.stringify({
+      message: 'تحديث Data.csv من الواجهة',
+      content: b64,
+      sha: currentSHA,
+      branch: branch
+    })
+  });
+  const r = await res.json();
+  if(res.ok){ alert('✅ تم الحفظ بنجاح'); currentSHA = r.content.sha; }
+  else alert('❌ خطأ: ' + (r.message||res.status));
+}
+</script>
+</body>
+</html>
