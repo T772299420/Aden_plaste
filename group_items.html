@@ -12,23 +12,38 @@
 </head>
 <body>
   <h2 id="groupTitle"></h2>
-  <div id="itemsContainer"></div>
+  <div id="itemsContainer">جارٍ تحميل البيانات...</div>
 
   <script>
     const urlParams = new URLSearchParams(window.location.search);
-    const groupName = urlParams.get('group');
+    const groupName = urlParams.get('group') || '';
+    console.log('المجموعة المختارة:', groupName);
 
     document.getElementById('groupTitle').textContent = `أصناف مجموعة: ${groupName}`;
 
     fetch('https://raw.githubusercontent.com/T772299420/Aden_plaste/main/Data.csv')
-      .then(res => res.text())
+      .then(res => {
+        if (!res.ok) throw new Error('فشل تحميل ملف CSV');
+        return res.text();
+      })
       .then(csvText => {
         const wb = XLSX.read(csvText, { type: 'string' });
         const sheet = wb.Sheets[wb.SheetNames[0]];
         const data = XLSX.utils.sheet_to_json(sheet);
-        const filtered = data.filter(item => item.group?.trim() === groupName);
+
+        const filtered = data.filter(item => {
+          if (!item.group) return false;
+          return item.group.trim().toLowerCase() === groupName.trim().toLowerCase();
+        });
 
         const container = document.getElementById('itemsContainer');
+        container.innerHTML = '';
+
+        if (filtered.length === 0) {
+          container.textContent = 'لا توجد أصناف لهذه المجموعة.';
+          return;
+        }
+
         filtered.forEach(item => {
           const image = item.image?.trim() || '01';
           const imgSrc = image.toLowerCase().endsWith('.jpg') ? image : `${image}.jpg`;
@@ -40,6 +55,10 @@
           `;
           container.appendChild(div);
         });
+      })
+      .catch(error => {
+        console.error('حدث خطأ:', error);
+        document.getElementById('itemsContainer').textContent = 'حدث خطأ أثناء تحميل البيانات.';
       });
   </script>
 </body>
