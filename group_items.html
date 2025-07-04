@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <title>الأصناف حسب المجموعة</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <style>
+    body { font-family: 'Arial'; background: #fff; padding: 20px; }
+    .item { border: 1px solid #ccc; margin: 10px 0; padding: 10px; border-radius: 6px; display: flex; align-items: center; gap: 10px; }
+    .item img { width: 100px; height: 100px; object-fit: contain; border: 2px solid #E41B17; border-radius: 6px; }
+  </style>
+</head>
+<body>
+  <h2 id="groupTitle"></h2>
+  <div id="itemsContainer"></div>
+
+  <script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const groupName = urlParams.get('group');
+
+    document.getElementById('groupTitle').textContent = `أصناف مجموعة: ${groupName}`;
+
+    fetch('https://raw.githubusercontent.com/T772299420/Aden_plaste/main/Data.csv')
+      .then(res => res.text())
+      .then(csvText => {
+        const wb = XLSX.read(csvText, { type: 'string' });
+        const sheet = wb.Sheets[wb.SheetNames[0]];
+        const data = XLSX.utils.sheet_to_json(sheet);
+        const filtered = data.filter(item => item.group?.trim() === groupName);
+
+        const container = document.getElementById('itemsContainer');
+        filtered.forEach(item => {
+          const image = item.image?.trim() || '01';
+          const imgSrc = image.toLowerCase().endsWith('.jpg') ? image : `${image}.jpg`;
+          const div = document.createElement('div');
+          div.className = 'item';
+          div.innerHTML = `
+            <img src="https://raw.githubusercontent.com/T772299420/Aden_plaste/main/${imgSrc}" alt="${item.name}" onerror="this.onerror=null;this.src='https://raw.githubusercontent.com/T772299420/Aden_plaste/main/01.jpg'" />
+            <span>${item.name}</span>
+          `;
+          container.appendChild(div);
+        });
+      });
+  </script>
+</body>
+</html>
