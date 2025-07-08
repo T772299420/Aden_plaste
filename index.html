@@ -1,9 +1,9 @@
 <!DOCTYPE html><html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>شركة عدن الوطنية للصناعات المنزلية</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
   <style>
     body { font-family: 'Times New Roman', serif; background: #FFFFF0; margin: 0; color: #000; padding-top: 100px; }
@@ -146,14 +146,16 @@
       itemsData.sort((a, b) => a.name.localeCompare(b.name, 'ar'));
       itemsData.forEach(item => {
         const name = item.name?.trim();
-        const image = item.image?.trim();
+        let image = item.image?.trim() || '';
+        if (!image.includes('.')) image += '.jpg';
+        const imgUrl = `https://raw.githubusercontent.com/T772299420/Aden_plaste/main/${image}`;
         const noteField = isReturn ? `<label>ملاحظة: <input readonly onclick="openNoteDialog(this)" placeholder='اضغط لإدخال ملاحظة' class='note-input'/></label>` : '';
         container.innerHTML += `
           <div class="item">
-            <img src="https://raw.githubusercontent.com/T772299420/Aden_plaste/main/${image}" />
+            <img src="${imgUrl}" onerror="this.src='https://raw.githubusercontent.com/T772299420/Aden_plaste/main/A.jpg'" />
             <div class="item-details">
               <p>${name}</p>
-              <label>العدد: <input type="number" min="0" value="0" data-name="${name}" /></label><br>
+              <label>العدد: <input type="number" min="0" placeholder="" data-name="${name}" /></label><br>
               ${noteField}
             </div>
           </div>
@@ -170,8 +172,8 @@
       if (!customer) return alert("يرجى إدخال بيانات العميل أولا.");
       let message = `طلب من: ${customer.fullName}\nتفاصيل الطلب:\n`;
       document.querySelectorAll('#items input[type=number]').forEach(input => {
-        const val = parseInt(input.value);
-        if (val > 0) message += `${input.dataset.name}: ${val}\n`;
+        const val = input.value;
+        if (val) message += `${input.dataset.name}: ${val}\n`;
       });
       window.open(`https://wa.me/967772299420?text=${encodeURIComponent(message)}`);
     }
@@ -183,7 +185,7 @@
         const name = item.querySelector('input[type=number]').dataset.name;
         const qty = item.querySelector('input[type=number]').value;
         const note = item.querySelector('.note-input')?.value || '';
-        if (qty > 0) message += `${name}: ${qty} | ملاحظة: ${note}\n`;
+        if (qty) message += `${name}: ${qty} | ملاحظة: ${note}\n`;
       });
       window.open(`https://wa.me/967772299420?text=${encodeURIComponent(message)}`);
     }
@@ -203,4 +205,4 @@
       fetchCSV();
     });
   </script></body>
-  </html>
+            </html>
