@@ -18,19 +18,26 @@
       height: 60px;
       background: linear-gradient(to right, #E41B17, #8B0000);
       display: flex;
-      overflow-x: auto; /* تمكين التمرير أفقياً */
-      scrollbar-width: none; /* إخفاء شريط التمرير في فايرفوكس */
-      -ms-overflow-style: none; /* إخفاء شريط التمرير في IE */
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 10px;
       box-shadow: 0 2px 5px rgba(0,0,0,0.2);
       border-bottom: 3px solid #b22222;
       z-index: 10000;
     }
-    #tabBar::-webkit-scrollbar {
-      display: none; /* إخفاء شريط التمرير في كروم وسفاري */
+    #tabsGroup {
+      display: flex;
+      gap: 10px;
+      overflow-x: auto;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+    }
+    #tabsGroup::-webkit-scrollbar {
+      display: none;
     }
 
-    #tabBar button {
-      flex: 0 0 auto; /* عدم التقلص، يسمح بالتمرير */
+    #tabBar button.tabBtn {
+      flex: 0 0 auto;
       background: transparent;
       border: none;
       color: #fff;
@@ -44,14 +51,31 @@
       align-items: center;
       gap: 8px;
     }
-    #tabBar button:hover {
+    #tabBar button.tabBtn:hover {
       background-color: rgba(255,255,255,0.15);
     }
-    #tabBar button.active {
+    #tabBar button.tabBtn.active {
       background-color: #fff;
       color: #8B0000;
       box-shadow: 0 0 10px #fff;
     }
+    /* زر معلومات العميل */
+    #btnClientInfo {
+      background-color: #25D366;
+      color: white;
+      padding: 10px 18px;
+      border: none;
+      border-radius: 6px;
+      font-weight: bold;
+      cursor: pointer;
+      font-size: 16px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      transition: background-color 0.3s ease;
+    }
+    #btnClientInfo:hover {
+      background-color: #1ebe57;
+    }
+
     /* أيقونات التبويبات */
     .tabBtn[data-tab="home"]::before {
       content: "🏠";
@@ -65,9 +89,8 @@
 
     .tabContent { display: none; max-width: 1000px; margin: auto; padding: 20px; color: #000; }
     .tabContent.active { display: block; }
-    #toolbar, #returnsToolbar { display: flex; justify-content: center; gap: 15px; margin-bottom: 10px; }
-    #toolbar button, #returnsToolbar button { background-color: #E41B17; color: white; padding: 10px 20px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; }
-    #returnsToolbar button:nth-child(2) { background-color: #8B0000; }
+    #toolbar { display: flex; justify-content: center; gap: 15px; margin-bottom: 10px; }
+    #toolbar button { background-color: #E41B17; color: white; padding: 10px 20px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; }
     .item { background: #fff; margin: 10px auto; padding: 10px; border-radius: 10px; box-shadow: 0 0 5px #ccc; display: flex; border: 2px solid #E41B17; align-items: center; gap: 15px; max-width: 900px; color: #8B0000; }
     .item img { width: 120px; height: 120px; object-fit: contain; border-radius: 6px; border: 3px solid #E41B17; cursor: pointer; transition: border-color 0.3s ease; }
     .item-details { flex-grow: 1; text-align: right; }
@@ -139,18 +162,24 @@
 <body>
   <button id="floatingWhatsapp" onclick="sendFloatingWhatsapp()">📤 إرسال واتساب</button>
   <div id="tabBar">
-    <button class="tabBtn active" data-tab="home">الرئيسية</button>
-    <button class="tabBtn" data-tab="sales">مبيعات</button>
-    <button class="tabBtn" data-tab="returns">مرتجعات</button>
+    <div id="tabsGroup">
+      <button class="tabBtn active" data-tab="home">الرئيسية</button>
+      <button class="tabBtn" data-tab="sales">مبيعات</button>
+      <button class="tabBtn" data-tab="returns">مرتجعات</button>
+    </div>
+    <button id="btnClientInfo" onclick="showForm()">معلومات العميل</button>
   </div>
 
   <div id="home" class="tabContent active">
     <h2 style="text-align:center; font-weight:bold; color:#8B0000;">شركة عدن الوطنية للصناعات المنزلية</h2>
-    <button onclick="showForm()">معلومات العميل</button>
-    <p style="text-align:center">مرحباً بكم في الموقع الرسمي لطلب المبيعات والمرتجعات.</p>
+    <p style="text-align:center; line-height:1.6; max-width:900px; margin:auto; padding:10px 20px;">
+      عن عدن للبلاستيك<br />
+      تعد شركة عدن الوطنية للصناعات المنزلية المحدودة - المعروفة اختصاراً بـ " عدن بلاستيك"- واحدة من الشركات الصناعية الرائدة في مجال إنتاج الأدوات المنزلية وأدوات التعبية والتغليف بالإضافة لمستلزمات الأثاث المنزلي. منذ بدايتها الأولى عمدت شركة عدن إلى التميز من خلال التركيز على جودة منتجاتها وإرضاء عملائها، ولتحقيق ذلك عملت الشركة على تشجيع التجديد والابتكار في المنتجات وترسيخ ثقافة الاهتمام بالعميل، وبذلك وضعت شركة عدن نفسها كواحدة من الشركات الرائدة في هذا المجال بفضل اتباع سياستي الاهتمام بالمنتج والعميل. تعتز شركة عدن أن منتجاتها تصنع من مواد خام أولية عالية الجودة تجلب من كبريات الشركات في هذه المجال، وتسويق منتجاتها في كل أرجاء اليمن من خلال شبكة واسعة من الموزعين ونقاط البيع، كما تستهدف الشركة الأسواق المجاورة في منطقة الخليج والقرن الأفريقي، وتشمل منتجاتها على سبيل المثال لا الحصر البراميل، البوالد، السلات، حافظات الأطعمة، الصناديق، رفوف المطبخ، الكراسي والطاولات وغيرها. تضع شركة عدن الوطنية موضوع الاستدامة في مقدمة أولوياتها، حيث تعمل جاهدة للحفاظ على البيئة والارتقاء بالجانب التصنيعي من خلال تقليل استنزاف الموارد واستخدام التكنولوجيا الحديثة بالإضافة إلى التحول إلى خيارات الطاقة البديلة.
+    </p>
   </div>
 
   <div id="sales" class="tabContent">
+    <h2 style="text-align:center; color:#8B0000; margin-bottom:15px;">قسم الطلبات</h2>
     <div id="toolbar"></div>
     <div class="client-info" id="clientInfoSales"></div>
     <div id="items"></div>
