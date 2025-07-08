@@ -1,0 +1,272 @@
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>شركة عدن الوطنية للصناعات المنزلية</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js">
+function sendFloatingWhatsapp() {
+  const activeTab = document.querySelector('.tabBtn.active')?.dataset.tab;
+  if (activeTab === 'returns') {
+    sendReturnsToWhatsApp();
+  } else {
+    sendToWhatsApp();
+  }
+}
+
+</script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js">
+function sendFloatingWhatsapp() {
+  const activeTab = document.querySelector('.tabBtn.active')?.dataset.tab;
+  if (activeTab === 'returns') {
+    sendReturnsToWhatsApp();
+  } else {
+    sendToWhatsApp();
+  }
+}
+
+</script>
+  <style>
+    body { font-family: 'Times New Roman', Times, serif; background: #FFFFF0; margin: 0; color: #000; padding-top: 100px; }
+    #tabBar { position: fixed; top: 0; left: 0; right: 0; height: 60px; background: #E41B17; display: flex; justify-content: space-around; align-items: center; z-index: 10000; }
+    #tabBar button { background: none; border: none; color: #FFFFF0; font-weight: bold; font-size: 18px; cursor: pointer; padding: 10px 15px; border-bottom: 3px solid transparent; transition: border-bottom-color 0.3s ease; }
+    #tabBar button.active { border-bottom-color: #8B0000; }
+    .tabContent { display: none; max-width: 1000px; margin: auto; padding: 20px; color: #000; }
+    .tabContent.active { display: block; }
+    #toolbar, #returnsToolbar { display: flex; justify-content: center; gap: 15px; margin-bottom: 10px; }
+    #toolbar button, #returnsToolbar button { background-color: #E41B17; color: white; padding: 10px 20px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; }
+    #returnsToolbar button:nth-child(2) { background-color: #8B0000; }
+    .item { background: #fff; margin: 10px auto; padding: 10px; border-radius: 10px; box-shadow: 0 0 5px #ccc; display: flex; border: 2px solid #E41B17; align-items: center; gap: 15px; max-width: 900px; color: #8B0000; }
+    .item img { width: 120px; height: 120px; object-fit: contain; border-radius: 6px; border: 3px solid #E41B17; cursor: pointer; transition: border-color 0.3s ease; }
+    .item-details { flex-grow: 1; text-align: right; }
+    .item-qty input { width: 70px; }
+  
+#floatingWhatsapp {
+  position: fixed;
+  top: 65px;
+  left: 10px;
+  z-index: 10001;
+  background-color: #25D366;
+  color: white;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 50px;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+#floatingWhatsapp:hover {
+  background-color: #1ebe57;
+}
+.client-info {
+  background: #f9f9f9;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 10px;
+  margin-bottom: 15px;
+  font-size: 14px;
+  line-height: 1.6;
+  color: #333;
+}
+</style>
+</head>
+<body>
+  <button id="floatingWhatsapp" onclick="sendFloatingWhatsapp()">📤 إرسال واتساب</button>
+  <div id="tabBar">
+    <button class="tabBtn active" data-tab="home">الرئيسية</button>
+    <button class="tabBtn" data-tab="sales">مبيعات</button>
+    <button class="tabBtn" data-tab="returns">مرتجعات</button>
+  </div>
+
+  <div id="home" class="tabContent active">
+    <h2 style="text-align:center; font-weight:bold; color:#8B0000;">شركة عدن الوطنية للصناعات المنزلية</h2>
+    <button onclick="showForm()">معلومات العميل</button>
+    <p style="text-align:center">مرحباً بكم في الموقع الرسمي لطلب المبيعات والمرتجعات.</p>
+  </div>
+
+  <div id="sales" class="tabContent">
+    <div id="toolbar">
+      </div>
+    <div class="client-info" id="clientInfoSales"></div>
+    <div id="items"></div>
+  </div>
+
+  <div id="returns" class="tabContent">
+    <h3 style="text-align:center;">قسم المرتجعات</h3>
+    
+    <div class="client-info" id="clientInfoReturns"></div>
+    <div id="returnsItems"></div>
+  </div>
+
+  <div id="overlay" style="display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.5); justify-content:center; align-items:center;">
+    <div style="background:#fff; padding:20px; border-radius:10px;">
+      <h3>معلومات العميل</h3>
+      <input id="fullName" placeholder="الاسم الرباعي" /><br />
+      <input id="businessName" placeholder="الاسم التجاري" /><br />
+      <input id="address" placeholder="العنوان" /><br />
+      <input id="phone" placeholder="رقم الهاتف" /><br />
+      <button onclick="saveCustomerInfo()">حفظ</button>
+    </div>
+  </div>
+
+  <script>
+    const tabs = document.querySelectorAll('.tabBtn');
+    const contents = document.querySelectorAll('.tabContent');
+    tabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        tabs.forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        contents.forEach(c => c.classList.toggle('active', c.id === tab.dataset.tab));
+      });
+    });
+
+    let customer = null;
+    let itemsData = [];
+
+    document.addEventListener('DOMContentLoaded', () => {
+      loadCustomerInfo();
+      fetchCSV();
+    });
+
+    function fetchCSV() {
+      fetch('https://raw.githubusercontent.com/T772299420/Aden_plaste/main/Data.csv')
+        .then(res => res.text())
+        .then(csvText => {
+          const wb = XLSX.read(csvText, { type: 'string' });
+          const sheet = wb.Sheets[wb.SheetNames[0]];
+          itemsData = XLSX.utils.sheet_to_json(sheet);
+          displayItems(itemsData);
+          displayReturns(itemsData);
+        });
+    }
+
+    function displayItems(items) {
+      const container = document.getElementById('items');
+      container.innerHTML = '';
+      items.forEach(item => {
+        const image = item.image?.trim();
+        const name = item.name?.trim();
+        const div = document.createElement('div');
+        div.className = 'item';
+        div.innerHTML = `<img src="https://raw.githubusercontent.com/T772299420/Aden_plaste/main/${image}" /><div class="item-details"><p>${name}</p><label>الكمية: <input type="number" min="0" value="0" data-name="${name}" /></label></div>`;
+        container.appendChild(div);
+      });
+    }
+
+    function displayReturns(items) {
+      const container = document.getElementById('returnsItems');
+      container.innerHTML = '';
+      items.forEach(item => {
+        const image = item.image?.trim();
+        const name = item.name?.trim();
+        const div = document.createElement('div');
+        div.className = 'item';
+        div.innerHTML = `<img src="https://raw.githubusercontent.com/T772299420/Aden_plaste/main/${image}" /><div class="item-details"><p>${name}</p><label>الكمية المرتجعة: <input type="number" min="0" value="0" data-name="${name}" /></label></div>`;
+        container.appendChild(div);
+      });
+    }
+
+    function showForm() {
+      document.getElementById('overlay').style.display = 'flex';
+      if (customer) {
+        document.getElementById('fullName').value = customer.fullName;
+        document.getElementById('businessName').value = customer.businessName;
+        document.getElementById('address').value = customer.address;
+        document.getElementById('phone').value = customer.phone;
+      }
+    }
+
+    function saveCustomerInfo() {
+      customer = {
+        fullName: document.getElementById('fullName').value,
+        businessName: document.getElementById('businessName').value,
+        address: document.getElementById('address').value,
+        phone: document.getElementById('phone').value
+      };
+      localStorage.setItem('customerInfo', JSON.stringify(customer));
+      document.getElementById('overlay').style.display = 'none';
+  updateClientInfoUI();
+    }
+
+    
+function updateClientInfoUI() {
+  if (!customer) return;
+  const infoHTML = `
+    <strong>العميل:</strong> ${customer.fullName} |
+    <strong>الاسم التجاري:</strong> ${customer.businessName} |
+    <strong>العنوان:</strong> ${customer.address} |
+    <strong>الهاتف:</strong> ${customer.phone}
+  `;
+  const salesInfo = document.getElementById("clientInfoSales");
+  const returnsInfo = document.getElementById("clientInfoReturns");
+  if (salesInfo) salesInfo.innerHTML = infoHTML;
+  if (returnsInfo) returnsInfo.innerHTML = infoHTML;
+}
+
+function loadCustomerInfo() {
+
+      const saved = localStorage.getItem('customerInfo');
+      if (saved) { customer = JSON.parse(saved); updateClientInfoUI(); }
+    }
+
+    function sendToWhatsApp() {
+      if (!customer) return showForm();
+      let message = `طلب من: ${customer.fullName}\nالاسم التجاري: ${customer.businessName}\nالعنوان: ${customer.address}\nرقم الهاتف: ${customer.phone}\n\nتفاصيل الطلب:\n`;
+      document.querySelectorAll('#items input[type=number]').forEach(input => {
+        const val = parseInt(input.value);
+        if (val > 0) message += `${input.dataset.name}: ${val}\n`;
+      });
+      const url = `https://wa.me/967772299420?text=${encodeURIComponent(message)}`;
+      window.open(url, '_blank');
+    }
+
+    async function printPDF() {
+      if (!customer) return showForm();
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF();
+      doc.text(`طلب مبيعات - ${customer.fullName}`, 20, 20);
+      let y = 40;
+      document.querySelectorAll('#items input[type=number]').forEach(input => {
+        const val = parseInt(input.value);
+        if (val > 0) doc.text(`${input.dataset.name}: ${val}`, 20, y += 10);
+      });
+      doc.save('طلب_مبيعات.pdf');
+    }
+
+    function sendReturnsToWhatsApp() {
+      if (!customer) return showForm();
+      let message = `مرتجعات من: ${customer.fullName}\nالاسم التجاري: ${customer.businessName}\nالعنوان: ${customer.address}\nرقم الهاتف: ${customer.phone}\n\nتفاصيل المرتجعات:\n`;
+      document.querySelectorAll('#returnsItems input[type=number]').forEach(input => {
+        const val = parseInt(input.value);
+        if (val > 0) message += `🔁 ${input.dataset.name}: ${val}\n`;
+      });
+      const url = `https://wa.me/967772299420?text=${encodeURIComponent(message)}`;
+      window.open(url, '_blank');
+    }
+
+    async function printReturnsPDF() {
+      if (!customer) return showForm();
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF();
+      doc.text(`مرتجعات - ${customer.fullName}`, 20, 20);
+      let y = 40;
+      document.querySelectorAll('#returnsItems input[type=number]').forEach(input => {
+        const val = parseInt(input.value);
+        if (val > 0) doc.text(`${input.dataset.name}: ${val}`, 20, y += 10);
+      });
+      doc.save('مرتجعات_العميل.pdf');
+    }
+  
+function sendFloatingWhatsapp() {
+  const activeTab = document.querySelector('.tabBtn.active')?.dataset.tab;
+  if (activeTab === 'returns') {
+    sendReturnsToWhatsApp();
+  } else {
+    sendToWhatsApp();
+  }
+}
+
+</script>
+</body>
+</html>
