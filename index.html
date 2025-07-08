@@ -120,10 +120,10 @@
 <body>
   <div id="tabBar">
     <div id="tabsGroup">
-      <button class="tabBtn active" data-tab="home">الرئيسية</button>
-      <button class="tabBtn" data-tab="sales">قسم الطلبات</button>
-      <button class="tabBtn" data-tab="returns">قسم المرتجعات</button>
-      <button class="tabBtn" data-tab="client">بيانات العميل</button>
+      <button class="tabBtn active" data-tab="home">عنا</button>
+      <button class="tabBtn" data-tab="sales">طلبات</button>
+      <button class="tabBtn" data-tab="returns">مرتجعات</button>
+      <button class="tabBtn" data-tab="client"> العميل</button>
     </div>
   </div>
 
@@ -281,7 +281,7 @@
     }
 
     function loadAddressDescription() {
-      fetch('https://raw.githubusercontent.com/T772299420/Aden_plaste/main/address.csv')
+      fetch('https://raw.githubusercontent.com/T772299420/Aden_plaste/main/address.scv')
         .then(res => res.text())
         .then(text => {
           const lines = text.split("\n");
@@ -299,4 +299,4 @@
     });
   </script>
 </body>
-      </html>
+  </html>
