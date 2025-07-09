@@ -148,6 +148,11 @@
         const name = item.name?.trim();
         let image = item.image?.trim() || '';
         if (!image.includes('.')) image += '.jpg';
+          
+        <img src="https://raw.githubusercontent.com/T772299420/Aden_plaste/main/${image}" alt="${name}" />
+          <div class="item-details">
+            <p>${name}</p>
+      
         const imgUrl = `https://raw.githubusercontent.com/T772299420/Aden_plaste/main/${image}`;
         const noteField = isReturn ? `<label>ملاحظة: <input readonly onclick="openNoteDialog(this)" placeholder='اضغط لإدخال ملاحظة' class='note-input'/></label>` : '';
         container.innerHTML += `
