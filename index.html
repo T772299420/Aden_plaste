@@ -4,29 +4,38 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>شركة عدن الوطنية للصناعات المنزلية</title>
+
+  <!-- استدعاء أيقونات Font Awesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+  <!-- مكتبة xlsx لتحليل ملفات Excel/CSV -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+  <!-- تنسيقات CSS الأساسية للموقع -->
   <style>
     body {
       font-family: 'Times New Roman', serif;
-      background: #FFFFF0;
+      background: #FFFFF0; /* لون خلفية فاتح */
       margin: 0;
       color: #000;
-      padding-top: 60px;
+      padding-top: 20px; /* مساحة فوق لتفادي شريط التبويبات */
     }
+
+    /* شريط التبويبات العلوي */
     #tabBar {
       position: fixed;
       top: 0; left: 0; right: 0;
-      height: 60px;
+      height: 50px;
       background: linear-gradient(to right, #E41B17, #8B0000);
       display: flex;
       justify-content: center;
-      gap: 20px;
+      gap: 10px;
       align-items: center;
       z-index: 10000;
-      /* ترتيب من اليمين لليسار */
-      flex-direction: row-reverse;
+      flex-direction: row; /* لعرض الأزرار من اليمين */
     }
+
+    /* أزرار التبويبات */
     #tabBar button {
       background: transparent;
       border: none;
@@ -38,12 +47,16 @@
       border-radius: 6px;
       transition: background-color 0.3s ease;
     }
+
+    /* تبويب نشط أو عند المرور */
     #tabBar button.active,
     #tabBar button:hover {
       background: #fff;
       color: #8B0000;
       box-shadow: 0 0 8px #fff;
     }
+
+    /* محتوى كل تبويب */
     .tabContent {
       display: none;
       max-width: 1000px;
@@ -51,9 +64,12 @@
       padding: 20px;
       color: #000;
     }
+
     .tabContent.active {
       display: block;
     }
+
+    /* تنسيق عنصر صنف منتج */
     .item {
       background: #fff;
       margin: 10px auto;
@@ -68,28 +84,35 @@
       color: #8B0000;
       flex-wrap: wrap;
     }
+
+    /* صورة المنتج */
     .item img {
       width: 120px;
       height: auto;
-      max-height: 30vw;
-      max-width: 100%;
+      max-height: 300vw;
       object-fit: contain;
       border-radius: 6px;
       border: 3px solid #E41B17;
     }
+
+    /* تفاصيل المنتج */
     .item-details {
       flex-grow: 1;
       text-align: right;
     }
+
     .item-details p {
       margin: 0 0 8px 0;
       font-weight: bold;
     }
+
+    /* تنسيق حقول الإدخال */
     .item-details label {
       display: block;
       margin-bottom: 6px;
       font-weight: normal;
     }
+
     .note-input {
       width: 100%;
       cursor: pointer;
@@ -100,6 +123,8 @@
       color: #8B0000;
       font-size: 14px;
     }
+
+    /* زر واتساب */
     .whatsapp-button {
       display: block;
       margin: 20px auto;
@@ -113,6 +138,8 @@
       cursor: pointer;
       max-width: 300px;
     }
+
+    /* خلفية النماذج */
     #overlay {
       position: fixed;
       top: 0; left: 0; right: 0; bottom: 0;
@@ -122,6 +149,8 @@
       align-items: center;
       z-index: 100000;
     }
+
+    /* نافذة النموذج المنبثقة */
     #formModal {
       background: #fff;
       padding: 20px;
@@ -131,6 +160,7 @@
       text-align: center;
       color: #000;
     }
+
     #formModal input {
       width: 90%;
       margin: 10px 0;
@@ -141,6 +171,7 @@
       color: #000;
       direction: rtl;
     }
+
     #formModal button {
       margin-top: 15px;
       padding: 12px 30px;
@@ -152,7 +183,8 @@
       font-size: 16px;
       cursor: pointer;
     }
-    /* نص تبويب "عنا" */
+
+    /* تنسيق تبويب "عنا" */
     #about p {
       max-width: 800px;
       margin: auto;
@@ -161,12 +193,14 @@
       color: #333;
       margin-bottom: 15px;
     }
+
     #about h3 {
       color: #8B0000;
       text-align: center;
       margin-top: 30px;
       margin-bottom: 10px;
     }
+
     #about p.contact {
       text-align: center;
       color: #333;
@@ -174,6 +208,8 @@
   </style>
 </head>
 <body>
+
+  <!-- أزرار التبويبات الرئيسية -->
   <div id="tabBar">
     <button class="tabBtn active" data-tab="about">عنا</button>
     <button class="tabBtn" data-tab="client">بيانات العميل</button>
@@ -181,6 +217,7 @@
     <button class="tabBtn" data-tab="returns">مرتجعات</button>
   </div>
 
+  <!-- تبويب عنا -->
   <div id="about" class="tabContent active">
     <h2 style="text-align:center; color:#8B0000;">عن عدن للبلاستيك</h2>
     <div id="aboutContent">
@@ -188,6 +225,7 @@
     </div>
   </div>
 
+  <!-- تبويب بيانات العميل -->
   <div id="client" class="tabContent">
     <h2 style="text-align:center; color:#8B0000;">بيانات العميل</h2>
     <div id="clientData">
@@ -199,19 +237,21 @@
     <button class="whatsapp-button" onclick="showCustomerForm()">تعديل بيانات العميل</button>
   </div>
 
+  <!-- تبويب الطلبات -->
   <div id="sales" class="tabContent">
     <h2 style="text-align:center; color:#8B0000;">قسم الطلبات</h2>
     <div id="salesItems"></div>
     <button class="whatsapp-button" onclick="sendToWhatsApp()">📤 إرسال الطلب عبر واتساب</button>
   </div>
 
+  <!-- تبويب المرتجعات -->
   <div id="returns" class="tabContent">
     <h2 style="text-align:center; color:#8B0000;">قسم المرتجعات</h2>
     <div id="returnsItems"></div>
     <button class="whatsapp-button" onclick="sendReturnsToWhatsApp()">🔁 إرسال المرتجعات عبر واتساب</button>
   </div>
 
-  <!-- نموذج بيانات العميل -->
+  <!-- نافذة تسجيل بيانات العميل -->
   <div id="overlay">
     <div id="formModal">
       <h3>تسجيل معلومات العميل</h3>
@@ -223,7 +263,9 @@
     </div>
   </div>
 
+  <!-- كود JavaScript لإدارة التفاعل -->
   <script>
+    // التبديل بين التبويبات
     const tabs = document.querySelectorAll('#tabBar button');
     const contents = document.querySelectorAll('.tabContent');
 
@@ -239,15 +281,15 @@
     let customer = null;
     let itemsData = [];
 
+    // تحميل البيانات عند بداية الصفحة
     document.addEventListener('DOMContentLoaded', () => {
       loadCustomerInfo();
-      fetchCSV();
-      loadAboutTextFromCSV();
-      // التبويب الافتراضي "عنا"
-      tabs[0].click();
+      fetchCSV(); // تحميل الأصناف
+      loadAboutTextFromCSV(); // تحميل نص "عنا"
+      tabs[0].click(); // فتح تبويب "عنا"
     });
 
-    // تحميل نص "عنا" من ملف CSV
+    // تحميل نص "عنا" من CSV
     function loadAboutTextFromCSV() {
       fetch('https://raw.githubusercontent.com/T772299420/Aden_plaste/main/address.csv')
         .then(res => res.text())
@@ -266,7 +308,7 @@
         });
     }
 
-    // تحميل بيانات الأصناف من Data.csv
+    // تحميل ملف الأصناف
     function fetchCSV() {
       fetch('https://raw.githubusercontent.com/T772299420/Aden_plaste/main/Data.csv')
         .then(res => res.text())
@@ -283,6 +325,7 @@
         });
     }
 
+    // عرض الأصناف في تبويب الطلبات
     function renderSalesItems() {
       const container = document.getElementById('salesItems');
       container.innerHTML = '';
@@ -302,6 +345,7 @@
       });
     }
 
+    // عرض الأصناف في تبويب المرتجعات
     function renderReturnsItems() {
       const container = document.getElementById('returnsItems');
       container.innerHTML = '';
@@ -322,11 +366,13 @@
       });
     }
 
+    // إدخال ملاحظة للمرتجع
     function openNoteDialog(input) {
       const note = prompt('أدخل سبب الإرجاع أو الملاحظة:');
       if (note !== null) input.value = note;
     }
 
+    // تحميل بيانات العميل من التخزين المحلي
     function loadCustomerInfo() {
       const saved = localStorage.getItem('customerInfo');
       if (saved) {
@@ -337,6 +383,7 @@
       }
     }
 
+    // عرض بيانات العميل
     function displayCustomerInfo() {
       document.getElementById('dispFullName').textContent = customer.fullName || '';
       document.getElementById('dispBusinessName').textContent = customer.businessName || '';
@@ -344,6 +391,7 @@
       document.getElementById('dispPhone').textContent = customer.phone || '';
     }
 
+    // عرض نموذج إدخال بيانات العميل
     function showCustomerForm() {
       if(customer) {
         document.getElementById('fullName').value = customer.fullName || '';
@@ -354,6 +402,7 @@
       document.getElementById('overlay').style.display = 'flex';
     }
 
+    // حفظ بيانات العميل في localStorage
     function saveCustomerInfo() {
       const fullName = document.getElementById('fullName').value.trim();
       const businessName = document.getElementById('businessName').value.trim();
@@ -372,12 +421,14 @@
       alert('تم حفظ بيانات العميل');
     }
 
+    // إرسال الطلب عبر واتساب
     function sendToWhatsApp() {
       if (!customer) {
         alert('يرجى تعبئة بيانات العميل أولاً.');
         showCustomerForm();
         return;
       }
+
       let message = `طلب من: ${customer.fullName}\n`;
       message += `الاسم التجاري: ${customer.businessName}\n`;
       message += `العنوان: ${customer.address}\n`;
@@ -385,6 +436,7 @@
       message += 'تفاصيل الطلب:\n';
 
       let hasOrder = false;
+
       document.querySelectorAll('#salesItems .item').forEach(item => {
         const name = item.querySelector('input[type=number]').dataset.name;
         const qty = parseInt(item.querySelector('input[type=number]').value) || 0;
@@ -405,12 +457,14 @@
       window.open(url, '_blank');
     }
 
+    // إرسال المرتجعات عبر واتساب
     function sendReturnsToWhatsApp() {
       if (!customer) {
         alert('يرجى تعبئة بيانات العميل أولاً.');
         showCustomerForm();
         return;
       }
+
       let message = `مرتجعات من: ${customer.fullName}\n`;
       message += `الاسم التجاري: ${customer.businessName}\n`;
       message += `العنوان: ${customer.address}\n`;
@@ -418,6 +472,7 @@
       message += 'تفاصيل المرتجعات:\n';
 
       let hasReturns = false;
+
       document.querySelectorAll('#returnsItems .item').forEach(item => {
         const name = item.querySelector('input[type=number]').dataset.name;
         const qty = parseInt(item.querySelector('input[type=number]').value) || 0;
@@ -442,4 +497,4 @@
     }
   </script>
 </body>
-</html>
+  </html>
