@@ -96,6 +96,9 @@
     }
     .btn-yes { background-color: #28a745; color: white; }
     .btn-no { background-color: #dc3545; color: white; }
+    mark {
+      background: yellow; color: black; padding: 0 4px;
+    }
   </style>
 </head>
 <body>
@@ -122,43 +125,42 @@
       <label>الاسم الرباعي:</label><input type="text" id="clientFullName" /><br><br>
       <label>الاسم التجاري:</label><input type="text" id="clientTradeName" /><br><br>
       <label>عنوان المحل:</label><input type="text" id="clientAddress" /><br><br>
-      <label>رقم الهاتف:</label><input type="text" id="clientPhone" dir="ltr"  /><br><br>
+      <label>رقم الهاتف:</label><input type="text" id="clientPhone" dir="ltr" /><br><br>
       <button id="saveClientInfoBtn" class="btn-yes">💾 حفظ البيانات</button>
     </div>
   </div>
-
-  <!-- نوافذ الملاحظات -->
-  <div id="itemNoteModal" class="modal">
-    <div class="modal-content">
-      <h3>أدخل ملاحظتك لهذا الصنف</h3>
-      <textarea id="itemNoteTextarea" placeholder="اكتب ملاحظتك هنا..."></textarea>
-      <div class="modal-buttons">
-        <button class="btn-yes" id="saveItemNoteBtn">حفظ</button>
-        <button class="btn-no" id="cancelItemNoteBtn">إلغاء</button>
-      </div>
+  <!-- النوافذ -->
+<div id="itemNoteModal" class="modal">
+  <div class="modal-content">
+    <h3>أدخل ملاحظتك لهذا الصنف</h3>
+    <textarea id="itemNoteTextarea" placeholder="اكتب ملاحظتك هنا..."></textarea>
+    <div class="modal-buttons">
+      <button class="btn-yes" id="saveItemNoteBtn">حفظ</button>
+      <button class="btn-no" id="cancelItemNoteBtn">إلغاء</button>
     </div>
   </div>
+</div>
 
-  <div id="noteModal" class="modal">
-    <div class="modal-content">
-      <p>هل ترغب في إضافة ملاحظة على الطلب؟</p>
-      <div class="modal-buttons">
-        <button class="btn-yes" id="btnAddNote">نعم</button>
-        <button class="btn-no" id="btnSendWithoutNote">لا</button>
-      </div>
+<div id="noteModal" class="modal">
+  <div class="modal-content">
+    <p>هل ترغب في إضافة ملاحظة على الطلب؟</p>
+    <div class="modal-buttons">
+      <button class="btn-yes" id="btnAddNote">نعم</button>
+      <button class="btn-no" id="btnSendWithoutNote">لا</button>
     </div>
   </div>
+</div>
 
-  <div id="inputNoteModal" class="modal">
-    <div class="modal-content">
-      <p>أدخل ملاحظتك على الطلب:</p>
-      <textarea id="orderNote" placeholder="اكتب ملاحظاتك هنا..."></textarea>
-      <div class="modal-buttons">
-        <button class="btn-yes" id="btnSendWithNote">إرسال الطلب</button>
-        <button class="btn-no" id="btnCancelNote">إلغاء</button>
-      </div>
+<div id="inputNoteModal" class="modal">
+  <div class="modal-content">
+    <p>أدخل ملاحظتك على الطلب:</p>
+    <textarea id="orderNote" placeholder="اكتب ملاحظاتك هنا..."></textarea>
+    <div class="modal-buttons">
+      <button class="btn-yes" id="btnSendWithNote">إرسال الطلب</button>
+      <button class="btn-no" id="btnCancelNote">إلغاء</button>
     </div>
   </div>
+</div>
 
 <script>
 let itemsData = [];
@@ -166,6 +168,7 @@ let savedQuantities = JSON.parse(localStorage.getItem('selectedQuantities') || '
 let savedItemNotes = JSON.parse(localStorage.getItem('itemNotes') || '{}');
 let clientInfo = JSON.parse(localStorage.getItem('clientInfo') || '{}');
 let currentNoteItem = null;
+let currentKeyword = '';
 
 document.addEventListener('DOMContentLoaded', () => {
   fetch('https://raw.githubusercontent.com/T772299420/Aden_plaste/main/data%20(7).csv')
@@ -178,306 +181,248 @@ document.addEventListener('DOMContentLoaded', () => {
         headers.forEach((h, i) => obj[h.trim().toLowerCase()] = row[i]?.trim() || '');
         return obj;
       });
-      // عند تحميل البيانات، نتحقق إذا هناك كميات محفوظة
+
+      const clientName = clientInfo.fullName || 'العميل';
+      const tradeName = clientInfo.tradeName || '';
       if (Object.keys(savedQuantities).length > 0) {
-        // عرض رسالة سؤال للمستخدم
-        const clientName = clientInfo.fullName || 'العميل';
-        const tradeName = clientInfo.tradeName || '';
-        if(confirm(`العميل / ${clientName} - ${tradeName}\nيوجد لديك طلب محفوظ من قبل. هل ترغب بإنشاء طلب جديد؟`)) {
+        if (confirm(`العميل / ${clientName} - ${tradeName}\nيوجد لديك طلب محفوظ من قبل. هل ترغب بإنشاء طلب جديد؟`)) {
           clearOrder();
-        } else {
-          renderSalesItems(true); // عرض الأصناف المختارة فقط
         }
-      } else {
-        renderSalesItems();
       }
+
+      renderSalesItems();
       fillClientInputs();
       updateButtonsVisibility();
     });
 
-  
-  
-    // تحميل بيانات الأصناف من ملف CSV على GitHub
-    fetch('https://raw.githubusercontent.com/T772299420/Aden_plaste/main/data%20(7).csv')
-      .then(res => res.text())
-      .then(text => {
-        const rows = text.trim().split('\n').map(row => row.split(','));
-        const headers = rows.shift();
-        itemsData = rows.map(row => {
-          const obj = {};
-          headers.forEach((h, i) => obj[h.trim().toLowerCase()] = row[i]?.trim() || '');
-          return obj;
-        });
-
-        // عند وجود طلب محفوظ سابقاً
-        if (Object.keys(savedQuantities).length > 0) {
-          const clientName = clientInfo.fullName || 'العميل';
-          const tradeName = clientInfo.tradeName || '';
-          if (confirm(`العميل / ${clientName} - ${tradeName}\nيوجد لديك طلب محفوظ من قبل. هل ترغب بإنشاء طلب جديد؟`)) {
-            clearOrder();
-            renderSalesItems();
-          } else {
-            renderSalesItems(true); // عرض الأصناف المختارة فقط
-          }
-        } else {
-          renderSalesItems();
-        }
-
-        fillClientInputs();
-        updateButtonsVisibility();
-      });
-
-    // حفظ بيانات العميل عند الضغط على زر الحفظ
-    document.getElementById('saveClientInfoBtn').onclick = () => {
-      clientInfo = {
-        fullName: document.getElementById('clientFullName').value.trim(),
-        tradeName: document.getElementById('clientTradeName').value.trim(),
-        address: document.getElementById('clientAddress').value.trim(),
-        phone: document.getElementById('clientPhone').value.trim(),
-      };
-      localStorage.setItem('clientInfo', JSON.stringify(clientInfo));
-      alert("تم حفظ بيانات العميل");
-    };
-
-    // التبديل بين التبويبات
-    document.querySelectorAll('.tabBtn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        document.querySelectorAll('.tabBtn').forEach(b => b.classList.remove('active'));
-        document.querySelectorAll('.tabContent').forEach(tab => tab.classList.remove('active'));
-        btn.classList.add('active');
-        document.getElementById(btn.dataset.tab).classList.add('active');
-      });
-    });
-
-    // زر البحث
-    document.getElementById('searchBtn').onclick = () => {
-      const keyword = document.getElementById('searchInput').value.trim().toLowerCase();
-      if (!keyword) renderSalesItems();
-      else filterItems(keyword);
-    };
-
-    // زر طلب جديد (مسح الطلب الحالي)
-    document.getElementById('btnNewOrder').onclick = () => {
-      if (confirm("هل أنت متأكد من بدء طلب جديد؟ سيتم مسح الكميات والملاحظات.")) {
-        clearOrder();
-        renderSalesItems();
-        updateButtonsVisibility();
-      }
-    };
-
-    // زر عرض الطلب (عرض رسالة بالطلب الحالي)
-    document.getElementById('showOrderBtn').onclick = () => {
-      const items = Object.keys(savedQuantities);
-      if (!items.length) return alert("لا توجد أصناف.");
-      let msg = "الطلب الحالي:\n\n";
-      items.forEach(name => {
-        msg += `- ${name}: ${savedQuantities[name]}`;
-        if (savedItemNotes[name]) msg += ` (ملاحظة: ${savedItemNotes[name]})`;
-        msg += '\n';
-      });
-      alert(msg);
-    };
-
-    // زر إرسال الطلب عبر واتساب
-    document.getElementById('whatsappBtn').onclick = () => {
-      if (!Object.keys(savedQuantities).length) return alert("لا توجد أصناف.");
-      document.getElementById('noteModal').style.display = 'flex';
-    };
-
-    // التعامل مع نافذة ملاحظة عامة على الطلب
-    document.getElementById('btnAddNote').onclick = () => {
-      document.getElementById('noteModal').style.display = 'none';
-      document.getElementById('inputNoteModal').style.display = 'flex';
-    };
-    document.getElementById('btnSendWithoutNote').onclick = () => {
-      document.getElementById('noteModal').style.display = 'none';
-      sendOrderWhatsApp('');
-    };
-    document.getElementById('btnSendWithNote').onclick = () => {
-      const note = document.getElementById('orderNote').value.trim();
-      sendOrderWhatsApp(note);
-      document.getElementById('inputNoteModal').style.display = 'none';
-      document.getElementById('orderNote').value = '';
-    };
-    document.getElementById('btnCancelNote').onclick = () => {
-      document.getElementById('inputNoteModal').style.display = 'none';
-    };
-
-    // حفظ ملاحظات صنف محدد
-    document.getElementById('saveItemNoteBtn').onclick = () => {
-      const note = document.getElementById('itemNoteTextarea').value.trim();
-      if (note) savedItemNotes[currentNoteItem] = note;
-      else delete savedItemNotes[currentNoteItem];
-      localStorage.setItem('itemNotes', JSON.stringify(savedItemNotes));
-      document.getElementById('itemNoteModal').style.display = 'none';
-      renderSalesItems();
-    };
-    document.getElementById('cancelItemNoteBtn').onclick = () => {
-      document.getElementById('itemNoteModal').style.display = 'none';
-    };
+  document.getElementById('searchInput').addEventListener('input', (e) => {
+    currentKeyword = e.target.value.trim().toLowerCase();
+    if (!currentKeyword) renderSalesItems();
+    else filterItems(currentKeyword);
   });
 
-  // دوال أخرى خارج DOMContentLoaded (تستخدم من عدة أماكن)
+  document.getElementById('saveClientInfoBtn').onclick = () => {
+    clientInfo = {
+      fullName: document.getElementById('clientFullName').value.trim(),
+      tradeName: document.getElementById('clientTradeName').value.trim(),
+      address: document.getElementById('clientAddress').value.trim(),
+      phone: document.getElementById('clientPhone').value.trim(),
+    };
+    localStorage.setItem('clientInfo', JSON.stringify(clientInfo));
+    alert("تم حفظ بيانات العميل");
+  };
 
-  // عرض الأصناف مع الكميات والملاحظات
-  function renderSalesItems(showOnlySelected = false) {
-    const container = document.getElementById('salesItems');
-    container.innerHTML = '';
-    const groups = {};
-    let filteredItems = itemsData;
+  document.querySelectorAll('.tabBtn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.tabBtn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.tabContent').forEach(tab => tab.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById(btn.dataset.tab).classList.add('active');
+    });
+  });
 
-    if (showOnlySelected) {
-      filteredItems = itemsData.filter(item => savedQuantities[item.name]);
+  document.getElementById('btnNewOrder').onclick = () => {
+    if (confirm("هل أنت متأكد من بدء طلب جديد؟ سيتم مسح الكميات والملاحظات.")) {
+      clearOrder();
+      renderSalesItems();
+      updateButtonsVisibility();
     }
+  };
 
-    filteredItems.forEach(item => {
-      const group = item.group || "أخرى";
-      if (!groups[group]) groups[group] = [];
-      groups[group].push(item);
+  document.getElementById('showOrderBtn').onclick = () => {
+    const items = Object.keys(savedQuantities);
+    if (!items.length) return alert("لا توجد أصناف.");
+    let msg = "الطلب الحالي:\n\n";
+    items.forEach(name => {
+      msg += `- ${name}: ${savedQuantities[name]}`;
+      if (savedItemNotes[name]) msg += ` (ملاحظة: ${savedItemNotes[name]})`;
+      msg += '\n';
+    });
+    alert(msg);
+  };
+
+  document.getElementById('whatsappBtn').onclick = () => {
+    if (!Object.keys(savedQuantities).length) return alert("لا توجد أصناف.");
+    document.getElementById('noteModal').style.display = 'flex';
+  };
+
+  document.getElementById('btnAddNote').onclick = () => {
+    document.getElementById('noteModal').style.display = 'none';
+    document.getElementById('inputNoteModal').style.display = 'flex';
+  };
+  document.getElementById('btnSendWithoutNote').onclick = () => {
+    document.getElementById('noteModal').style.display = 'none';
+    sendOrderWhatsApp('');
+  };
+  document.getElementById('btnSendWithNote').onclick = () => {
+    const note = document.getElementById('orderNote').value.trim();
+    sendOrderWhatsApp(note);
+    document.getElementById('inputNoteModal').style.display = 'none';
+    document.getElementById('orderNote').value = '';
+  };
+  document.getElementById('btnCancelNote').onclick = () => {
+    document.getElementById('inputNoteModal').style.display = 'none';
+  };
+
+  document.getElementById('saveItemNoteBtn').onclick = () => {
+    const note = document.getElementById('itemNoteTextarea').value.trim();
+    if (note) savedItemNotes[currentNoteItem] = note;
+    else delete savedItemNotes[currentNoteItem];
+    localStorage.setItem('itemNotes', JSON.stringify(savedItemNotes));
+    document.getElementById('itemNoteModal').style.display = 'none';
+    renderSalesItems();
+  };
+  document.getElementById('cancelItemNoteBtn').onclick = () => {
+    document.getElementById('itemNoteModal').style.display = 'none';
+  };
+});
+
+function renderSalesItems() {
+  const container = document.getElementById('salesItems');
+  container.innerHTML = '';
+  const groups = {};
+
+  itemsData.forEach(item => {
+    const group = item.group || "أخرى";
+    if (!groups[group]) groups[group] = [];
+    groups[group].push(item);
+  });
+
+  Object.keys(groups).sort().forEach(group => {
+    const section = document.createElement('div');
+    section.classList.add('group-section', 'group-collapsed');
+
+    const header = document.createElement('div');
+    header.classList.add('group-header');
+    header.innerHTML = `<span>${group}</span><span class="group-arrow">▶️</span>`;
+    header.onclick = () => section.classList.toggle('group-collapsed');
+
+    const groupItems = document.createElement('div');
+    groupItems.classList.add('group-items');
+
+    groups[group].forEach(item => {
+      const name = item.name;
+      const unit = item.unit || 'درزن';
+      const image = item.image || '';
+      const imgUrl = `https://raw.githubusercontent.com/T772299420/Aden_plaste/main/${image}`;
+      const qty = savedQuantities[name] || '';
+      const note = savedItemNotes[name] || '';
+      const highlighted = qty ? 'highlighted' : '';
+
+      const card = document.createElement('div');
+      card.className = `item ${highlighted}`;
+      card.innerHTML = `
+        <div class="image-box"><img src="${imgUrl}" alt="${name}" /></div>
+        <div class="item-details">
+          <p>${highlightKeyword(name, currentKeyword)} (${unit})</p>
+          <div class="item-controls">
+            <label>الكمية:
+              <input type="number" dir="ltr" min="0" value="${qty}" data-name="${name}" oninput="onQuantityChange(this)" />
+            </label>
+            <button class="notes-btn" onclick="openItemNoteModal('${name}')">ملاحظات${note ? ' ✓' : ''}</button>
+          </div>
+        </div>`;
+      groupItems.appendChild(card);
     });
 
-    Object.keys(groups).sort().forEach(group => {
-      const section = document.createElement('div');
-      section.classList.add('group-section');
+    section.appendChild(header);
+    section.appendChild(groupItems);
 
-      const header = document.createElement('div');
-      header.classList.add('group-header');
-      header.innerHTML = `<span>${group}</span><span class="group-arrow">▶️</span>`;
-      header.onclick = () => section.classList.toggle('group-collapsed');
-
-      const groupItems = document.createElement('div');
-      groupItems.classList.add('group-items');
-
-      groups[group].forEach(item => {
-        const name = item.name;
-        const unit = item.unit || 'درزن';
-        const image = item.image || '';
-        const imgUrl = `https://raw.githubusercontent.com/T772299420/Aden_plaste/main/${image}`;
-        const qty = savedQuantities[name] || '';
-        const note = savedItemNotes[name] || '';
-        const highlighted = qty ? 'highlighted' : '';
-
-        const card = document.createElement('div');
-        card.className = `item ${highlighted}`;
-        card.setAttribute('data-name', name);
-
-        card.innerHTML = `
-          <div class="image-box"><img src="${imgUrl}" alt="${name}" /></div>
-          <div class="item-details">
-            <p>${name} (${unit})</p>
-            <div class="item-controls">
-              <label>الكمية:
-               <input type="number" dir="ltr" min="0" value="${qty}" data-name="${name}" oninput="onQuantityChange(this)" />
-              </label>
-              <button class="notes-btn" onclick="openItemNoteModal('${name}')">ملاحظات${note ? ' ✓' : ''}</button>
-            </div>
-          </div>`;
-        groupItems.appendChild(card);
-      });
-
-      section.appendChild(header);
-      section.appendChild(groupItems);
-      container.appendChild(section);
-    });
-  }
-
-  // فتح نافذة ملاحظة صنف معين
-  function openItemNoteModal(name) {
-    currentNoteItem = name;
-    document.getElementById('itemNoteTextarea').value = savedItemNotes[name] || '';
-    document.getElementById('itemNoteModal').style.display = 'flex';
-  }
-
-  // تحديث الكمية وحفظها عند تغيير المستخدم
-  function onQuantityChange(input) {
-    const qty = parseInt(input.value) || 0;
-    const name = input.dataset.name;
-    const itemCard = input.closest('.item');
-
-    if (qty > 0) {
-      savedQuantities[name] = qty;
-      itemCard.classList.add('highlighted');
-    } else {
-      delete savedQuantities[name];
-      delete savedItemNotes[name];
-      localStorage.setItem('itemNotes', JSON.stringify(savedItemNotes));
-      itemCard.classList.remove('highlighted');
-    }
-    localStorage.setItem('selectedQuantities', JSON.stringify(savedQuantities));
-    updateButtonsVisibility();
-  }
-
-  // تحديث إظهار أزرار الطلبات حسب وجود كميات
-  function updateButtonsVisibility() {
-    const visible = Object.keys(savedQuantities).length > 0;
-    document.getElementById('showOrderBtn').style.display = visible ? 'inline-block' : 'none';
-    document.getElementById('whatsappBtn').style.display = visible ? 'inline-block' : 'none';
-  }
-
-  // فلترة الأصناف بالبحث
-  function filterItems(keyword) {
-    const filtered = itemsData.filter(item => item.name.toLowerCase().includes(keyword));
-    if (filtered.length) {
-      renderSalesItems(false);
-    } else {
-      document.getElementById('salesItems').innerHTML = '<p>لا توجد نتائج مطابقة.</p>';
-    }
-  }
-
-  // تعبئة بيانات العميل في الحقول عند التحميل
-  function fillClientInputs() {
-    document.getElementById('clientFullName').value = clientInfo.fullName || '';
-    document.getElementById('clientTradeName').value = clientInfo.tradeName || '';
-    document.getElementById('clientAddress').value = clientInfo.address || '';
-    document.getElementById('clientPhone').value = clientInfo.phone || '';
-  }
-
-  // مسح الطلب الحالي (الكميات والملاحظات)
-  function clearOrder() {
-    savedQuantities = {};
-    savedItemNotes = {};
-    localStorage.removeItem('selectedQuantities');
-    localStorage.removeItem('itemNotes');
-    // طي المجموعات
-    document.querySelectorAll('.group-section').forEach(section => {
-      section.classList.add('group-collapsed');
-    });
-    updateButtonsVisibility();
-  }
-
-  // إرسال الطلب عبر واتساب مع ملاحظة اختيارية
-  function sendOrderWhatsApp(note) {
-    if (!clientInfo.phone) {
-      alert("يرجى إدخال رقم الهاتف في بيانات العميل");
-      return;
+    if (groups[group].some(i => i.name.toLowerCase().includes(currentKeyword))) {
+      section.classList.remove('group-collapsed');
     }
 
-    const today = new Date();
-    const formattedDate = today.toISOString().split('T')[0]; // yyyy-mm-dd
+    container.appendChild(section);
+  });
+}
 
-    let message = `أنا العميل / ${clientInfo.fullName || ''} - ${clientInfo.tradeName || ''}%0A`;
-    message += `عنواني / ${clientInfo.address || ''}%0A`;
-    message += `رقم هاتفي / ${clientInfo.phone || ''}%0A`;
-    message += `تاريخ الطلب / ${formattedDate}%0A`;
-    message += `__________________________%0A`;
-    message += `الاصناف المطلوبة:%0A`;
-    message += `__________________________%0A`;
+function highlightKeyword(text, keyword) {
+  if (!keyword) return text;
+  const regex = new RegExp(`(${keyword})`, 'gi');
+  return text.replace(regex, '<mark>$1</mark>');
+}
 
-    Object.keys(savedQuantities).forEach(name => {
-      const item = itemsData.find(i => i.name === name);
-      const unit = item?.unit || 'وحدة';
-      const qty = savedQuantities[name];
-      const noteItem = savedItemNotes[name] ? ` - ملاحظة: ${savedItemNotes[name]}` : '';
-      message += `- ${name} - ${unit} - ${qty}${noteItem}%0A`;
-    });
+function filterItems(keyword) {
+  renderSalesItems(); // سيأخذ الكلمة المفتاحية من المتغير
+}
 
-    if (note) {
-      message += `%0Aملاحظات عامة:%0A${encodeURIComponent(note)}`;
-    }
+function openItemNoteModal(name) {
+  currentNoteItem = name;
+  document.getElementById('itemNoteTextarea').value = savedItemNotes[name] || '';
+  document.getElementById('itemNoteModal').style.display = 'flex';
+}
 
-    const url = `https://wa.me/967772299420?text=${message}`;
-    window.open(url, '_blank');
+function onQuantityChange(input) {
+  const qty = parseInt(input.value) || 0;
+  const name = input.dataset.name;
+  const itemCard = input.closest('.item');
+
+  if (qty > 0) {
+    savedQuantities[name] = qty;
+    itemCard.classList.add('highlighted');
+  } else {
+    delete savedQuantities[name];
+    delete savedItemNotes[name];
+    itemCard.classList.remove('highlighted');
+    localStorage.setItem('itemNotes', JSON.stringify(savedItemNotes));
   }
+
+  localStorage.setItem('selectedQuantities', JSON.stringify(savedQuantities));
+  updateButtonsVisibility();
+}
+
+function updateButtonsVisibility() {
+  const visible = Object.keys(savedQuantities).length > 0;
+  document.getElementById('showOrderBtn').style.display = visible ? 'inline-block' : 'none';
+  document.getElementById('whatsappBtn').style.display = visible ? 'inline-block' : 'none';
+}
+
+function fillClientInputs() {
+  document.getElementById('clientFullName').value = clientInfo.fullName || '';
+  document.getElementById('clientTradeName').value = clientInfo.tradeName || '';
+  document.getElementById('clientAddress').value = clientInfo.address || '';
+  document.getElementById('clientPhone').value = clientInfo.phone || '';
+}
+
+function clearOrder() {
+  savedQuantities = {};
+  savedItemNotes = {};
+  localStorage.removeItem('selectedQuantities');
+  localStorage.removeItem('itemNotes');
+  updateButtonsVisibility();
+}
+
+function sendOrderWhatsApp(note) {
+  if (!clientInfo.phone) {
+    alert("يرجى إدخال رقم الهاتف في بيانات العميل");
+    return;
+  }
+
+  const today = new Date();
+  const formattedDate = today.toISOString().split('T')[0];
+
+  let message = `أنا العميل / ${clientInfo.fullName || ''} - ${clientInfo.tradeName || ''}%0A`;
+  message += `عنواني / ${clientInfo.address || ''}%0A`;
+  message += `رقم هاتفي / ${clientInfo.phone || ''}%0A`;
+  message += `تاريخ الطلب / ${formattedDate}%0A`;
+  message += `__________________________%0A`;
+  message += `الاصناف المطلوبة:%0A`;
+
+  Object.keys(savedQuantities).forEach(name => {
+    const item = itemsData.find(i => i.name === name);
+    const unit = item?.unit || 'وحدة';
+    const qty = savedQuantities[name];
+    const noteItem = savedItemNotes[name] ? ` - ملاحظة: ${savedItemNotes[name]}` : '';
+    message += `- ${name} - ${unit} - ${qty}${noteItem}%0A`;
+  });
+
+  if (note) {
+    message += `%0Aملاحظات عامة:%0A${encodeURIComponent(note)}`;
+  }
+
+  const url = `https://wa.me/967772299420?text=${message}`;
+  window.open(url, '_blank');
+}
 </script>
 </body>
-          </html>
+  </html>
