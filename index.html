@@ -4,497 +4,480 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>شركة عدن الوطنية للصناعات المنزلية</title>
-
-  <!-- استدعاء أيقونات Font Awesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-
-  <!-- مكتبة xlsx لتحليل ملفات Excel/CSV -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-
-  <!-- تنسيقات CSS الأساسية للموقع -->
   <style>
-    body {
-      font-family: 'Times New Roman', serif;
-      background: #FFFFF0; /* لون خلفية فاتح */
-      margin: 0;
-      color: #000;
-      padding-top: 20px; /* مساحة فوق لتفادي شريط التبويبات */
-    }
-
-    /* شريط التبويبات العلوي */
+    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f9f9f9; margin: 0; padding: 0; color: #333; }
+    h2 { color: #8B0000; margin-bottom: 20px; font-weight: 700; text-align: center; }
     #tabBar {
-      position: fixed;
-      top: 0; left: 0; right: 0;
-      height: 50px;
-      background: linear-gradient(to right, #E41B17, #8B0000);
-      display: flex;
-      justify-content: center;
-      gap: 10px;
-      align-items: center;
-      z-index: 10000;
-      flex-direction: row; /* لعرض الأزرار من اليمين */
+      background: #8B0000; display: flex; align-items: center;
+      padding: 10px 15px; gap: 15px; flex-wrap: wrap; position: sticky; top: 0; z-index: 1000;
     }
-
-    /* أزرار التبويبات */
-    #tabBar button {
-      background: transparent;
-      border: none;
-      color: #fff;
-      font-weight: bold;
-      font-size: 18px;
-      padding: 10px 20px;
-      cursor: pointer;
-      border-radius: 6px;
-      transition: background-color 0.3s ease;
+    #tabBar button.tabBtn {
+      background: transparent; border: none; color: #fff;
+      font-size: 18px; cursor: pointer; padding: 10px 18px; border-radius: 8px;
     }
-
-    /* تبويب نشط أو عند المرور */
-    #tabBar button.active,
-    #tabBar button:hover {
-      background: #fff;
-      color: #8B0000;
-      box-shadow: 0 0 8px #fff;
+    #tabBar button.tabBtn.active, #tabBar button.tabBtn:hover {
+      background: #f44336;
     }
-
-    /* محتوى كل تبويب */
+    .search-container {
+      margin-left: auto; display: flex; align-items: center; gap: 10px;
+    }
+    #searchInput {
+      padding: 7px 12px; font-size: 16px; border-radius: 8px; border: none; width: 200px;
+    }
+    #searchBtn, #whatsappBtn, #showOrderBtn, #btnClientInfo, #btnNewOrder {
+      padding: 9px 14px; border-radius: 8px; cursor: pointer;
+      font-size: 16px; border: none; color: #fff;
+    }
+    #searchBtn { background: #f44336; }
+    #whatsappBtn, #showOrderBtn { background: #25d366; margin-left: 10px; }
+    #btnClientInfo { background: #004d40; margin-left: 10px; }
+    #btnNewOrder { background: #FF9800; margin-left: 10px; }
     .tabContent {
-      display: none;
-      max-width: 1000px;
-      margin: 20px auto;
-      padding: 20px;
-      color: #000;
+      display: none; padding: 20px; max-width: 1100px; margin: auto; background: white;
     }
-
-    .tabContent.active {
-      display: block;
+    .tabContent.active { display: block; }
+    .group-section { margin-bottom: 20px; }
+    .group-header {
+      background: #8B0000; color: #fff; padding: 12px 18px; font-size: 1.2rem; font-weight: bold;
+      cursor: pointer; border-radius: 8px; display: flex; justify-content: space-between; align-items: center;
     }
-
-    /* تنسيق عنصر صنف منتج */
+    .group-items {
+      display: grid; grid-template-columns: repeat(auto-fill,minmax(230px,1fr));
+      gap: 20px; padding: 15px 10px;
+    }
+    .group-collapsed .group-items { display: none; }
+    .group-arrow { font-size: 1.4rem; transition: transform 0.3s ease; }
+    .group-collapsed .group-arrow { transform: rotate(90deg); }
     .item {
-      background: #fff;
-      margin: 10px auto;
-      padding: 10px;
-      border-radius: 10px;
-      box-shadow: 0 0 5px #ccc;
-      display: flex;
-      border: 2px solid #E41B17;
-      align-items: center;
-      gap: 15px;
-      max-width: 900px;
-      color: #8B0000;
-      flex-wrap: wrap;
+      border: 1px solid #ccc; padding: 10px; border-radius: 8px; background: #fefefe;
     }
-
-    /* صورة المنتج */
-    .item img {
-      width: 120px;
-      height: auto;
-      max-height: 300vw;
-      object-fit: contain;
-      border-radius: 6px;
-      border: 3px solid #E41B17;
+    .item.highlighted { border-color: #f44336; background: #fff0f0; }
+    .image-box img {
+      width: 100%; height: 200px; object-fit: contain;
     }
-
-    /* تفاصيل المنتج */
     .item-details {
-      flex-grow: 1;
-      text-align: right;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
     }
-
-    .item-details p {
-      margin: 0 0 8px 0;
-      font-weight: bold;
+    .item-controls {
+      display: flex;
+      align-items: center;
+      gap: 10px;
     }
-
-    /* تنسيق حقول الإدخال */
-    .item-details label {
-      display: block;
-      margin-bottom: 6px;
-      font-weight: normal;
-    }
-
-    .note-input {
-      width: 100%;
-      cursor: pointer;
-      background: #fff;
-      border: 1px solid #ccc;
+    .notes-btn {
+      background-color: #2196f3;
+      border: none;
+      color: white;
+      padding: 5px 10px;
       border-radius: 6px;
-      padding: 6px;
-      color: #8B0000;
+      cursor: pointer;
       font-size: 14px;
     }
-
-    /* زر واتساب */
-    .whatsapp-button {
-      display: block;
-      margin: 20px auto;
-      padding: 12px 24px;
-      background-color: #25D366;
-      color: white;
-      font-weight: bold;
-      border: none;
-      border-radius: 50px;
-      font-size: 18px;
-      cursor: pointer;
-      max-width: 300px;
+    .modal {
+      display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%;
+      background-color: rgba(0,0,0,0.5); justify-content: center; align-items: center;
     }
-
-    /* خلفية النماذج */
-    #overlay {
-      position: fixed;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(0,0,0,0.5);
-      display: none;
-      justify-content: center;
-      align-items: center;
-      z-index: 100000;
+    .modal-content {
+      background: #fff; border-radius: 8px; padding: 20px; max-width: 400px; width: 90%;
+      box-shadow: 0 0 10px rgba(0,0,0,0.3); text-align: center;
     }
-
-    /* نافذة النموذج المنبثقة */
-    #formModal {
-      background: #fff;
-      padding: 20px;
-      border-radius: 10px;
-      max-width: 400px;
-      width: 90%;
-      text-align: center;
-      color: #000;
+    .modal textarea, .modal input {
+      width: 100%; margin-top: 10px; font-size: 16px; padding: 8px;
+      border-radius: 6px; border: 1px solid #ccc; resize: vertical; box-sizing: border-box;
     }
-
-    #formModal input {
-      width: 90%;
-      margin: 10px 0;
-      padding: 10px;
-      border-radius: 6px;
-      border: 1px solid #ccc;
-      font-size: 16px;
-      color: #000;
-      direction: rtl;
+    .modal input { height: 36px; }
+    .modal-buttons {
+      margin-top: 15px; display: flex; justify-content: space-around;
     }
-
-    #formModal button {
-      margin-top: 15px;
-      padding: 12px 30px;
-      background: #E41B17;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      font-weight: bold;
-      font-size: 16px;
-      cursor: pointer;
+    .modal-buttons button {
+      padding: 10px 20px; border: none; border-radius: 6px; cursor: pointer; font-size: 16px;
     }
-
-    /* تنسيق تبويب "عنا" */
-    #about p {
-      max-width: 800px;
-      margin: auto;
-      text-align: justify;
-      line-height: 1.6;
-      color: #333;
-      margin-bottom: 15px;
-    }
-
-    #about h3 {
-      color: #8B0000;
-      text-align: center;
-      margin-top: 30px;
-      margin-bottom: 10px;
-    }
-
-    #about p.contact {
-      text-align: center;
-      color: #333;
-    }
+    .btn-yes { background-color: #28a745; color: white; }
+    .btn-no { background-color: #dc3545; color: white; }
   </style>
 </head>
 <body>
-
-  <!-- أزرار التبويبات الرئيسية -->
   <div id="tabBar">
-    <button class="tabBtn active" data-tab="about">عنا</button>
+    <button class="tabBtn active" data-tab="sales">الطلبات</button>
     <button class="tabBtn" data-tab="client">بيانات العميل</button>
-    <button class="tabBtn" data-tab="sales">طلبات</button>
-    <button class="tabBtn" data-tab="returns">مرتجعات</button>
-  </div>
-
-  <!-- تبويب عنا -->
-  <div id="about" class="tabContent active">
-    <h2 style="text-align:center; color:#8B0000;">شركة عدن الوطنية للصناعات المنزلية</h2>
-    <div id="aboutContent">
-      <p>...جارٍ تحميل البيانات</p>
+    <div class="search-container">
+      <input type="text" id="searchInput" placeholder="ابحث عن صنف..." />
+      <button id="searchBtn">🔍</button>
+      <button id="showOrderBtn" style="display:none;">عرض الطلب</button>
+      <button id="whatsappBtn" style="display:none;">📤 إرسال الطلب</button>
+      <button id="btnNewOrder">🗑️ طلب جديد</button>
     </div>
   </div>
 
-  <!-- تبويب بيانات العميل -->
-  <div id="client" class="tabContent">
-    <h2 style="text-align:center; color:#8B0000;">بيانات العميل</h2>
-    <div id="clientData">
-      <p><strong>الاسم الرباعي:</strong> <span id="dispFullName"></span></p>
-      <p><strong>الاسم التجاري:</strong> <span id="dispBusinessName"></span></p>
-      <p><strong>العنوان:</strong> <span id="dispAddress"></span></p>
-      <p><strong>رقم الهاتف:</strong> <span id="dispPhone"></span></p>
-    </div>
-    <button class="whatsapp-button" onclick="showCustomerForm()">تعديل بيانات العميل</button>
-  </div>
-
-  <!-- تبويب الطلبات -->
-  <div id="sales" class="tabContent">
-    <h2 style="text-align:center; color:#8B0000;">قسم الطلبات</h2>
+  <div id="sales" class="tabContent active">
+    <h2>قسم الطلبات</h2>
     <div id="salesItems"></div>
-    <button class="whatsapp-button" onclick="sendToWhatsApp()">📤 إرسال الطلب عبر واتساب</button>
   </div>
 
-  <!-- تبويب المرتجعات -->
-  <div id="returns" class="tabContent">
-    <h2 style="text-align:center; color:#8B0000;">قسم المرتجعات</h2>
-    <div id="returnsItems"></div>
-    <button class="whatsapp-button" onclick="sendReturnsToWhatsApp()">🔁 إرسال المرتجعات عبر واتساب</button>
-  </div>
-
-  <!-- نافذة تسجيل بيانات العميل -->
-  <div id="overlay">
-    <div id="formModal">
-      <h3>تسجيل معلومات العميل</h3>
-      <input type="text" id="fullName" placeholder="الاسم الرباعي" required />
-      <input type="text" id="businessName" placeholder="الاسم التجاري" required />
-      <input type="text" id="address" placeholder="عنوان المحل" required />
-      <input type="tel" id="phone" placeholder="رقم الهاتف" required />
-      <button onclick="saveCustomerInfo()">حفظ البيانات</button>
+  <div id="client" class="tabContent">
+    <h2>بيانات العميل</h2>
+    <div>
+      <label>الاسم الرباعي:</label><input type="text" id="clientFullName" /><br><br>
+      <label>الاسم التجاري:</label><input type="text" id="clientTradeName" /><br><br>
+      <label>عنوان المحل:</label><input type="text" id="clientAddress" /><br><br>
+      <label>رقم الهاتف:</label><input type="text" id="clientPhone" dir="ltr"  /><br><br>
+      <button id="saveClientInfoBtn" class="btn-yes">💾 حفظ البيانات</button>
     </div>
   </div>
 
-  <!-- كود JavaScript لإدارة التفاعل -->
-  <script>
-    // التبديل بين التبويبات
-    const tabs = document.querySelectorAll('#tabBar button');
-    const contents = document.querySelectorAll('.tabContent');
+  <!-- نوافذ الملاحظات -->
+  <div id="itemNoteModal" class="modal">
+    <div class="modal-content">
+      <h3>أدخل ملاحظتك لهذا الصنف</h3>
+      <textarea id="itemNoteTextarea" placeholder="اكتب ملاحظتك هنا..."></textarea>
+      <div class="modal-buttons">
+        <button class="btn-yes" id="saveItemNoteBtn">حفظ</button>
+        <button class="btn-no" id="cancelItemNoteBtn">إلغاء</button>
+      </div>
+    </div>
+  </div>
 
-    tabs.forEach(tab => {
-      tab.addEventListener('click', () => {
-        tabs.forEach(t => t.classList.remove('active'));
-        tab.classList.add('active');
-        contents.forEach(c => c.classList.remove('active'));
-        document.getElementById(tab.dataset.tab).classList.add('active');
+  <div id="noteModal" class="modal">
+    <div class="modal-content">
+      <p>هل ترغب في إضافة ملاحظة على الطلب؟</p>
+      <div class="modal-buttons">
+        <button class="btn-yes" id="btnAddNote">نعم</button>
+        <button class="btn-no" id="btnSendWithoutNote">لا</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="inputNoteModal" class="modal">
+    <div class="modal-content">
+      <p>أدخل ملاحظتك على الطلب:</p>
+      <textarea id="orderNote" placeholder="اكتب ملاحظاتك هنا..."></textarea>
+      <div class="modal-buttons">
+        <button class="btn-yes" id="btnSendWithNote">إرسال الطلب</button>
+        <button class="btn-no" id="btnCancelNote">إلغاء</button>
+      </div>
+    </div>
+  </div>
+
+<script>
+let itemsData = [];
+let savedQuantities = JSON.parse(localStorage.getItem('selectedQuantities') || '{}');
+let savedItemNotes = JSON.parse(localStorage.getItem('itemNotes') || '{}');
+let clientInfo = JSON.parse(localStorage.getItem('clientInfo') || '{}');
+let currentNoteItem = null;
+
+document.addEventListener('DOMContentLoaded', () => {
+  fetch('https://raw.githubusercontent.com/T772299420/Aden_plaste/main/data%20(7).csv')
+    .then(res => res.text())
+    .then(text => {
+      const rows = text.trim().split('\n').map(row => row.split(','));
+      const headers = rows.shift();
+      itemsData = rows.map(row => {
+        const obj = {};
+        headers.forEach((h, i) => obj[h.trim().toLowerCase()] = row[i]?.trim() || '');
+        return obj;
       });
-    });
-
-    let customer = null;
-    let itemsData = [];
-
-    // تحميل البيانات عند بداية الصفحة
-    document.addEventListener('DOMContentLoaded', () => {
-      loadCustomerInfo();
-      fetchCSV(); // تحميل الأصناف
-      loadAboutTextFromCSV(); // تحميل نص "عنا"
-      tabs[0].click(); // فتح تبويب "عنا"
-    });
-
-    // تحميل نص "عنا" من CSV
-    function loadAboutTextFromCSV() {
-      fetch('https://raw.githubusercontent.com/T772299420/Aden_plaste/main/address.csv')
-        .then(res => res.text())
-        .then(csvText => {
-          const lines = csvText.split(/\r?\n/).filter(line => line.trim() !== '');
-          let aboutText = '';
-          lines.forEach(line => {
-            const cells = line.split(',');
-            aboutText += `<p>${cells[0]}</p>`;
-          });
-          document.getElementById('aboutContent').innerHTML = aboutText;
-        })
-        .catch(err => {
-          console.error('خطأ تحميل ملف address.csv:', err);
-          document.getElementById('aboutContent').innerHTML = '<p>تعذر تحميل بيانات عن الشركة.</p>';
-        });
-    }
-
-    // تحميل ملف الأصناف
-    function fetchCSV() {
-      fetch('https://raw.githubusercontent.com/T772299420/Aden_plaste/main/Data.csv')
-        .then(res => res.text())
-        .then(csvText => {
-          const wb = XLSX.read(csvText, { type: 'string' });
-          const sheet = wb.Sheets[wb.SheetNames[0]];
-          itemsData = XLSX.utils.sheet_to_json(sheet);
-          renderSalesItems();
-          renderReturnsItems();
-        })
-        .catch(err => {
-          console.error('خطأ تحميل CSV:', err);
-          alert('تعذر تحميل بيانات الأصناف من GitHub.');
-        });
-    }
-
-    // عرض الأصناف في تبويب الطلبات
-    function renderSalesItems() {
-      const container = document.getElementById('salesItems');
-      container.innerHTML = '';
-      itemsData.forEach(item => {
-        const name = item.name?.trim();
-        const image = item.image?.trim() || '';
-        const imgUrl = `https://raw.githubusercontent.com/T772299420/Aden_plaste/main/${image.includes('.') ? image : image + '.jpg'}`;
-        container.innerHTML += `
-          <div class="item">
-            <img src="${imgUrl}" alt="${name}" />
-            <div class="item-details">
-              <p>${name}</p>
-              <label>الكمية: <input type="number" min="0" value="" data-name="${name}" /></label>
-            </div>
-          </div>
-        `;
-      });
-    }
-
-    // عرض الأصناف في تبويب المرتجعات
-    function renderReturnsItems() {
-      const container = document.getElementById('returnsItems');
-      container.innerHTML = '';
-      itemsData.forEach(item => {
-        const name = item.name?.trim();
-        const image = item.image?.trim() || '';
-        const imgUrl = `https://raw.githubusercontent.com/T772299420/Aden_plaste/main/${image.includes('.') ? image : image + '.jpg'}`;
-        container.innerHTML += `
-          <div class="item">
-            <img src="${imgUrl}" alt="${name}" />
-            <div class="item-details">
-              <p>${name}</p>
-              <label>الكمية: <input type="number" min="0" value="" data-name="${name}" /></label>
-              <label>ملاحظة: <input readonly onclick="openNoteDialog(this)" placeholder="اضغط لإدخال ملاحظة" class="note-input" /></label>
-            </div>
-          </div>
-        `;
-      });
-    }
-
-    // إدخال ملاحظة للمرتجع
-    function openNoteDialog(input) {
-      const note = prompt('أدخل سبب الإرجاع أو الملاحظة:');
-      if (note !== null) input.value = note;
-    }
-
-    // تحميل بيانات العميل من التخزين المحلي
-    function loadCustomerInfo() {
-      const saved = localStorage.getItem('customerInfo');
-      if (saved) {
-        customer = JSON.parse(saved);
-        displayCustomerInfo();
+      // عند تحميل البيانات، نتحقق إذا هناك كميات محفوظة
+      if (Object.keys(savedQuantities).length > 0) {
+        // عرض رسالة سؤال للمستخدم
+        const clientName = clientInfo.fullName || 'العميل';
+        const tradeName = clientInfo.tradeName || '';
+        if(confirm(`العميل / ${clientName} - ${tradeName}\nيوجد لديك طلب محفوظ من قبل. هل ترغب بإنشاء طلب جديد؟`)) {
+          clearOrder();
+        } else {
+          renderSalesItems(true); // عرض الأصناف المختارة فقط
+        }
       } else {
-        showCustomerForm();
+        renderSalesItems();
       }
-    }
+      fillClientInputs();
+      updateButtonsVisibility();
+    });
 
-    // عرض بيانات العميل
-    function displayCustomerInfo() {
-      document.getElementById('dispFullName').textContent = customer.fullName || '';
-      document.getElementById('dispBusinessName').textContent = customer.businessName || '';
-      document.getElementById('dispAddress').textContent = customer.address || '';
-      document.getElementById('dispPhone').textContent = customer.phone || '';
-    }
+  
+  
+    // تحميل بيانات الأصناف من ملف CSV على GitHub
+    fetch('https://raw.githubusercontent.com/T772299420/Aden_plaste/main/data%20(7).csv')
+      .then(res => res.text())
+      .then(text => {
+        const rows = text.trim().split('\n').map(row => row.split(','));
+        const headers = rows.shift();
+        itemsData = rows.map(row => {
+          const obj = {};
+          headers.forEach((h, i) => obj[h.trim().toLowerCase()] = row[i]?.trim() || '');
+          return obj;
+        });
 
-    // عرض نموذج إدخال بيانات العميل
-    function showCustomerForm() {
-      if(customer) {
-        document.getElementById('fullName').value = customer.fullName || '';
-        document.getElementById('businessName').value = customer.businessName || '';
-        document.getElementById('address').value = customer.address || '';
-        document.getElementById('phone').value = customer.phone || '';
-      }
-      document.getElementById('overlay').style.display = 'flex';
-    }
-
-    // حفظ بيانات العميل في localStorage
-    function saveCustomerInfo() {
-      const fullName = document.getElementById('fullName').value.trim();
-      const businessName = document.getElementById('businessName').value.trim();
-      const address = document.getElementById('address').value.trim();
-      const phone = document.getElementById('phone').value.trim();
-
-      if (!fullName || !businessName || !address || !phone) {
-        alert('يرجى تعبئة جميع الحقول.');
-        return;
-      }
-
-      customer = { fullName, businessName, address, phone };
-      localStorage.setItem('customerInfo', JSON.stringify(customer));
-      displayCustomerInfo();
-      document.getElementById('overlay').style.display = 'none';
-      alert('تم حفظ بيانات العميل');
-    }
-
-    // إرسال الطلب عبر واتساب
-    function sendToWhatsApp() {
-      if (!customer) {
-        alert('يرجى تعبئة بيانات العميل أولاً.');
-        showCustomerForm();
-        return;
-      }
-
-      let message = `طلب من: ${customer.fullName}\n`;
-      message += `الاسم التجاري: ${customer.businessName}\n`;
-      message += `العنوان: ${customer.address}\n`;
-      message += `رقم الهاتف: ${customer.phone}\n\n`;
-      message += 'تفاصيل الطلب:\n';
-
-      let hasOrder = false;
-
-      document.querySelectorAll('#salesItems .item').forEach(item => {
-        const name = item.querySelector('input[type=number]').dataset.name;
-        const qty = parseInt(item.querySelector('input[type=number]').value) || 0;
-        if (qty > 0) {
-          hasOrder = true;
-          message += `${name}: ${qty}\n`;
+        // عند وجود طلب محفوظ سابقاً
+        if (Object.keys(savedQuantities).length > 0) {
+          const clientName = clientInfo.fullName || 'العميل';
+          const tradeName = clientInfo.tradeName || '';
+          if (confirm(`العميل / ${clientName} - ${tradeName}\nيوجد لديك طلب محفوظ من قبل. هل ترغب بإنشاء طلب جديد؟`)) {
+            clearOrder();
+            renderSalesItems();
+          } else {
+            renderSalesItems(true); // عرض الأصناف المختارة فقط
+          }
+        } else {
+          renderSalesItems();
         }
+
+        fillClientInputs();
+        updateButtonsVisibility();
       });
 
-      if (!hasOrder) {
-        alert('يرجى إدخال كميات للطلبات.');
-        return;
-      }
+    // حفظ بيانات العميل عند الضغط على زر الحفظ
+    document.getElementById('saveClientInfoBtn').onclick = () => {
+      clientInfo = {
+        fullName: document.getElementById('clientFullName').value.trim(),
+        tradeName: document.getElementById('clientTradeName').value.trim(),
+        address: document.getElementById('clientAddress').value.trim(),
+        phone: document.getElementById('clientPhone').value.trim(),
+      };
+      localStorage.setItem('clientInfo', JSON.stringify(clientInfo));
+      alert("تم حفظ بيانات العميل");
+    };
 
-      const encodedMessage = encodeURIComponent(message);
-      const phone = "967772299420";
-      const url = `https://wa.me/${phone}?text=${encodedMessage}`;
-      window.open(url, '_blank');
+    // التبديل بين التبويبات
+    document.querySelectorAll('.tabBtn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.tabBtn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.tabContent').forEach(tab => tab.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById(btn.dataset.tab).classList.add('active');
+      });
+    });
+
+    // زر البحث
+    document.getElementById('searchBtn').onclick = () => {
+      const keyword = document.getElementById('searchInput').value.trim().toLowerCase();
+      if (!keyword) renderSalesItems();
+      else filterItems(keyword);
+    };
+
+    // زر طلب جديد (مسح الطلب الحالي)
+    document.getElementById('btnNewOrder').onclick = () => {
+      if (confirm("هل أنت متأكد من بدء طلب جديد؟ سيتم مسح الكميات والملاحظات.")) {
+        clearOrder();
+        renderSalesItems();
+        updateButtonsVisibility();
+      }
+    };
+
+    // زر عرض الطلب (عرض رسالة بالطلب الحالي)
+    document.getElementById('showOrderBtn').onclick = () => {
+      const items = Object.keys(savedQuantities);
+      if (!items.length) return alert("لا توجد أصناف.");
+      let msg = "الطلب الحالي:\n\n";
+      items.forEach(name => {
+        msg += `- ${name}: ${savedQuantities[name]}`;
+        if (savedItemNotes[name]) msg += ` (ملاحظة: ${savedItemNotes[name]})`;
+        msg += '\n';
+      });
+      alert(msg);
+    };
+
+    // زر إرسال الطلب عبر واتساب
+    document.getElementById('whatsappBtn').onclick = () => {
+      if (!Object.keys(savedQuantities).length) return alert("لا توجد أصناف.");
+      document.getElementById('noteModal').style.display = 'flex';
+    };
+
+    // التعامل مع نافذة ملاحظة عامة على الطلب
+    document.getElementById('btnAddNote').onclick = () => {
+      document.getElementById('noteModal').style.display = 'none';
+      document.getElementById('inputNoteModal').style.display = 'flex';
+    };
+    document.getElementById('btnSendWithoutNote').onclick = () => {
+      document.getElementById('noteModal').style.display = 'none';
+      sendOrderWhatsApp('');
+    };
+    document.getElementById('btnSendWithNote').onclick = () => {
+      const note = document.getElementById('orderNote').value.trim();
+      sendOrderWhatsApp(note);
+      document.getElementById('inputNoteModal').style.display = 'none';
+      document.getElementById('orderNote').value = '';
+    };
+    document.getElementById('btnCancelNote').onclick = () => {
+      document.getElementById('inputNoteModal').style.display = 'none';
+    };
+
+    // حفظ ملاحظات صنف محدد
+    document.getElementById('saveItemNoteBtn').onclick = () => {
+      const note = document.getElementById('itemNoteTextarea').value.trim();
+      if (note) savedItemNotes[currentNoteItem] = note;
+      else delete savedItemNotes[currentNoteItem];
+      localStorage.setItem('itemNotes', JSON.stringify(savedItemNotes));
+      document.getElementById('itemNoteModal').style.display = 'none';
+      renderSalesItems();
+    };
+    document.getElementById('cancelItemNoteBtn').onclick = () => {
+      document.getElementById('itemNoteModal').style.display = 'none';
+    };
+  });
+
+  // دوال أخرى خارج DOMContentLoaded (تستخدم من عدة أماكن)
+
+  // عرض الأصناف مع الكميات والملاحظات
+  function renderSalesItems(showOnlySelected = false) {
+    const container = document.getElementById('salesItems');
+    container.innerHTML = '';
+    const groups = {};
+    let filteredItems = itemsData;
+
+    if (showOnlySelected) {
+      filteredItems = itemsData.filter(item => savedQuantities[item.name]);
     }
 
-    // إرسال المرتجعات عبر واتساب
-    function sendReturnsToWhatsApp() {
-      if (!customer) {
-        alert('يرجى تعبئة بيانات العميل أولاً.');
-        showCustomerForm();
-        return;
-      }
+    filteredItems.forEach(item => {
+      const group = item.group || "أخرى";
+      if (!groups[group]) groups[group] = [];
+      groups[group].push(item);
+    });
 
-      let message = `مرتجعات من: ${customer.fullName}\n`;
-      message += `الاسم التجاري: ${customer.businessName}\n`;
-      message += `العنوان: ${customer.address}\n`;
-      message += `رقم الهاتف: ${customer.phone}\n\n`;
-      message += 'تفاصيل المرتجعات:\n';
+    Object.keys(groups).sort().forEach(group => {
+      const section = document.createElement('div');
+      section.classList.add('group-section');
 
-      let hasReturns = false;
+      const header = document.createElement('div');
+      header.classList.add('group-header');
+      header.innerHTML = `<span>${group}</span><span class="group-arrow">▶️</span>`;
+      header.onclick = () => section.classList.toggle('group-collapsed');
 
-      document.querySelectorAll('#returnsItems .item').forEach(item => {
-        const name = item.querySelector('input[type=number]').dataset.name;
-        const qty = parseInt(item.querySelector('input[type=number]').value) || 0;
-        const note = item.querySelector('.note-input').value.trim();
-        if (qty > 0) {
-          hasReturns = true;
-          message += `${name}: ${qty}`;
-          if (note) message += ` | ملاحظة: ${note}`;
-          message += `\n`;
-        }
+      const groupItems = document.createElement('div');
+      groupItems.classList.add('group-items');
+
+      groups[group].forEach(item => {
+        const name = item.name;
+        const unit = item.unit || 'درزن';
+        const image = item.image || '';
+        const imgUrl = `https://raw.githubusercontent.com/T772299420/Aden_plaste/main/${image}`;
+        const qty = savedQuantities[name] || '';
+        const note = savedItemNotes[name] || '';
+        const highlighted = qty ? 'highlighted' : '';
+
+        const card = document.createElement('div');
+        card.className = `item ${highlighted}`;
+        card.setAttribute('data-name', name);
+
+        card.innerHTML = `
+          <div class="image-box"><img src="${imgUrl}" alt="${name}" /></div>
+          <div class="item-details">
+            <p>${name} (${unit})</p>
+            <div class="item-controls">
+              <label>الكمية:
+               <input type="number" dir="ltr" min="0" value="${qty}" data-name="${name}" oninput="onQuantityChange(this)" />
+              </label>
+              <button class="notes-btn" onclick="openItemNoteModal('${name}')">ملاحظات${note ? ' ✓' : ''}</button>
+            </div>
+          </div>`;
+        groupItems.appendChild(card);
       });
 
-      if (!hasReturns) {
-        alert('يرجى إدخال كميات أو ملاحظات للمرتجعات.');
-        return;
-      }
+      section.appendChild(header);
+      section.appendChild(groupItems);
+      container.appendChild(section);
+    });
+  }
 
-      const encodedMessage = encodeURIComponent(message);
-      const phone = "967772299420";
-      const url = `https://wa.me/${phone}?text=${encodedMessage}`;
-      window.open(url, '_blank');
+  // فتح نافذة ملاحظة صنف معين
+  function openItemNoteModal(name) {
+    currentNoteItem = name;
+    document.getElementById('itemNoteTextarea').value = savedItemNotes[name] || '';
+    document.getElementById('itemNoteModal').style.display = 'flex';
+  }
+
+  // تحديث الكمية وحفظها عند تغيير المستخدم
+  function onQuantityChange(input) {
+    const qty = parseInt(input.value) || 0;
+    const name = input.dataset.name;
+    const itemCard = input.closest('.item');
+
+    if (qty > 0) {
+      savedQuantities[name] = qty;
+      itemCard.classList.add('highlighted');
+    } else {
+      delete savedQuantities[name];
+      delete savedItemNotes[name];
+      localStorage.setItem('itemNotes', JSON.stringify(savedItemNotes));
+      itemCard.classList.remove('highlighted');
     }
-  </script>
+    localStorage.setItem('selectedQuantities', JSON.stringify(savedQuantities));
+    updateButtonsVisibility();
+  }
+
+  // تحديث إظهار أزرار الطلبات حسب وجود كميات
+  function updateButtonsVisibility() {
+    const visible = Object.keys(savedQuantities).length > 0;
+    document.getElementById('showOrderBtn').style.display = visible ? 'inline-block' : 'none';
+    document.getElementById('whatsappBtn').style.display = visible ? 'inline-block' : 'none';
+  }
+
+  // فلترة الأصناف بالبحث
+  function filterItems(keyword) {
+    const filtered = itemsData.filter(item => item.name.toLowerCase().includes(keyword));
+    if (filtered.length) {
+      renderSalesItems(false);
+    } else {
+      document.getElementById('salesItems').innerHTML = '<p>لا توجد نتائج مطابقة.</p>';
+    }
+  }
+
+  // تعبئة بيانات العميل في الحقول عند التحميل
+  function fillClientInputs() {
+    document.getElementById('clientFullName').value = clientInfo.fullName || '';
+    document.getElementById('clientTradeName').value = clientInfo.tradeName || '';
+    document.getElementById('clientAddress').value = clientInfo.address || '';
+    document.getElementById('clientPhone').value = clientInfo.phone || '';
+  }
+
+  // مسح الطلب الحالي (الكميات والملاحظات)
+  function clearOrder() {
+    savedQuantities = {};
+    savedItemNotes = {};
+    localStorage.removeItem('selectedQuantities');
+    localStorage.removeItem('itemNotes');
+    // طي المجموعات
+    document.querySelectorAll('.group-section').forEach(section => {
+      section.classList.add('group-collapsed');
+    });
+    updateButtonsVisibility();
+  }
+
+  // إرسال الطلب عبر واتساب مع ملاحظة اختيارية
+  function sendOrderWhatsApp(note) {
+    if (!clientInfo.phone) {
+      alert("يرجى إدخال رقم الهاتف في بيانات العميل");
+      return;
+    }
+
+    const today = new Date();
+    const formattedDate = today.toISOString().split('T')[0]; // yyyy-mm-dd
+
+    let message = `أنا العميل / ${clientInfo.fullName || ''} - ${clientInfo.tradeName || ''}%0A`;
+    message += `عنواني / ${clientInfo.address || ''}%0A`;
+    message += `رقم هاتفي / ${clientInfo.phone || ''}%0A`;
+    message += `تاريخ الطلب / ${formattedDate}%0A`;
+    message += `__________________________%0A`;
+    message += `الاصناف المطلوبة:%0A`;
+    message += `__________________________%0A`;
+
+    Object.keys(savedQuantities).forEach(name => {
+      const item = itemsData.find(i => i.name === name);
+      const unit = item?.unit || 'وحدة';
+      const qty = savedQuantities[name];
+      const noteItem = savedItemNotes[name] ? ` - ملاحظة: ${savedItemNotes[name]}` : '';
+      message += `- ${name} - ${unit} - ${qty}${noteItem}%0A`;
+    });
+
+    if (note) {
+      message += `%0Aملاحظات عامة:%0A${encodeURIComponent(note)}`;
+    }
+
+    const url = `https://wa.me/967772299420?text=${message}`;
+    window.open(url, '_blank');
+  }
+</script>
 </body>
-  </html>
+          </html>
