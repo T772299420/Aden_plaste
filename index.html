@@ -25,14 +25,12 @@
     #searchInput {
       padding: 7px 12px; font-size: 16px; border-radius: 8px; border: none; width: 200px;
     }
-    #searchBtn, #whatsappBtn, #showOrderBtn, #btnClientInfo, #btnNewOrder {
+    #searchBtn, #btnClientInfo {
       padding: 9px 14px; border-radius: 8px; cursor: pointer;
       font-size: 16px; border: none; color: #fff;
     }
     #searchBtn { background: #f44336; }
-    #whatsappBtn, #showOrderBtn { background: #25d366; margin-left: 10px; }
     #btnClientInfo { background: #004d40; margin-left: 10px; }
-    #btnNewOrder { background: #FF9800; margin-left: 10px; }
     .tabContent {
       display: none; padding: 20px; max-width: 1100px; margin: auto; background: white;
     }
@@ -75,30 +73,32 @@
       cursor: pointer;
       font-size: 14px;
     }
-    .modal {
-      display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%;
-      background-color: rgba(0,0,0,0.5); justify-content: center; align-items: center;
-    }
-    .modal-content {
-      background: #fff; border-radius: 8px; padding: 20px; max-width: 400px; width: 90%;
-      box-shadow: 0 0 10px rgba(0,0,0,0.3); text-align: center;
-    }
-    .modal textarea, .modal input {
-      width: 100%; margin-top: 10px; font-size: 16px; padding: 8px;
-      border-radius: 6px; border: 1px solid #ccc; resize: vertical; box-sizing: border-box;
-    }
-    .modal input { height: 36px; }
-    .modal-buttons {
-      margin-top: 15px; display: flex; justify-content: space-around;
-    }
-    .modal-buttons button {
-      padding: 10px 20px; border: none; border-radius: 6px; cursor: pointer; font-size: 16px;
-    }
-    .btn-yes { background-color: #28a745; color: white; }
-    .btn-no { background-color: #dc3545; color: white; }
     mark {
       background: yellow; color: black; padding: 0 4px;
     }
+    #bottomBar {
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      background: #fff;
+      border-top: 1px solid #ccc;
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      padding: 10px;
+      z-index: 1000;
+    }
+    #bottomBar button {
+      padding: 10px 16px;
+      font-size: 16px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      color: white;
+    }
+    #btnNewOrder { background-color: #FF9800; }
+    #showOrderBtn { background-color: #2196F3; }
+    #whatsappBtn { background-color: #25d366; }
   </style>
 </head>
 <body>
@@ -108,9 +108,6 @@
     <div class="search-container">
       <input type="text" id="searchInput" placeholder="ابحث عن صنف..." />
       <button id="searchBtn">🔍</button>
-      <button id="showOrderBtn" style="display:none;">عرض الطلب</button>
-      <button id="whatsappBtn" style="display:none;">📤 إرسال الطلب</button>
-      <button id="btnNewOrder">🗑️ طلب جديد</button>
     </div>
   </div>
 
@@ -129,46 +126,20 @@
       <button id="saveClientInfoBtn" class="btn-yes">💾 حفظ البيانات</button>
     </div>
   </div>
-  <!-- النوافذ -->
-<div id="itemNoteModal" class="modal">
-  <div class="modal-content">
-    <h3>أدخل ملاحظتك لهذا الصنف</h3>
-    <textarea id="itemNoteTextarea" placeholder="اكتب ملاحظتك هنا..."></textarea>
-    <div class="modal-buttons">
-      <button class="btn-yes" id="saveItemNoteBtn">حفظ</button>
-      <button class="btn-no" id="cancelItemNoteBtn">إلغاء</button>
-    </div>
-  </div>
-</div>
 
-<div id="noteModal" class="modal">
-  <div class="modal-content">
-    <p>هل ترغب في إضافة ملاحظة على الطلب؟</p>
-    <div class="modal-buttons">
-      <button class="btn-yes" id="btnAddNote">نعم</button>
-      <button class="btn-no" id="btnSendWithoutNote">لا</button>
-    </div>
+  <!-- الشريط السفلي الثابت -->
+  <div id="bottomBar">
+    <button id="btnNewOrder">🗑️ طلب جديد</button>
+    <button id="showOrderBtn" style="display:none;">📄 عرض الطلب</button>
+    <button id="whatsappBtn" style="display:none;">📤 إرسال الطلب</button>
   </div>
-</div>
-
-<div id="inputNoteModal" class="modal">
-  <div class="modal-content">
-    <p>أدخل ملاحظتك على الطلب:</p>
-    <textarea id="orderNote" placeholder="اكتب ملاحظاتك هنا..."></textarea>
-    <div class="modal-buttons">
-      <button class="btn-yes" id="btnSendWithNote">إرسال الطلب</button>
-      <button class="btn-no" id="btnCancelNote">إلغاء</button>
-    </div>
-  </div>
-</div>
-
-<script>
+  <script>
 let itemsData = [];
 let savedQuantities = JSON.parse(localStorage.getItem('selectedQuantities') || '{}');
 let savedItemNotes = JSON.parse(localStorage.getItem('itemNotes') || '{}');
 let clientInfo = JSON.parse(localStorage.getItem('clientInfo') || '{}');
-let currentNoteItem = null;
-let currentKeyword = '';
+let groupStates = {};
+let lastOpenedGroup = '';
 
 document.addEventListener('DOMContentLoaded', () => {
   fetch('https://raw.githubusercontent.com/T772299420/Aden_plaste/main/data%20(7).csv')
@@ -182,10 +153,8 @@ document.addEventListener('DOMContentLoaded', () => {
         return obj;
       });
 
-      const clientName = clientInfo.fullName || 'العميل';
-      const tradeName = clientInfo.tradeName || '';
       if (Object.keys(savedQuantities).length > 0) {
-        if (confirm(`العميل / ${clientName} - ${tradeName}\nيوجد لديك طلب محفوظ من قبل. هل ترغب بإنشاء طلب جديد؟`)) {
+        if (confirm("يوجد طلب محفوظ مسبقًا، هل ترغب بإنشاء طلب جديد؟")) {
           clearOrder();
         }
       }
@@ -196,9 +165,8 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
   document.getElementById('searchInput').addEventListener('input', (e) => {
-    currentKeyword = e.target.value.trim().toLowerCase();
-    if (!currentKeyword) renderSalesItems();
-    else filterItems(currentKeyword);
+    const keyword = e.target.value.trim().toLowerCase();
+    renderSalesItems(keyword);
   });
 
   document.getElementById('saveClientInfoBtn').onclick = () => {
@@ -222,7 +190,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   document.getElementById('btnNewOrder').onclick = () => {
-    if (confirm("هل أنت متأكد من بدء طلب جديد؟ سيتم مسح الكميات والملاحظات.")) {
+    if (confirm("هل أنت متأكد من بدء طلب جديد؟")) {
       clearOrder();
       renderSalesItems();
       updateButtonsVisibility();
@@ -231,7 +199,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   document.getElementById('showOrderBtn').onclick = () => {
     const items = Object.keys(savedQuantities);
-    if (!items.length) return alert("لا توجد أصناف.");
+    if (!items.length) return alert("لا توجد أصناف مختارة.");
     let msg = "الطلب الحالي:\n\n";
     items.forEach(name => {
       msg += `- ${name}: ${savedQuantities[name]}`;
@@ -243,138 +211,138 @@ document.addEventListener('DOMContentLoaded', () => {
 
   document.getElementById('whatsappBtn').onclick = () => {
     if (!Object.keys(savedQuantities).length) return alert("لا توجد أصناف.");
-    document.getElementById('noteModal').style.display = 'flex';
-  };
-
-  document.getElementById('btnAddNote').onclick = () => {
-    document.getElementById('noteModal').style.display = 'none';
-    document.getElementById('inputNoteModal').style.display = 'flex';
-  };
-  document.getElementById('btnSendWithoutNote').onclick = () => {
-    document.getElementById('noteModal').style.display = 'none';
-    sendOrderWhatsApp('');
-  };
-  document.getElementById('btnSendWithNote').onclick = () => {
-    const note = document.getElementById('orderNote').value.trim();
-    sendOrderWhatsApp(note);
-    document.getElementById('inputNoteModal').style.display = 'none';
-    document.getElementById('orderNote').value = '';
-  };
-  document.getElementById('btnCancelNote').onclick = () => {
-    document.getElementById('inputNoteModal').style.display = 'none';
-  };
-
-  document.getElementById('saveItemNoteBtn').onclick = () => {
-    const note = document.getElementById('itemNoteTextarea').value.trim();
-    if (note) savedItemNotes[currentNoteItem] = note;
-    else delete savedItemNotes[currentNoteItem];
-    localStorage.setItem('itemNotes', JSON.stringify(savedItemNotes));
-    document.getElementById('itemNoteModal').style.display = 'none';
-    renderSalesItems();
-  };
-  document.getElementById('cancelItemNoteBtn').onclick = () => {
-    document.getElementById('itemNoteModal').style.display = 'none';
+    if (!clientInfo.phone) return alert("يرجى إدخال رقم الهاتف أولًا.");
+    const date = new Date().toISOString().split('T')[0];
+    let msg = `أنا العميل / ${clientInfo.fullName || ''} - ${clientInfo.tradeName || ''}%0A`;
+    msg += `عنواني / ${clientInfo.address || ''}%0Aرقم هاتفي / ${clientInfo.phone || ''}%0Aتاريخ الطلب / ${date}%0A`;
+    msg += `__________________________%0Aالاصناف المطلوبة:%0A`;
+    Object.keys(savedQuantities).forEach(name => {
+      const item = itemsData.find(i => i.name === name);
+      const unit = item?.unit || 'وحدة';
+      const qty = savedQuantities[name];
+      const note = savedItemNotes[name] ? ` - ملاحظة: ${savedItemNotes[name]}` : '';
+      msg += `- ${name} - ${unit} - ${qty}${note}%0A`;
+    });
+    const url = `https://wa.me/967772299420?text=${msg}`;
+    window.open(url, '_blank');
   };
 });
 
-function renderSalesItems() {
+function renderSalesItems(keyword = '') {
   const container = document.getElementById('salesItems');
   container.innerHTML = '';
   const groups = {};
 
   itemsData.forEach(item => {
-    const group = item.group || "أخرى";
+    const group = item.group || 'أخرى';
     if (!groups[group]) groups[group] = [];
     groups[group].push(item);
   });
 
-  Object.keys(groups).sort().forEach(group => {
+  Object.entries(groups).forEach(([group, items]) => {
+    const matchedItems = keyword
+      ? items.filter(i => i.name.toLowerCase().includes(keyword))
+      : items;
+
+    if (keyword && matchedItems.length === 0) return; // لا تعرض المجموعة
+
     const section = document.createElement('div');
-    section.classList.add('group-section', 'group-collapsed');
+    section.className = 'group-section';
 
+    const selectedCount = items.filter(i => savedQuantities[i.name]).length;
     const header = document.createElement('div');
-    header.classList.add('group-header');
-    header.innerHTML = `<span>${group}</span><span class="group-arrow">▶️</span>`;
-    header.onclick = () => section.classList.toggle('group-collapsed');
+    header.className = 'group-header';
+    header.innerHTML = `<span>${group} - ${items.length} صنف - ${selectedCount} مختار</span><span class="group-arrow">▶️</span>`;
 
-    const groupItems = document.createElement('div');
-    groupItems.classList.add('group-items');
+    header.onclick = () => {
+      const collapsed = section.classList.toggle('group-collapsed');
+      groupStates[group] = !collapsed;
+      if (!collapsed) lastOpenedGroup = group;
+    };
 
-    groups[group].forEach(item => {
+    const itemsContainer = document.createElement('div');
+    itemsContainer.className = 'group-items';
+
+    matchedItems.forEach(item => {
       const name = item.name;
-      const unit = item.unit || 'درزن';
+      const unit = item.unit || 'وحدة';
       const image = item.image || '';
       const imgUrl = `https://raw.githubusercontent.com/T772299420/Aden_plaste/main/${image}`;
       const qty = savedQuantities[name] || '';
       const note = savedItemNotes[name] || '';
-      const highlighted = qty ? 'highlighted' : '';
 
       const card = document.createElement('div');
-      card.className = `item ${highlighted}`;
+      card.className = `item ${qty ? 'highlighted' : ''}`;
       card.innerHTML = `
         <div class="image-box"><img src="${imgUrl}" alt="${name}" /></div>
         <div class="item-details">
-          <p>${highlightKeyword(name, currentKeyword)} (${unit})</p>
+        <p>${highlightKeyword(name, keyword)} (${unit}) ${qty ? '👍' : ''}</p>
           <div class="item-controls">
             <label>الكمية:
               <input type="number" dir="ltr" min="0" value="${qty}" data-name="${name}" oninput="onQuantityChange(this)" />
             </label>
-            <button class="notes-btn" onclick="openItemNoteModal('${name}')">ملاحظات${note ? ' ✓' : ''}</button>
+            <button class="notes-btn" onclick="addNote('${name}')">ملاحظات${note ? ' ✓' : ''}</button>
           </div>
         </div>`;
-      groupItems.appendChild(card);
+      itemsContainer.appendChild(card);
     });
 
     section.appendChild(header);
-    section.appendChild(groupItems);
+    section.appendChild(itemsContainer);
 
-    if (groups[group].some(i => i.name.toLowerCase().includes(currentKeyword))) {
-      section.classList.remove('group-collapsed');
-    }
+    // الحالة الأولية للمجموعة
+    const shouldOpen = keyword
+      ? true
+      : (group === lastOpenedGroup || groupStates[group]);
 
+    if (!shouldOpen) section.classList.add('group-collapsed');
     container.appendChild(section);
   });
-}
-
-function highlightKeyword(text, keyword) {
-  if (!keyword) return text;
-  const regex = new RegExp(`(${keyword})`, 'gi');
-  return text.replace(regex, '<mark>$1</mark>');
-}
-
-function filterItems(keyword) {
-  renderSalesItems(); // سيأخذ الكلمة المفتاحية من المتغير
-}
-
-function openItemNoteModal(name) {
-  currentNoteItem = name;
-  document.getElementById('itemNoteTextarea').value = savedItemNotes[name] || '';
-  document.getElementById('itemNoteModal').style.display = 'flex';
 }
 
 function onQuantityChange(input) {
   const qty = parseInt(input.value) || 0;
   const name = input.dataset.name;
-  const itemCard = input.closest('.item');
-
+  const card = input.closest('.item');
+  
   if (qty > 0) {
     savedQuantities[name] = qty;
-    itemCard.classList.add('highlighted');
+    card.classList.add('highlighted');
   } else {
     delete savedQuantities[name];
     delete savedItemNotes[name];
-    itemCard.classList.remove('highlighted');
-    localStorage.setItem('itemNotes', JSON.stringify(savedItemNotes));
+    card.classList.remove('highlighted');
   }
-
+  
+  // ✅ تحديث اسم الصنف وإضافة رمز 👍 مباشرة بعد إدخال الكمية
+  const titleElement = input.closest('.item-details').querySelector('p');
+  if (titleElement) {
+    const unit = itemsData.find(i => i.name === name)?.unit || 'وحدة';
+    const keyword = document.getElementById('searchInput').value.trim().toLowerCase();
+    titleElement.innerHTML = `${highlightKeyword(name, keyword)} (${unit}) ${qty ? '👍' : ''}`;
+  }
+  
   localStorage.setItem('selectedQuantities', JSON.stringify(savedQuantities));
+  localStorage.setItem('itemNotes', JSON.stringify(savedItemNotes));
   updateButtonsVisibility();
 }
 
-function updateButtonsVisibility() {
-  const visible = Object.keys(savedQuantities).length > 0;
-  document.getElementById('showOrderBtn').style.display = visible ? 'inline-block' : 'none';
-  document.getElementById('whatsappBtn').style.display = visible ? 'inline-block' : 'none';
+function addNote(name) {
+  const note = prompt("أدخل الملاحظة:", savedItemNotes[name] || '');
+  if (note !== null) {
+    if (note.trim()) savedItemNotes[name] = note.trim();
+    else delete savedItemNotes[name];
+    localStorage.setItem('itemNotes', JSON.stringify(savedItemNotes));
+    renderSalesItems(document.getElementById('searchInput').value.trim().toLowerCase());
+    
+    
+  }
+  
+}
+
+function highlightKeyword(text, keyword) {
+  if (!keyword) return text;
+  return text.replace(new RegExp(`(${keyword})`, 'gi'), `<mark>$1</mark>`);
 }
 
 function fillClientInputs() {
@@ -392,36 +360,10 @@ function clearOrder() {
   updateButtonsVisibility();
 }
 
-function sendOrderWhatsApp(note) {
-  if (!clientInfo.phone) {
-    alert("يرجى إدخال رقم الهاتف في بيانات العميل");
-    return;
-  }
-
-  const today = new Date();
-  const formattedDate = today.toISOString().split('T')[0];
-
-  let message = `أنا العميل / ${clientInfo.fullName || ''} - ${clientInfo.tradeName || ''}%0A`;
-  message += `عنواني / ${clientInfo.address || ''}%0A`;
-  message += `رقم هاتفي / ${clientInfo.phone || ''}%0A`;
-  message += `تاريخ الطلب / ${formattedDate}%0A`;
-  message += `__________________________%0A`;
-  message += `الاصناف المطلوبة:%0A`;
-
-  Object.keys(savedQuantities).forEach(name => {
-    const item = itemsData.find(i => i.name === name);
-    const unit = item?.unit || 'وحدة';
-    const qty = savedQuantities[name];
-    const noteItem = savedItemNotes[name] ? ` - ملاحظة: ${savedItemNotes[name]}` : '';
-    message += `- ${name} - ${unit} - ${qty}${noteItem}%0A`;
-  });
-
-  if (note) {
-    message += `%0Aملاحظات عامة:%0A${encodeURIComponent(note)}`;
-  }
-
-  const url = `https://wa.me/967772299420?text=${message}`;
-  window.open(url, '_blank');
+function updateButtonsVisibility() {
+  const visible = Object.keys(savedQuantities).length > 0;
+  document.getElementById('showOrderBtn').style.display = visible ? 'inline-block' : 'none';
+  document.getElementById('whatsappBtn').style.display = visible ? 'inline-block' : 'none';
 }
 </script>
 </body>
