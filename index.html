@@ -159,9 +159,9 @@
   }
 /*حجم عمود البحث */
   #searchInput {
-    width: 100px;      /* عرض الحقل */
-    height: 30px;      /* ارتفاع الحقل */
-    font-size: 20px;   /* حجم الخط */
+    width: 30px;      /* عرض الحقل */
+    height: 40px;      /* ارتفاع الحقل */
+    font-size: 18px;   /* حجم الخط */
     padding: 8px 12px; /* مساحة داخلية */
     border: 2px solid #8B0000; /* إطار أنيق بلون أحمر غامق */
     border-radius: 10px;
@@ -186,17 +186,19 @@
   بيانات العميل
 </button>
         <!-- تبويب تحميل الكتلوج -->
-    <div class="tab" onclick="confirmDownload()">📥 الكتلوج</div>
-    
-    <script>
-      function confirmDownload() {
-        const confirmed = confirm("هل تريد تحميل كتلوج المنتجات؟");
-        if (confirmed) {
-          // فتح رابط التحميل بصيغة RAW مباشر
-          window.open("https://github.com/T772299420/Aden_plaste/raw/main/%D9%83%D8%AA%D9%84%D9%88%D8%AC%20%D8%A7%D9%84%D9%85%D9%86%D8%AA%D8%AC%D8%A7%D8%AA%20%D9%8A%D9%88%D9%86%D9%8A%D9%88%202025.pdf", "_blank");
-        }
-      }
-    </script>
+  <!-- زر تحميل الكتلوج مع أيقونة FontAwesome -->
+<button class="tab" onclick="confirmDownload()" style="cursor: pointer;">
+  <i class="fas fa-download" style="margin-left: 5px;"></i> الكتلوج
+</button>
+
+<script>
+  function confirmDownload() {
+    const confirmed = confirm("هل تريد تحميل كتلوج المنتجات؟");
+    if (confirmed) {
+      window.open("https://github.com/T772299420/Aden_plaste/raw/main/%D9%83%D8%AA%D9%84%D9%88%D8%AC%20%D8%A7%D9%84%D9%85%D9%86%D8%AA%D8%AC%D8%A7%D8%AA%20%D9%8A%D9%88%D9%86%D9%8A%D9%88%202025.pdf", "_blank");
+    }
+  }
+</script>
     <div class="search-container">
       <input type="text" id="searchInput" placeholder="ابحث عن صنف..." />
       <!-- أضف هذا الزر ضمن شريط التبويبات الرئيسي -->
@@ -250,10 +252,9 @@
 
 <!-- بيانات التواصل أسفل الأزرار -->
 <div id="footerInfo">
-  المميز سوفت للأنظمة المحاسبية المتكاملة    
-  <a href="https://wa.me/967772299420" target="_blank">
-    <i class="fab fa-whatsapp" style="color: #25D366;"></i> +967 772299420
-  </a> 
+  المميز سوفت للأنظمة المحاسبية المتكاملة   
+  <a href="https://wa.me/967772299420" target="_blank">📞 +967 772299420</a> 
+  <a h
 </div>
 
   
