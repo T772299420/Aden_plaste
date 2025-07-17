@@ -152,6 +152,7 @@
   padding: 4px;      /* حشو داخلي */
 }
 <style>
+
   .search-container {
     display: flex;
     justify-content: center;
@@ -159,7 +160,7 @@
   }
 /*حجم عمود البحث */
   #searchInput {
-    width: 30px;      /* عرض الحقل */
+    width: 200px;      /* عرض الحقل */
     height: 40px;      /* ارتفاع الحقل */
     font-size: 18px;   /* حجم الخط */
     padding: 8px 12px; /* مساحة داخلية */
@@ -167,6 +168,7 @@
     border-radius: 10px;
     outline: none;
   }
+
 
   #searchInput::placeholder {
     color: #aaa;
@@ -177,18 +179,17 @@
 </head>
 <body>
   <div id="tabBar">
-    
-   <button class="tabBtn active" data-tab="sales">
+   <button class="tabBtn active" data-tab="sales" style="color: white; border: 2px solid white; border-radius: 8px;">
   <i class="fa fa-shopping-cart" aria-hidden="true" style="margin-left:8px;"></i> الطلبات
 </button>
-   <button class="tabBtn" data-tab="client">
+  <button class="tabBtn" data-tab="client" style="color: white; border: 2px solid white;">
   <i class="fas fa-user" style="margin-left: 5px;"></i>
   بيانات العميل
 </button>
         <!-- تبويب تحميل الكتلوج -->
   <!-- زر تحميل الكتلوج مع أيقونة FontAwesome -->
-<button class="tab" onclick="confirmDownload()" style="cursor: pointer;">
-  <i class="fas fa-download" style="margin-left: 5px;"></i> الكتلوج
+<button class="tab" onclick="confirmDownload()" style="cursor: pointer; color: white; border: 2px solid white;">
+  <i class="fas fa-download" style="margin-left: 5px;"></i> 
 </button>
 
 <script>
