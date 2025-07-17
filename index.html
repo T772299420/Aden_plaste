@@ -6,11 +6,24 @@
   <title>شركة عدن الوطنية للصناعات المنزلية</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
   
+  
+  
+  
+  
   <style>
   
   
     body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f9f9f9; margin: 0; padding: 0; color: #333; }
     h2 { color: #8B0000; margin-bottom: 20px; font-weight: 700; text-align: center; }
+    
+   
+
+#pageFooter {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  z-index: 1001;
+}
     
     #tabBar {
       background: #8B0000; display: flex; align-items: center;
@@ -82,7 +95,38 @@
     #btnNewOrder { background-color: #FF9800; }
     #showOrderBtn { background-color: #2196F3; }
     #whatsappBtn { background-color: #25d366; }
-    
+    #bottomBar {
+  position: fixed;
+  bottom: 40px; /* تم رفعه فوق الفوتر */
+  right: 0;
+  left: 0;
+  background-color: #f9f9f9;
+  padding: 8px;
+  text-align: center;
+  z-index: 999;
+  border-top: 1px solid #ccc;
+}
+
+#footerInfo {
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  background-color: #8B0000;
+  color: white;
+  text-align: center;
+  padding: 5px 10px;
+  font-size: 14px;
+  z-index: 998;
+  white-space: nowrap;
+  overflow-x: auto;
+}
+
+#footerInfo a {
+  color: white;
+  text-decoration: none;
+  margin: 0 5px;
+}
     .logo {
   height: 48px;                /* ارتفاع الشعار */
   border-radius: 10px;         /* زوايا مستديرة */
@@ -95,12 +139,7 @@
 </head>
 <body>
   <div id="tabBar">
-      
-   <button class="tabBtn active" data-tab="sales">
-  <i class="fa fa-shopping-cart" aria-hidden="true" style="margin-left:8px;"></i> عنا
-</button>
-
-
+    
    <button class="tabBtn active" data-tab="sales">
   <i class="fa fa-shopping-cart" aria-hidden="true" style="margin-left:8px;"></i> الطلبات
 </button>
@@ -131,11 +170,18 @@
     </div>
   </div>
 
-  <div id="bottomBar">
-    <button id="btnNewOrder">🗑️ طلب جديد</button>
-    <button id="showOrderBtn" style="display:none;">📄 عرض الطلب</button>
-    <button id="whatsappBtn" style="display:none;">📤 إرسال الطلب</button>
-  </div>
+<div id="bottomBar">
+  <button id="btnNewOrder">🗑️ طلب جديد</button>
+  <button id="showOrderBtn" style="display:none;">📄 عرض الطلب</button>
+  <button id="whatsappBtn" style="display:none;">📤 إرسال الطلب</button>
+</div>
+
+<!-- بيانات التواصل أسفل الأزرار -->
+<div id="footerInfo">
+  المميز سوفت للأنظمة المحاسبية المتكاملة -
+  <a href="https://wa.me/967772299420" target="_blank">📞 +967 772299420</a> -
+  <a href="mailto:Mr772299420@gmail.com">✉️ Mr772299420@gmail.com</a>
+</div>
 
   <script>
   let itemsData = [];
@@ -382,4 +428,4 @@ function updateButtonsVisibility() {
 }
 </script> 
 </body> 
-  </html>
+        </html>
