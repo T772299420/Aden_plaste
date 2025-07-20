@@ -1,1 +1,39 @@
 
+name: Build Android APK
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    name: Build APK
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up JDK
+        uses: actions/setup-java@v2
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Download Android WebView project
+        run: |
+          git clone https://github.com/vincentserpoul/webview-template.git app
+          cd app
+          sed -i 's|https://example.com|https://t772299420.github.io/Aden_plaste/|g' app/src/main/java/com/example/webview/MainActivity.kt
+
+      - name: Build APK
+        run: |
+          cd app
+          ./gradlew assembleDebug
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v3
+        with:
+          name: Aden_Plast_App
+          path: app/app/build/outputs/apk/debug/app-debug.apk
