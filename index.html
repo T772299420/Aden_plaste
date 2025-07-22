@@ -70,9 +70,31 @@
     .tabContent.active { display: block; }
     .group-section { margin-bottom: 20px; }
     .group-header {
-      background: #8B0000; color: #fff; padding: 12px 18px; font-size: 1.2rem; font-weight: bold;
+      background: #8B0000;
+      background: rgba(139, 0, 0, 0.1); /* خلفية حمراء شفافة بنسبة 10% */
+      color: #8B0000; padding: 12px 18px; font-size: 1.2rem; font-weight: bold;
+      border: 2px solid #8B0000;
       cursor: pointer; border-radius: 8px; display: flex; justify-content: space-between; align-items: center;
     }
+      .group-header {
+  background: linear-gradient(190deg, rgba(190, 0, 0, 0.8), rgba(255, 255, 255, 0.1));
+  color: white;
+  padding: 12px 18px;
+  font-size: 1.2rem;
+  font-weight: bold;
+  border: 2px solid #8B0000;
+  font-size: 2.0rem; /* تم تكبير الخط */
+  font-weight: bold;
+  cursor: pointer;
+  border-radius: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  backdrop-filter: brightness(1.2);
+  box-shadow: 0 0 10px #8B0000(1, 0, 0, 0.3);
+}
+    
+    
     .group-items {
       display: grid; grid-template-columns: repeat(auto-fill,minmax(230px,1fr));
       gap: 20px; padding: 15px 10px;
@@ -405,8 +427,9 @@ function renderSalesItems(keyword = '') {
     const selectedCount = items.filter(i => savedQuantities[i.name]).length;
     const header = document.createElement('div');
     header.className = 'group-header';
-    header.innerHTML = `<span>${group} - ${items.length} صنف - ${selectedCount} مختار</span><span class="group-arrow">▶️</span>`;
-    
+    header.innerHTML = `<span>${group} - العدد ${items.length}</span>
+<span class="group-arrow"><i class="fas fa-angle-double-down" style="color: #8B0000;"></i></span>`;
+
     header.onclick = () => {
       const collapsed = section.classList.toggle('group-collapsed');
       groupStates[group] = !collapsed;
