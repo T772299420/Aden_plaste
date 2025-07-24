@@ -1,260 +1,367 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
-  
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>شركة عدن الوطنية للصناعات المنزلية</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-  
-  
-  
-  
-  
   <style>
-  
-  
-    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f9f9f9; margin: 0; padding: 0; color: #333; }
-    h2 { color: #8B0000; margin-bottom: 20px; font-weight: 700; text-align: center; }
-    
-   
-
-#pageFooter {
-  position: fixed;
-  bottom: 0;
-  width: 100%;
-  z-index: 1001;
-}
-    
-    #tabBar {
-      background: #8B0000; display: flex; align-items: center;
-      padding: 10px 15px; gap: 15px; flex-wrap: wrap; position: sticky; top: 0; z-index: 1000;
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f9f9f9;
+      margin: 0;
+      padding: 0;
+      color: #333;
     }
+
+    h2 {
+      color: #8B0000;
+      margin-bottom: 20px;
+      font-weight: 700;
+      text-align: center;
+    }
+
+    #pageFooter {
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      z-index: 1001;
+    }
+
+    #tabBar {
+      background: #8B0000;
+      display: flex;
+      align-items: center;
+      padding: 10px 15px;
+      gap: 15px;
+      flex-wrap: wrap;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+
     .tab {
-  font-size: 18px;
-  cursor: pointer;
-  padding: 10px 18px;
-  border-radius: 8px;
-  background-color: #8B0000;
-  color: white;
-  margin-left: 5px;
-  display: inline-block;
-  transition: background-color 0.3s;
-}
-.tab:hover {
-  background-color: #a30000;
-}
+      font-size: 18px;
+      cursor: pointer;
+      padding: 10px 18px;
+      border-radius: 8px;
+      background-color: #8B0000;
+      color: white;
+      margin-left: 5px;
+      display: inline-block;
+      transition: background-color 0.3s;
+    }
+
+    .tab:hover {
+      background-color: #a30000;
+    }
 
     #tabBar button.tabBtn {
-      background: transparent; border: none; color: #fff;
-      font-size: 18px; cursor: pointer; padding: 10px 18px; border-radius: 8px;
+      background: transparent;
+      border: none;
+      color: #fff;
+      font-size: 18px;
+      cursor: pointer;
+      padding: 10px 18px;
+      border-radius: 8px;
     }
-    #tabBar button.tabBtn.active, #tabBar button.tabBtn:hover {
+
+    #tabBar button.tabBtn.active,
+    #tabBar button.tabBtn:hover {
       background: #f44336;
     }
+
     .search-container {
-      margin-left: auto; display: flex; align-items: center; gap: 10px;
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      gap: 10px;
     }
+
     #searchInput {
-      padding: 7px 12px; font-size: 16px; border-radius: 8px; border: none; width: 200px;
+      padding: 7px 12px;
+      font-size: 16px;
+      border-radius: 8px;
+      border: none;
+      width: 200px;
     }
-    #searchBtn, #btnClientInfo {
-      padding: 9px 14px; border-radius: 8px; cursor: pointer;
-      font-size: 16px; border: none; color: #fff;
+
+    #searchBtn,
+    #btnClientInfo {
+      padding: 9px 14px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 16px;
+      border: none;
+      color: #fff;
     }
-    #searchBtn { background: #f44336; }
-    #btnClientInfo { background: #004d40; margin-left: 10px; }
+
+    #searchBtn {
+      background: #f44336;
+    }
+
+    #btnClientInfo {
+      background: #004d40;
+      margin-left: 10px;
+    }
+
     .tabContent {
-      display: none; padding: 20px; max-width: 1100px; margin: auto; background: white;
+      display: none;
+      padding: 20px;
+      max-width: 1100px;
+      margin: auto;
+      background: white;
     }
-    .tabContent.active { display: block; }
-    .group-section { margin-bottom: 20px; }
+
+    .tabContent.active {
+      display: block;
+    }
+
+    .group-section {
+      margin-bottom: 20px;
+    }
+
     .group-header {
-      background: #8B0000;
-      background: rgba(139, 0, 0, 0.1); /* خلفية حمراء شفافة بنسبة 10% */
-      color: #8B0000; padding: 12px 18px; font-size: 1.2rem; font-weight: bold;
+      background: linear-gradient(190deg, rgba(190, 0, 0, 0.8), rgba(255, 255, 255, 0.1));
+      color: white;
+      padding: 12px 18px;
+      font-size: 1.3rem;
+      font-weight: bold;
       border: 2px solid #8B0000;
-      cursor: pointer; border-radius: 8px; display: flex; justify-content: space-between; align-items: center;
+      cursor: pointer;
+      border-radius: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      backdrop-filter: brightness(1.2);
+      box-shadow: 0 0 10px rgba(139, 0, 0, 0.3);
     }
-      .group-header {
-  background: linear-gradient(190deg, rgba(190, 0, 0, 0.8), rgba(255, 255, 255, 0.1));
-  color: white;
-  padding: 12px 18px;
-  font-size: 1.2rem;
-  font-weight: bold;
-  border: 2px solid #8B0000;
-  font-size: 1.3rem; /* تم تكبير الخط */
-  font-weight: bold;
-  cursor: pointer;
-  border-radius: 8px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  backdrop-filter: brightness(1.2);
-  box-shadow: 0 0 10px #8B0000(1, 0, 0, 0.3);
-}
-    
-    
+
     .group-items {
-      display: grid; grid-template-columns: repeat(auto-fill,minmax(230px,1fr));
-      gap: 20px; padding: 15px 10px;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+      gap: 20px;
+      padding: 15px 10px;
     }
-    .group-collapsed .group-items { display: none; }
-    .group-arrow { font-size: 1.4rem; transition: transform 0.3s ease; }
-    .group-collapsed .group-arrow { transform: rotate(90deg); }
+
+    .group-collapsed .group-items {
+      display: none;
+    }
+
+    .group-arrow {
+      font-size: 1.4rem;
+      transition: transform 0.3s ease;
+    }
+
+    .group-collapsed .group-arrow {
+      transform: rotate(90deg);
+    }
+
     .item {
-      border: 1px solid #ccc; padding: 10px; border-radius: 8px; background: #fefefe;
+      border: 1px solid #ccc;
+      padding: 10px;
+      border-radius: 8px;
+      background: #fefefe;
     }
-    .item.highlighted { border-color: #f44336; background: #fff0f0; }
+
+    .item.highlighted {
+      border-color: #f44336;
+      background: #fff0f0;
+    }
+
     .image-box img {
-      width: 100%; height: 200px; object-fit: contain;
+      width: 100%;
+      height: 200px;
+      object-fit: contain;
     }
-    .item-details { display: flex; flex-direction: column; gap: 8px; }
-    .item-controls { display: flex; align-items: center; gap: 10px; }
+
+    .item-details {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .item-controls {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
     .notes-btn {
       background-color: #2196f3;
-      border: none; color: white;
-      padding: 5px 10px; border-radius: 6px;
-      cursor: pointer; font-size: 14px;
+      border: none;
+      color: white;
+      padding: 5px 10px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
     }
+
     mark {
-      background: yellow; color: black; padding: 0 4px;
+      background: yellow;
+      color: black;
+      padding: 0 4px;
     }
+
     #bottomBar {
-      position: fixed; bottom: 0; width: 100%; background: #fff;
-      border-top: 1px solid #ccc; display: flex; justify-content: center;
-      gap: 10px; padding: 10px; z-index: 1000;
+      position: fixed;
+      bottom: 40px;
+      /* تم رفعه فوق الفوتر */
+      right: 0;
+      left: 0;
+      background-color: #f9f9f9;
+      padding: 8px;
+      text-align: center;
+      z-index: 999;
+      border-top: 1px solid #ccc;
+      display: flex;
+      justify-content: center;
+      gap: 10px;
     }
+
     #bottomBar button {
-      padding: 10px 16px; font-size: 16px;
-      border: none; border-radius: 8px;
-      cursor: pointer; color: white;
+      padding: 10px 16px;
+      font-size: 16px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      color: white;
     }
-    #btnNewOrder { background-color: #FF9800; }
-    #showOrderBtn { background-color: #2196F3; }
-    #whatsappBtn { background-color: #25d366; }
-    #bottomBar {
-  position: fixed;
-  bottom: 40px; /* تم رفعه فوق الفوتر */
-  right: 0;
-  left: 0;
-  background-color: #f9f9f9;
-  padding: 8px;
-  text-align: center;
-  z-index: 999;
-  border-top: 1px solid #ccc;
-}
 
-#footerInfo {
-  position: fixed;
-  bottom: 0;
-  right: 0;
-  left: 0;
-  background-color: #8B0000;
-  color: white;
-  text-align: center;
-  padding: 5px 10px;
-  font-size: 14px;
-  z-index: 998;
-  white-space: nowrap;
-  overflow-x: auto;
-}
+    #btnNewOrder {
+      background-color: #FF9800;
+    }
 
-#footerInfo a {
-  color: white;
-  text-decoration: none;
-  margin: 0 5px;
-}
+    #showOrderBtn {
+      background-color: #2196F3;
+    }
+
+    #whatsappBtn {
+      background-color: #25d366;
+    }
+
+    #footerInfo {
+      position: fixed;
+      bottom: 0;
+      right: 0;
+      left: 0;
+      background-color: #8B0000;
+      color: white;
+      text-align: center;
+      padding: 5px 10px;
+      font-size: 14px;
+      z-index: 998;
+      white-space: nowrap;
+      overflow-x: auto;
+    }
+
+    #footerInfo a {
+      color: white;
+      text-decoration: none;
+      margin: 0 5px;
+    }
+
     .logo {
-  height: 48px;                /* ارتفاع الشعار */
-  border-radius: 10px;         /* زوايا مستديرة */
-  box-shadow: 0 2px 5px rgba(0,0,0,0.3); /* ظل بسيط تحت الصورة */
-  margin-inline-start: 10px;   /* مسافة من جهة اليسار في تخطيط RTL */
-  background: white;           /* خلفية بيضاء حول الشعار */
-  padding: 4px;      /* حشو داخلي */
-}
-<style>
+      height: 48px;
+      /* ارتفاع الشعار */
+      border-radius: 10px;
+      /* زوايا مستديرة */
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+      /* ظل بسيط تحت الصورة */
+      margin-inline-start: 10px;
+      /* مسافة من جهة اليسار في تخطيط RTL */
+      background: white;
+      /* خلفية بيضاء حول الشعار */
+      padding: 4px;
+      /* حشو داخلي */
+    }
 
-  .search-container {
-    display: flex;
-    justify-content: center;
-    margin: 10px 0;
-  }
-/*حجم عمود البحث */
-  #searchInput {
-    width: 200px;      /* عرض الحقل */
-    height: 40px;      /* ارتفاع الحقل */
-    font-size: 18px;   /* حجم الخط */
-    padding: 8px 12px; /* مساحة داخلية */
-    border: 2px solid #8B0000; /* إطار أنيق بلون أحمر غامق */
-    border-radius: 10px;
-    outline: none;
-  }
+    .search-container {
+      display: flex;
+      justify-content: center;
+      margin: 10px 0;
+    }
 
+    /*حجم عمود البحث */
+    #searchInput {
+      width: 200px;
+      /* عرض الحقل */
+      height: 40px;
+      /* ارتفاع الحقل */
+      font-size: 18px;
+      /* حجم الخط */
+      padding: 8px 12px;
+      /* مساحة داخلية */
+      border: 2px solid #8B0000;
+      /* إطار أنيق بلون أحمر غامق */
+      border-radius: 10px;
+      outline: none;
+    }
 
-  #searchInput::placeholder {
-    color: #aaa;
-    font-size: 16px;
-  }
-</style>
+    #searchInput::placeholder {
+      color: #aaa;
+      font-size: 16px;
+    }
   </style>
 </head>
+
 <body>
   <div id="tabBar">
-   <button class="tabBtn active" data-tab="sales" style="color: white; border: 2px solid white; border-radius: 8px;">
-  <i class="fa fa-shopping-cart" aria-hidden="true" style="margin-left:8px;"></i> الطلبات
-</button>
-  <button class="tabBtn" data-tab="client" style="color: white; border: 2px solid white;">
-  <i class="fas fa-user" style="margin-left: 5px;"></i>
-  بيانات العميل
-</button>
-        <!-- تبويب تحميل الكتلوج -->
-  <!-- زر تحميل الكتلوج مع أيقونة FontAwesome -->
-<button class="tab" onclick="confirmDownload()" style="cursor: pointer; color: white; border: 2px solid white;">
-  <i class="fas fa-download" style="margin-left: 5px;"></i> 
-</button>
+    <button class="tabBtn active" data-tab="sales" style="color: white; border: 2px solid white; border-radius: 8px;">
+      <i class="fa fa-shopping-cart" aria-hidden="true" style="margin-left:8px;"></i> الطلبات
+    </button>
+    <button class="tabBtn" data-tab="client" style="color: white; border: 2px solid white;">
+      <i class="fas fa-user" style="margin-left: 5px;"></i>
+      بيانات العميل
+    </button>
+    <!-- تبويب تحميل الكتلوج -->
+    <!-- زر تحميل الكتلوج مع أيقونة FontAwesome -->
+    <button class="tab" onclick="confirmDownload()" style="cursor: pointer; color: white; border: 2px solid white;">
+      <i class="fas fa-download" style="margin-left: 5px;"></i>
+    </button>
 
-<script>
-  function confirmDownload() {
-    const confirmed = confirm("هل تريد تحميل كتلوج المنتجات؟");
-    if (confirmed) {
-      window.open("https://github.com/T772299420/Aden_plaste/raw/main/%D9%83%D8%AA%D9%84%D9%88%D8%AC%20%D8%A7%D9%84%D9%85%D9%86%D8%AA%D8%AC%D8%A7%D8%AA%20%D9%8A%D9%88%D9%86%D9%8A%D9%88%202025.pdf", "_blank");
-    }
-  }
-</script>
+    <script>
+      function confirmDownload() {
+        const confirmed = confirm("هل تريد تحميل كتلوج المنتجات؟");
+        if (confirmed) {
+          window.open("https://github.com/T772299420/Aden_plaste/raw/main/%D9%83%D8%AA%D9%84%D9%88%D8%AC%20%D8%A7%D9%84%D9%85%D9%86%D8%AA%D8%AC%D8%A7%D8%AA%20%D9%8A%D9%88%D9%86%D9%8A%D9%88%202025.pdf", "_blank");
+        }
+      }
+    </script>
     <div class="search-container">
       <input type="text" id="searchInput" placeholder="ابحث عن صنف..." />
       <!-- أضف هذا الزر ضمن شريط التبويبات الرئيسي -->
 
+      <style>
+        .tab {
+          font-size: 18px;
+          cursor: pointer;
+          padding: 10px 18px;
+          border-radius: 8px;
+          background-color: #8B0000;
+          color: white;
+          margin-left: 5px;
+          display: inline-block;
+          transition: background-color 0.3s;
+        }
 
-<style>
-  .tab {
-    font-size: 18px;
-    cursor: pointer;
-    padding: 10px 18px;
-    border-radius: 8px;
-    background-color: #8B0000;
-    color: white;
-    margin-left: 5px;
-    display: inline-block;
-    transition: background-color 0.3s;
-  }
-  .tab:hover {
-    background-color: #a30000;
-  }
-</style>
-     
+        .tab:hover {
+          background-color: #a30000;
+        }
+      </style>
+
       <img class="logo" src="https://raw.githubusercontent.com/T772299420/Aden_plaste/main/logo.png" alt="Logo" />
     </div>
   </div>
 
-<div id="sales" class="tabContent active">
-  <div class="section-header">
-    <h2>🛒 قسم الطلبات</h2>
-    <p>يرجى اختيار الكمية المطلوبة لكل صنف ثم الضغط على زر إرسال الطلب.</p>
+  <div id="sales" class="tabContent active">
+    <div class="section-header">
+      <h2>🛒 قسم الطلبات</h2>
+      <p>يرجى اختيار الكمية المطلوبة لكل صنف ثم الضغط على زر إرسال الطلب.</p>
+    </div>
+    <div id="salesItems" class="items-container"></div>
   </div>
-  <div id="salesItems" class="items-container"></div>
-</div>
 
   <div id="client" class="tabContent">
     <h2>بيانات العميل</h2>
@@ -267,276 +374,290 @@
     </div>
   </div>
 
-<div id="bottomBar">
-  <button id="btnNewOrder">🗑️ طلب جديد</button>
-  <button id="showOrderBtn" style="display:none;">📄 عرض الطلب</button>
-  <button id="whatsappBtn" style="display:none;">📤 إرسال الطلب</button>
-</div>
+  <div id="bottomBar">
+    <button id="btnNewOrder">🗑️ طلب جديد</button>
+    <button id="showOrderBtn" style="display:none;">📄 عرض الطلب</button>
+    <button id="whatsappBtn" style="display:none;">📤 إرسال الطلب</button>
+  </div>
 
-<!-- بيانات التواصل أسفل الأزرار -->
-<div id="footerInfo">
-  المميز سوفت للأنظمة المحاسبية المتكاملة   
-  <a href="https://wa.me/967772299420" target="_blank">📞 +967 772299420</a> 
-  <a h
-</div>
-
-  
-  <script>
-function downloadCatalog() {
-  const url = 'https://github.com/T772299420/Aden_plaste/raw/main/%D9%83%D8%AA%D9%84%D9%88%D8%AC%20%D8%A7%D9%84%D9%85%D9%86%D8%AA%D8%AC%D8%A7%D8%AA%20%D9%8A%D9%88%D9%86%D9%8A%D9%88%202025.pdf';
-  const link = document.createElement('a');
-  link.href = url;
-  link.download = 'كتالوج المنتجات.pdf'; // اسم الملف عند التنزيل
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-}
-
-
+  <!-- بيانات التواصل أسفل الأزرار -->
+  <div id="footerInfo">
+    المميز سوفت للأنظمة المحاسبية المتكاملة
+    <a href="https://wa.me/967772299420" target="_blank">📞 +967 772299420</a>
+    <a h
+  </div><script>
   let itemsData = [];
-let savedQuantities = JSON.parse(localStorage.getItem('selectedQuantities') || '{}');
-let savedItemNotes = JSON.parse(localStorage.getItem('itemNotes') || '{}');
-let clientInfo = JSON.parse(localStorage.getItem('clientInfo') || '{}');
-let groupStates = {};
-let lastOpenedGroup = '';
-
-document.addEventListener('DOMContentLoaded', () => {
-  fetch('https://raw.githubusercontent.com/T772299420/Aden_plaste/main/data%20(7).csv')
-    .then(res => res.text())
-    .then(text => {
-      const rows = text.trim().split('\n').map(row => row.split(','));
-      const headers = rows.shift();
-      itemsData = rows.map(row => {
-        const obj = {};
-        headers.forEach((h, i) => obj[h.trim().toLowerCase()] = row[i]?.trim() || '');
-        return obj;
+  let savedQuantities = JSON.parse(localStorage.getItem('selectedQuantities') || '{}');
+  let savedItemNotes = JSON.parse(localStorage.getItem('itemNotes') || '{}');
+  let clientInfo = JSON.parse(localStorage.getItem('clientInfo') || '{}');
+  let groupStates = {};
+  let lastOpenedGroup = '';
+  
+  document.addEventListener('DOMContentLoaded', () => {
+    fetch('https://raw.githubusercontent.com/T772299420/Aden_plaste/main/data%20(7).csv')
+      .then(res => res.text())
+      .then(text => {
+        const rows = text.trim().split('\n').map(row => row.split(','));
+        const headers = rows.shift();
+        itemsData = rows.map(row => {
+          const obj = {};
+          headers.forEach((h, i) => obj[h.trim().toLowerCase()] = row[i]?.trim() || '');
+          return obj;
+        });
+        
+        fillClientInputs();
+        if (!clientInfo.fullName || !clientInfo.phone) {
+          alert("يرجى إدخال بيانات العميل أولاً.");
+          switchToTab("client");
+        }
+        
+        if (Object.keys(savedQuantities).length > 0) {
+          if (confirm("يوجد طلب محفوظ مسبقًا، هل ترغب بإنشاء طلب جديد؟")) {
+            clearOrder();
+          }
+        }
+        
+        renderSalesItems();
+        updateButtonsVisibility();
+      });
+    
+    document.getElementById('searchInput').addEventListener('input', (e) => {
+      const keyword = e.target.value.trim().toLowerCase();
+      renderSalesItems(keyword);
+    });
+    
+    document.getElementById('saveClientInfoBtn').onclick = () => {
+      clientInfo = {
+        fullName: document.getElementById('clientFullName').value.trim(),
+        tradeName: document.getElementById('clientTradeName').value.trim(),
+        address: document.getElementById('clientAddress').value.trim(),
+        phone: document.getElementById('clientPhone').value.trim(),
+      };
+      localStorage.setItem('clientInfo', JSON.stringify(clientInfo));
+      alert("تم حفظ بيانات العميل");
+    };
+    
+    document.querySelectorAll('.tabBtn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const targetTab = btn.dataset.tab;
+        if (targetTab === 'sales' && (!clientInfo.fullName || !clientInfo.phone)) {
+          alert("لا يمكنك الدخول إلى الطلبات قبل إدخال بيانات العميل.");
+          switchToTab("client");
+          return;
+        }
+        switchToTab(targetTab);
+      });
+    });
+    
+    document.getElementById('btnNewOrder').onclick = () => {
+      if (confirm("هل أنت متأكد من بدء طلب جديد؟")) {
+        clearOrder();
+        renderSalesItems();
+        updateButtonsVisibility();
+      }
+    };
+    
+    document.getElementById('showOrderBtn').onclick = () => {
+      const items = Object.keys(savedQuantities);
+      if (!items.length) return alert("لا توجد أصناف مختارة.");
+      let msg = "الطلب الحالي:\n\n";
+      items.forEach(name => {
+        msg += `- ${name}: ${savedQuantities[name]}`;
+        if (savedItemNotes[name]) msg += ` (ملاحظة: ${savedItemNotes[name]})`;
+        msg += '\n';
+      });
+      alert(msg);
+    };
+    
+    document.getElementById('whatsappBtn').onclick = () => {
+      if (!Object.keys(savedQuantities).length) return alert("لا توجد أصناف.");
+      if (!clientInfo.phone) return alert("يرجى إدخال رقم الهاتف أولًا.");
+      sendWhatsAppMessage();
+    };
+  });
+  
+  function switchToTab(tabName) {
+    document.querySelectorAll('.tabBtn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tabContent').forEach(tab => tab.classList.remove('active'));
+    document.querySelector(`.tabBtn[data-tab="${tabName}"]`).classList.add('active');
+    document.getElementById(tabName).classList.add('active');
+  }
+  
+  function renderSalesItems(keyword = '') {
+    const container = document.getElementById('salesItems');
+    container.innerHTML = '';
+    const groups = {};
+    
+    itemsData.forEach(item => {
+      const group = item.group || 'أخرى';
+      if (!groups[group]) groups[group] = [];
+      groups[group].push(item);
+    });
+    
+    Object.entries(groups).forEach(([group, items]) => {
+      const matchedItems = keyword ?
+        items.filter(i => i.name.toLowerCase().includes(keyword)) :
+        items;
+      
+      if (keyword && matchedItems.length === 0) return;
+      
+      const section = document.createElement('div');
+      section.className = 'group-section';
+      
+      const selectedCount = items.filter(i => savedQuantities[i.name]).length;
+      const header = document.createElement('div');
+      header.className = 'group-header';
+      header.innerHTML = `<span>${group} - العدد ${items.length}</span>
+<span class="group-arrow"><i class="fas fa-angle-double-down" style="color: #8B0000;"></i></span>`;
+      
+      header.onclick = () => {
+        const collapsed = section.classList.toggle('group-collapsed');
+        groupStates[group] = !collapsed;
+        if (!collapsed) lastOpenedGroup = group;
+      };
+      
+      const itemsContainer = document.createElement('div');
+      itemsContainer.className = 'group-items';
+      
+      matchedItems.forEach(item => {
+        const name = item.name;
+        const unit = item.unit || 'وحدة';
+        const image = item.image || '';
+        const imgUrl = `https://raw.githubusercontent.com/T772299420/Aden_plaste/main/${image}`;
+        const qty = savedQuantities[name] || '';
+        const note = savedItemNotes[name] || '';
+        
+        const card = document.createElement('div');
+        card.className = `item ${qty ? 'highlighted' : ''}`;
+        card.innerHTML = `
+          <div class="image-box"><img src="${imgUrl}" alt="${name}" /></div>
+          <div class="item-details">
+          <p>${highlightKeyword(name, keyword)} (${unit}) ${qty ? '👍' : ''}</p>
+            <div class="item-controls">
+              <label>الكمية:
+                <input type="number" dir="ltr" min="0" value="${qty}" data-name="${name}" oninput="onQuantityChange(this)" />
+              </label>
+              <button class="notes-btn" onclick="addNote('${name}')">ملاحظات${note ? ' ✓' : ''}</button>
+            </div>
+          </div>`;
+        itemsContainer.appendChild(card);
       });
       
-      // التحقق من وجود بيانات العميل
-      fillClientInputs();
-      if (!clientInfo.fullName || !clientInfo.phone) {
-        alert("يرجى إدخال بيانات العميل أولاً.");
-        switchToTab("client");
-      }
+      section.appendChild(header);
+      section.appendChild(itemsContainer);
       
-      if (Object.keys(savedQuantities).length > 0) {
-        if (confirm("يوجد طلب محفوظ مسبقًا، هل ترغب بإنشاء طلب جديد؟")) {
-          clearOrder();
-        }
-      }
+      const shouldOpen = keyword ?
+        true :
+        (group === lastOpenedGroup || groupStates[group]);
       
-      renderSalesItems();
-      updateButtonsVisibility();
+      if (!shouldOpen) section.classList.add('group-collapsed');
+      container.appendChild(section);
     });
+  }
   
-  document.getElementById('searchInput').addEventListener('input', (e) => {
-    const keyword = e.target.value.trim().toLowerCase();
-    renderSalesItems(keyword);
-  });
-  
-  document.getElementById('saveClientInfoBtn').onclick = () => {
-    clientInfo = {
-      fullName: document.getElementById('clientFullName').value.trim(),
-      tradeName: document.getElementById('clientTradeName').value.trim(),
-      address: document.getElementById('clientAddress').value.trim(),
-      phone: document.getElementById('clientPhone').value.trim(),
-    };
-    localStorage.setItem('clientInfo', JSON.stringify(clientInfo));
-    alert("تم حفظ بيانات العميل");
-  };
-  
-  document.querySelectorAll('.tabBtn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const targetTab = btn.dataset.tab;
-      if (targetTab === 'sales' && (!clientInfo.fullName || !clientInfo.phone)) {
-        alert("لا يمكنك الدخول إلى الطلبات قبل إدخال بيانات العميل.");
-        switchToTab("client");
-        return;
-      }
-      switchToTab(targetTab);
-    });
-  });
-  
-  document.getElementById('btnNewOrder').onclick = () => {
-    if (confirm("هل أنت متأكد من بدء طلب جديد؟")) {
-      clearOrder();
-      renderSalesItems();
-      updateButtonsVisibility();
+  function onQuantityChange(input) {
+    const qty = parseInt(input.value) || 0;
+    const name = input.dataset.name;
+    const card = input.closest('.item');
+    
+    if (qty > 0) {
+      savedQuantities[name] = qty;
+      card.classList.add('highlighted');
+    } else {
+      delete savedQuantities[name];
+      delete savedItemNotes[name];
+      card.classList.remove('highlighted');
     }
-  };
+    
+    const titleElement = input.closest('.item-details').querySelector('p');
+    if (titleElement) {
+      const unit = itemsData.find(i => i.name === name)?.unit || 'وحدة';
+      const keyword = document.getElementById('searchInput').value.trim().toLowerCase();
+      titleElement.innerHTML = `${highlightKeyword(name, keyword)} (${unit}) ${qty ? '👍' : ''}`;
+    }
+    
+    localStorage.setItem('selectedQuantities', JSON.stringify(savedQuantities));
+    localStorage.setItem('itemNotes', JSON.stringify(savedItemNotes));
+    updateButtonsVisibility();
+  }
   
-  document.getElementById('showOrderBtn').onclick = () => {
-    const items = Object.keys(savedQuantities);
-    if (!items.length) return alert("لا توجد أصناف مختارة.");
-    let msg = "الطلب الحالي:\n\n";
-    items.forEach(name => {
-      msg += `- ${name}: ${savedQuantities[name]}`;
-      if (savedItemNotes[name]) msg += ` (ملاحظة: ${savedItemNotes[name]})`;
-      msg += '\n';
-    });
-    alert(msg);
-  };
+  function addNote(name) {
+    const note = prompt("أدخل الملاحظة:", savedItemNotes[name] || '');
+    if (note !== null) {
+      if (note.trim()) savedItemNotes[name] = note.trim();
+      else delete savedItemNotes[name];
+      localStorage.setItem('itemNotes', JSON.stringify(savedItemNotes));
+      renderSalesItems(document.getElementById('searchInput').value.trim().toLowerCase());
+    }
+  }
   
-  document.getElementById('whatsappBtn').onclick = () => {
-    if (!Object.keys(savedQuantities).length) return alert("لا توجد أصناف.");
-    if (!clientInfo.phone) return alert("يرجى إدخال رقم الهاتف أولًا.");
+  function highlightKeyword(text, keyword) {
+    if (!keyword) return text;
+    return text.replace(new RegExp(`(${keyword})`, 'gi'), `<mark>$1</mark>`);
+  }
+  
+  function fillClientInputs() {
+    document.getElementById('clientFullName').value = clientInfo.fullName || '';
+    document.getElementById('clientTradeName').value = clientInfo.tradeName || '';
+    document.getElementById('clientAddress').value = clientInfo.address || '';
+    document.getElementById('clientPhone').value = clientInfo.phone || '';
+  }
+  
+  function clearOrder() {
+    savedQuantities = {};
+    savedItemNotes = {};
+    localStorage.removeItem('selectedQuantities');
+    localStorage.removeItem('itemNotes');
+    updateButtonsVisibility();
+  }
+  
+  function updateButtonsVisibility() {
+    const visible = Object.keys(savedQuantities).length > 0;
+    document.getElementById('showOrderBtn').style.display = visible ? 'inline-block' : 'none';
+    document.getElementById('whatsappBtn').style.display = visible ? 'inline-block' : 'none';
+  }
+  
+  // تعديل دالة ارسال الطلب على واتساب لتقسيم الرسالة لأجزاء بحجم مناسب (حوالي 1500 حرف)
+  function sendWhatsAppMessage() {
+    const baseUrl = 'https://wa.me/967772299420?text=';
     const date = new Date().toISOString().split('T')[0];
-    let msg = `أنا العميل / ${clientInfo.fullName || ''} - ${clientInfo.tradeName || ''}%0A`;
-    msg += `عنواني / ${clientInfo.address || ''}%0Aرقم هاتفي / ${clientInfo.phone || ''}%0Aتاريخ الطلب / ${date}%0A`;
-    msg += `__________________________%0Aالاصناف المطلوبة:%0A`;
-    Object.keys(savedQuantities).forEach(name => {
-      const item = itemsData.find(i => i.name === name);
+    
+    let headerMsg = `أنا العميل / ${clientInfo.fullName || ''} - ${clientInfo.tradeName || ''}%0A`;
+    headerMsg += `عنواني / ${clientInfo.address || ''}%0Aرقم هاتفي / ${clientInfo.phone || ''}%0Aتاريخ الطلب / ${date}%0A`;
+    headerMsg += `__________________________%0Aالاصناف المطلوبة:%0A`;
+    
+    const maxChunkLength = 1500; // الحد الأقصى لطول كل رسالة (يمكن تعديله)
+    let currentMsg = headerMsg;
+    const messages = [];
+    
+    const keys = Object.keys(savedQuantities);
+    for (let i = 0; i < keys.length; i++) {
+      const name = keys[i];
+      const item = itemsData.find(it => it.name === name);
       const unit = item?.unit || 'وحدة';
       const qty = savedQuantities[name];
       const note = savedItemNotes[name] ? ` - ملاحظة: ${savedItemNotes[name]}` : '';
-      msg += `- ${name} - ${unit} - ${qty}${note}%0A`;
-    });
-    const url = `https://wa.me/967772299420?text=${msg}`;
-    window.open(url, '_blank');
-  };
-});
-
-function switchToTab(tabName) {
-  document.querySelectorAll('.tabBtn').forEach(b => b.classList.remove('active'));
-  document.querySelectorAll('.tabContent').forEach(tab => tab.classList.remove('active'));
-  document.querySelector(`.tabBtn[data-tab="${tabName}"]`).classList.add('active');
-  document.getElementById(tabName).classList.add('active');
-}
-
-function renderSalesItems(keyword = '') {
-  const container = document.getElementById('salesItems');
-  container.innerHTML = '';
-  const groups = {};
-  
-  itemsData.forEach(item => {
-    const group = item.group || 'أخرى';
-    if (!groups[group]) groups[group] = [];
-    groups[group].push(item);
-  });
-  
-  Object.entries(groups).forEach(([group, items]) => {
-    const matchedItems = keyword ?
-      items.filter(i => i.name.toLowerCase().includes(keyword)) :
-      items;
-    
-    if (keyword && matchedItems.length === 0) return;
-    
-    const section = document.createElement('div');
-    section.className = 'group-section';
-    
-    const selectedCount = items.filter(i => savedQuantities[i.name]).length;
-    const header = document.createElement('div');
-    header.className = 'group-header';
-    header.innerHTML = `<span>${group} - العدد ${items.length}</span>
-<span class="group-arrow"><i class="fas fa-angle-double-down" style="color: #8B0000;"></i></span>`;
-
-    header.onclick = () => {
-      const collapsed = section.classList.toggle('group-collapsed');
-      groupStates[group] = !collapsed;
-      if (!collapsed) lastOpenedGroup = group;
-    };
-    
-    const itemsContainer = document.createElement('div');
-    itemsContainer.className = 'group-items';
-    
-    matchedItems.forEach(item => {
-      const name = item.name;
-      const unit = item.unit || 'وحدة';
-      const image = item.image || '';
-      const imgUrl = `https://raw.githubusercontent.com/T772299420/Aden_plaste/main/${image}`;
-      const qty = savedQuantities[name] || '';
-      const note = savedItemNotes[name] || '';
+      const line = `- ${name} - ${unit} - ${qty}${note}%0A`;
       
-      const card = document.createElement('div');
-      card.className = `item ${qty ? 'highlighted' : ''}`;
-      card.innerHTML = `
-        <div class="image-box"><img src="${imgUrl}" alt="${name}" /></div>
-        <div class="item-details">
-        <p>${highlightKeyword(name, keyword)} (${unit}) ${qty ? '👍' : ''}</p>
-          <div class="item-controls">
-            <label>الكمية:
-              <input type="number" dir="ltr" min="0" value="${qty}" data-name="${name}" oninput="onQuantityChange(this)" />
-            </label>
-            <button class="notes-btn" onclick="addNote('${name}')">ملاحظات${note ? ' ✓' : ''}</button>
-          </div>
-        </div>`;
-      itemsContainer.appendChild(card);
+      if ((currentMsg + line).length > maxChunkLength) {
+        // تخزين الرسالة الحالية وبدء رسالة جديدة مع الترويسة
+        messages.push(currentMsg);
+        currentMsg = headerMsg + line;
+      } else {
+        currentMsg += line;
+      }
+    }
+    if (currentMsg.length > headerMsg.length) {
+      messages.push(currentMsg);
+    }
+    
+    // فتح جميع الرسائل في نوافذ جديدة منفصلة (أو يمكن تعديل الإرسال حسب الحاجة)
+    messages.forEach(msg => {
+      const url = baseUrl + msg;
+      window.open(url, '_blank');
     });
-    
-    section.appendChild(header);
-    section.appendChild(itemsContainer);
-    
-    const shouldOpen = keyword ?
-      true :
-      (group === lastOpenedGroup || groupStates[group]);
-    
-    if (!shouldOpen) section.classList.add('group-collapsed');
-    container.appendChild(section);
-  });
-}
-
-function onQuantityChange(input) {
-  const qty = parseInt(input.value) || 0;
-  const name = input.dataset.name;
-  const card = input.closest('.item');
-  
-  if (qty > 0) {
-    savedQuantities[name] = qty;
-    card.classList.add('highlighted');
-  } else {
-    delete savedQuantities[name];
-    delete savedItemNotes[name];
-    card.classList.remove('highlighted');
   }
-  
-  const titleElement = input.closest('.item-details').querySelector('p');
-  if (titleElement) {
-    const unit = itemsData.find(i => i.name === name)?.unit || 'وحدة';
-    const keyword = document.getElementById('searchInput').value.trim().toLowerCase();
-    titleElement.innerHTML = `${highlightKeyword(name, keyword)} (${unit}) ${qty ? '👍' : ''}`;
-  }
-  
-  localStorage.setItem('selectedQuantities', JSON.stringify(savedQuantities));
-  localStorage.setItem('itemNotes', JSON.stringify(savedItemNotes));
-  updateButtonsVisibility();
-}
-
-function addNote(name) {
-  const note = prompt("أدخل الملاحظة:", savedItemNotes[name] || '');
-  if (note !== null) {
-    if (note.trim()) savedItemNotes[name] = note.trim();
-    else delete savedItemNotes[name];
-    localStorage.setItem('itemNotes', JSON.stringify(savedItemNotes));
-    renderSalesItems(document.getElementById('searchInput').value.trim().toLowerCase());
-  }
-}
-
-function highlightKeyword(text, keyword) {
-  if (!keyword) return text;
-  return text.replace(new RegExp(`(${keyword})`, 'gi'), `<mark>$1</mark>`);
-}
-
-function fillClientInputs() {
-  document.getElementById('clientFullName').value = clientInfo.fullName || '';
-  document.getElementById('clientTradeName').value = clientInfo.tradeName || '';
-  document.getElementById('clientAddress').value = clientInfo.address || '';
-  document.getElementById('clientPhone').value = clientInfo.phone || '';
-}
-
-function clearOrder() {
-  savedQuantities = {};
-  savedItemNotes = {};
-  localStorage.removeItem('selectedQuantities');
-  localStorage.removeItem('itemNotes');
-  updateButtonsVisibility();
-}
-
-function updateButtonsVisibility() {
-  const visible = Object.keys(savedQuantities).length > 0;
-  document.getElementById('showOrderBtn').style.display = visible ? 'inline-block' : 'none';
-  document.getElementById('whatsappBtn').style.display = visible ? 'inline-block' : 'none';
-}
-</script> 
+</script>
 </body>
-</html>
-    
+
+  </html>
