@@ -366,15 +366,25 @@ document.addEventListener('DOMContentLoaded', () => {
   };
   
 document.getElementById('showOrderBtn').onclick = () => {
-  if (!messagePages || messagePages.length === 0) {
-    return alert("لا توجد أصناف لعرضها.");
+  const items = Object.keys(savedQuantities);
+  if (!items.length) return alert("لا توجد أصناف مختارة.");
+
+  if (messagePages && messagePages.length > 0) {
+    const currentMsg = messagePages[currentPage] || '';
+    return alert(`الطلب الحالي - صفحة ${currentPage + 1}:\n\n${currentMsg}`);
   }
 
-  const currentMsg = messagePages[currentPage] || '';
+  // في حال لم يتم التقسيم، نعرض جميع الطلبات يدويًا
+  let msg = "الطلب الحالي:\n\n";
+  items.forEach(name => {
+    msg += `- ${name}: ${savedQuantities[name]}`;
+    if (savedItemNotes[name]) msg += ` (ملاحظة: ${savedItemNotes[name]})`;
+    msg += '\n';
+  });
 
-  // عرض النص الكامل للصفحة الحالية (الأصناف + الملاحظات)
-  alert(`الطلب الحالي - صفحة ${currentPage + 1}:\n\n${currentMsg}`);
+  alert(msg);
 };
+
   const MAX_WHATSAPP_LENGTH = 3900; // أقل من الحد الرسمي
 
 let currentPage = 0;
