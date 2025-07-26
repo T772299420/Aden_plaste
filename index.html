@@ -586,7 +586,14 @@ function clearOrder() {
   localStorage.removeItem('selectedQuantities');
   localStorage.removeItem('itemNotes');
   updateButtonsVisibility();
+// حذف أزرار الصفحات عند طلب جديد
+  const paginationContainer = document.getElementById('paginationControls');
+  if (paginationContainer) {
+    paginationContainer.innerHTML = '';
+  }
+  currentPage = 0; // إعادة تعيين الصفحة الحالية
 }
+
 
 function updateButtonsVisibility() {
   const visible = Object.keys(savedQuantities).length > 0;
