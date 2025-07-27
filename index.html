@@ -14,8 +14,8 @@
   <style>
  #btnCloseGroups {
   position: absolute;
-  top: 0.3%;
-  right: 15px;
+  top: 0.1%;
+  right: 3px;
   transform: translateY(-100%);
   width: 64px;
   height: 64px;
@@ -662,6 +662,34 @@ function updateButtonsVisibility() {
   document.getElementById('whatsappBtn').style.display = visible ? 'inline-block' : 'none';
 }
 </script> 
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  document.querySelectorAll('input[type="number"][data-name]').forEach(input => {
+    input.addEventListener("keydown", function (e) {
+      if (e.key === "Enter") {
+        e.preventDefault();      // يمنع السلوك الافتراضي (مثل إرسال النموذج)
+        this.blur();             // يفقد التركيز → يغلق الكيبورد على الجوال
+      }
+    });
+  });
+});
+
+</script>
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    // المراقبة العامة للنقر داخل الحقول العددية الخاصة بالكمية
+    document.addEventListener("keydown", function(e) {
+      if (
+        e.key === "Enter" &&
+        document.activeElement.tagName === "INPUT" &&
+        document.activeElement.type === "number"
+      ) {
+        e.preventDefault(); // منع التصرف الافتراضي
+        document.activeElement.blur(); // فقدان التركيز = إغلاق الكيبورد
+      }
+    });
+  });
+</script>
 </body>
 </html>
     
