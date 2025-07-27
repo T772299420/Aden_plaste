@@ -12,8 +12,35 @@
   
   
   <style>
-  
-  
+ #btnCloseGroups {
+  position: absolute;
+  top: 100%;
+  right: 100px;
+  transform: translateY(-100%);
+  width: 64px;
+  height: 64px;
+  background: linear-gradient(135deg, #ff4e50, #8B0000);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  font-size: 280px;
+  font-weight: bold;
+  cursor: pointer;
+  z-index: 2000;
+  box-shadow: 0 100px 250px rgba(255, 78, 80, 0.6);
+  transition: all 0.3s ease;
+  user-select: none;
+}
+
+#btnCloseGroups:hover {
+  background: linear-gradient(189deg, #8B0000, #8B0000);
+  transform: translateY(-100%) scale(1.1);
+  box-shadow: 0 14px 30px #8B0000(29, 21, 35, 0.8);
+}
+
     body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f9f9f9; margin: 0; padding: 0; color: #333; }
     h2 { color: #8B0000; margin-bottom: 20px; font-weight: 700; text-align: center; }
     
@@ -268,7 +295,12 @@
   </div>
 
 <div id="bottomBar">
+  <!-- زر إغلاق المجموعات -->
+<button id="btnCloseGroups" style="background-color: red; color: white; border-radius: 50%; padding: 10px; font-size: 20px; display: none;">
+  ×
+</button>
   <button id="btnNewOrder">🗑️ طلب جديد</button>
+  
   <button id="showOrderBtn" style="display:none;">📄 عرض الطلب</button>
   <button id="whatsappBtn" style="display:none;">📤 إرسال الطلب</button>
 </div>
@@ -301,17 +333,33 @@ let groupStates = {};
 let lastOpenedGroup = '';
 
 document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('btnCloseGroups').onclick = () => {
+  // غلق كل المجموعات
+  groupStates = {};
+  lastOpenedGroup = '';
+
+  // إخفاء زر الإغلاق
+  document.getElementById('btnCloseGroups').style.display = 'none';
+
+  // إعادة تصنيف كل الأقسام كمغلقة
+  document.querySelectorAll('.group-section').forEach(section => {
+    section.classList.add('group-collapsed');
+  });
+};
   fetch('https://raw.githubusercontent.com/T772299420/Aden_plaste/main/data%20(7).csv')
     .then(res => res.text())
     .then(text => {
       const rows = text.trim().split('\n').map(row => row.split(','));
       const headers = rows.shift();
       itemsData = rows.map(row => {
-        const obj = {};
-        headers.forEach((h, i) => obj[h.trim().toLowerCase()] = row[i]?.trim() || '');
-        return obj;
-      });
-      
+  const obj = {};
+  headers.forEach((h, i) => obj[h.trim().toLowerCase()] = row[i]?.trim() || '');
+  obj._priority = parseFloat(row[5]) || 0; // العمود F هو السادس (index 5)
+  return obj;
+});
+
+// ترتيب تصاعدي حسب العمود السادس (الذي أضفناه باسم _priority)
+itemsData.sort((a, b) => a._priority - b._priority);
       // التحقق من وجود بيانات العميل
       fillClientInputs();
       if (!clientInfo.fullName || !clientInfo.phone) {
@@ -497,11 +545,15 @@ function renderSalesItems(keyword = '') {
 <span class="group-arrow"><i class="fas fa-angle-double-down" style="color: #8B0000;"></i></span>`;
 
     header.onclick = () => {
-      const collapsed = section.classList.toggle('group-collapsed');
-      groupStates[group] = !collapsed;
-      if (!collapsed) lastOpenedGroup = group;
-    };
-    
+  const collapsed = section.classList.toggle('group-collapsed');
+  groupStates[group] = !collapsed;
+  if (!collapsed) lastOpenedGroup = group;
+  
+  // بعد التبديل، نتحقق هل هناك أي مجموعة مفتوحة لنظهر زر الإغلاق
+  const anyGroupOpen = Object.values(groupStates).some(state => state === true);
+  document.getElementById('btnCloseGroups').style.display = anyGroupOpen ? 'inline-block' : 'none';
+};
+
     const itemsContainer = document.createElement('div');
     itemsContainer.className = 'group-items';
     
