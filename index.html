@@ -28,6 +28,7 @@
   
   
   <style>
+  
     .group:last-child {
   margin-bottom: 500px; /* المسافة المطلوبة */
     }
@@ -291,6 +292,39 @@
     background-color: #a30000;
   }
 </style>
+<style>
+  .client-note {
+    background: #fff3cd;           /* خلفية صفراء فاتحة */
+    border: 1px solid #ffeeba;     /* حد خفيف */
+    color: #856404;                 /* نص بني فاتح */
+    padding: 10px 12px;
+    border-radius: 8px;
+    margin-bottom: 12px;            /* مسافة تحت التنبيه */
+    font-weight: 600;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  /* زر حفظ البيانات مخصص */
+#saveClientInfoBtn {
+  background: #8B0000;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  padding: 14px;
+  font-size: 16px;
+  font-weight: 700;
+  width: 100%;           /* بعرض الكرت بالكامل */
+  cursor: pointer;
+  transition: background .3s ease;
+}
+
+#saveClientInfoBtn:hover {
+  background: #a30000;   /* أفتح عند المرور */
+}
+</style>
+
      
       <img class="logo" src="https://raw.githubusercontent.com/T772299420/Aden_plaste/main/logo.png" alt="Logo" />
     </div>
@@ -305,15 +339,84 @@
 </div>
 
   <div id="client" class="tabContent">
-    <h2>بيانات العميل</h2>
-    <div>
-      <label>الاسم الرباعي:</label><input type="text" id="clientFullName" /><br><br>
-      <label>الاسم التجاري:</label><input type="text" id="clientTradeName" /><br><br>
-      <label>عنوان المحل:</label><input type="text" id="clientAddress" /><br><br>
-      <label>رقم الهاتف:</label><input type="text" id="clientPhone" dir="ltr" /><br><br>
+  <h2>بيانات العميل</h2>
+
+  <div class="client-card">
+    <!-- التنبيه الذي أضفناه سابقًا -->
+    <div class="client-note">⚠️ يرجى إدخال جميع بياناتك بشكل صحيح.</div>
+
+    <div class="form-grid">
+      <!-- الاسم الرباعي -->
+      <div class="form-group">
+        <label for="clientFullName" class="form-label">الاسم الرباعي</label>
+        <div class="input-wrap">
+          <i class="fa fa-user icon" aria-hidden="true"></i>
+          <input
+            type="text"
+            id="clientFullName"
+            class="text-input"
+            placeholder="اكتب اسمك الرباعي"
+            autocomplete="name"
+            required
+          />
+        </div>
+      </div>
+
+      <!-- الاسم التجاري -->
+      <div class="form-group">
+        <label for="clientTradeName" class="form-label">الاسم التجاري</label>
+        <div class="input-wrap">
+          <i class="fa fa-store icon" aria-hidden="true"></i>
+          <input
+            type="text"
+            id="clientTradeName"
+            class="text-input"
+            placeholder="اسم منشأتك أو المحل"
+            autocomplete="organization"
+          />
+        </div>
+      </div>
+
+      <!-- عنوان المحل -->
+      <div class="form-group">
+        <label for="clientAddress" class="form-label">عنوان المحل</label>
+        <div class="input-wrap">
+          <i class="fa fa-location-dot icon" aria-hidden="true"></i>
+          <input
+            type="text"
+            id="clientAddress"
+            class="text-input"
+            placeholder="المحافظة / المدينة / الحي"
+            autocomplete="street-address"
+          />
+        </div>
+      </div>
+
+      <!-- رقم الهاتف -->
+      <div class="form-group">
+        <label for="clientPhone" class="form-label">رقم الهاتف</label>
+        <div class="input-wrap">
+          <i class="fa fa-phone icon" aria-hidden="true"></i>
+          <input
+            type="tel"
+            id="clientPhone"
+            class="text-input"
+            dir="ltr"
+            inputmode="tel"
+            placeholder="مثال: 9677XXXXXXXX"
+            autocomplete="tel"
+            required
+          />
+        </div>
+        <div class="field-hint">أدخل الرقم مع المفتاح الدولي إن أمكن.</div>
+      </div>
+    </div>
+
+    <div class="client-actions">
       <button id="saveClientInfoBtn" class="btn-yes">💾 حفظ البيانات</button>
     </div>
   </div>
+</div>
 
 <div id="bottomBar">
   <!-- زر إغلاق المجموعات -->
@@ -403,17 +506,36 @@ itemsData.sort((a, b) => a._priority - b._priority);
     renderSalesItems(keyword);
   });
   
-  document.getElementById('saveClientInfoBtn').onclick = () => {
-    clientInfo = {
-      fullName: document.getElementById('clientFullName').value.trim(),
-      tradeName: document.getElementById('clientTradeName').value.trim(),
-      address: document.getElementById('clientAddress').value.trim(),
-      phone: document.getElementById('clientPhone').value.trim(),
-    };
-    localStorage.setItem('clientInfo', JSON.stringify(clientInfo));
-    alert("تم حفظ بيانات العميل");
+  <!-- داخل نفس <script> الذي يبدأ بـ document.addEventListener('DOMContentLoaded', () => { -->
+document.getElementById('saveClientInfoBtn').onclick = () => {
+  // جمع البيانات
+  clientInfo = {
+    fullName: document.getElementById('clientFullName').value.trim(),
+    tradeName: document.getElementById('clientTradeName').value.trim(),
+    address: document.getElementById('clientAddress').value.trim(),
+    phone: document.getElementById('clientPhone').value.trim(),
   };
-  
+
+  // تحقق بسيط قبل الحفظ (اختياري لكنه مفيد)
+  if (!clientInfo.fullName || !clientInfo.phone) {
+    alert("يرجى إدخال الاسم الرباعي ورقم الهاتف على الأقل.");
+    return;
+  }
+
+  // حفظ في التخزين المحلي
+  localStorage.setItem('clientInfo', JSON.stringify(clientInfo));
+  alert("تم حفظ بيانات العميل");
+
+  // انتقل تلقائيًا إلى تبويب الطلبات
+  switchToTab("sales");
+
+  // تركيز المؤشر في خانة البحث لتسهيل بدء الاختيار
+  setTimeout(() => {
+    const search = document.getElementById('searchInput');
+    if (search) search.focus();
+  }, 0);
+};
+<!-- باقي الأكواد... -->
   document.querySelectorAll('.tabBtn').forEach(btn => {
     btn.addEventListener('click', () => {
       const targetTab = btn.dataset.tab;
